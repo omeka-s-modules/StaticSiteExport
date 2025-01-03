@@ -1,7 +1,7 @@
 <?php
 use StaticSiteExport\Module;
 
-$canExport = Module::directoryPathIsValid($this->setting('static_site_export_directory_path'));
+$canExport = Module::sitesDirectoryPathIsValid($this->setting('static_site_export_sites_directory_path'));
 
 $this->htmlElement('body')->appendAttribute('class', 'static-site-export browse');
 ?>
@@ -33,8 +33,9 @@ $this->htmlElement('body')->appendAttribute('class', 'static-site-export browse'
 <table class="tablesaw" data-tablesaw-mode="stack">
     <thead>
         <tr>
-            <th><?php echo $this->translate('Static site'); ?></th>
-            <th><?php echo $this->translate('Job status'); ?></th>
+            <th><?php echo $this->translate('Label'); ?></th>
+            <th><?php echo $this->translate('Directory name'); ?></th>
+            <th><?php echo $this->translate('Export status'); ?></th>
             <th><?php echo $this->translate('Owner'); ?></th>
             <th><?php echo $this->translate('Created'); ?></th>
         </tr>
@@ -63,6 +64,7 @@ $this->htmlElement('body')->appendAttribute('class', 'static-site-export browse'
                     ]); ?></li>
                 </ul>
             </td>
+            <td><?php echo $staticSite->directoryName(); ?></td>
             <td><?php echo $job->link(ucfirst($job->status())); ?></td>
             <td><?php echo $owner ? $owner->link($owner->name()) : ''; ?></td>
             <td><?php echo $this->i18n()->dateFormat($staticSite->created()); ?></td>

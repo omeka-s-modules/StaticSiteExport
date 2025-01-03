@@ -67,10 +67,10 @@ class StaticSite extends \StaticSiteExport\Entity\StaticSite implements \Doctrin
     public function __sleep()
     {
         if ($this->__isInitialized__) {
-            return ['__isInitialized__', 'id', 'owner', 'site', 'job', 'created', 'label', 'data'];
+            return ['__isInitialized__', 'id', 'owner', 'site', 'job', 'created', 'label', 'directoryName', 'data'];
         }
 
-        return ['__isInitialized__', 'id', 'owner', 'site', 'job', 'created', 'label', 'data'];
+        return ['__isInitialized__', 'id', 'owner', 'site', 'job', 'created', 'label', 'directoryName', 'data'];
     }
 
     /**
@@ -180,7 +180,7 @@ class StaticSite extends \StaticSiteExport\Entity\StaticSite implements \Doctrin
     /**
      * {@inheritDoc}
      */
-    public function getId(): int
+    public function getId(): ?int
     {
         if ($this->__isInitialized__ === false) {
             return (int)  parent::getId();
@@ -300,6 +300,28 @@ class StaticSite extends \StaticSiteExport\Entity\StaticSite implements \Doctrin
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'getLabel', []);
 
         return parent::getLabel();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setDirectoryName(string $directoryName): void
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setDirectoryName', [$directoryName]);
+
+        parent::setDirectoryName($directoryName);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getDirectoryName(): string
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getDirectoryName', []);
+
+        return parent::getDirectoryName();
     }
 
     /**

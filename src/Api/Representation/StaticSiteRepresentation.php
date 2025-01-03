@@ -65,6 +65,11 @@ class StaticSiteRepresentation extends AbstractEntityRepresentation
         return $this->resource->getLabel();
     }
 
+    public function directoryName()
+    {
+        return $this->resource->getDirectoryName();
+    }
+
     public function data()
     {
         return $this->resource->getData();

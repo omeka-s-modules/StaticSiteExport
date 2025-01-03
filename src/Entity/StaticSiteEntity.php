@@ -133,6 +133,25 @@ class StaticSite extends AbstractEntity
 
     /**
      * @Column(
+     *     type="string",
+     *     length=255,
+     *     nullable=true
+     * )
+     */
+    protected $directoryName;
+
+    public function setDirectoryName(string $directoryName) : void
+    {
+        $this->directoryName = $directoryName;
+    }
+
+    public function getDirectoryName() : string
+    {
+        return $this->directoryName;
+    }
+
+    /**
+     * @Column(
      *     type="json",
      *     nullable=false
      * )

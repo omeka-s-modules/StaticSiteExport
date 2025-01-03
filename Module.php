@@ -19,7 +19,7 @@ class Module extends AbstractModule
     public function install(ServiceLocatorInterface $services)
     {
         $sql = <<<'SQL'
-CREATE TABLE static_site (id INT UNSIGNED AUTO_INCREMENT NOT NULL, owner_id INT DEFAULT NULL, site_id INT NOT NULL, job_id INT DEFAULT NULL, created DATETIME NOT NULL, `label` VARCHAR(255) NOT NULL, data LONGTEXT NOT NULL COMMENT '(DC2Type:json)', INDEX IDX_F2ED50517E3C61F9 (owner_id), INDEX IDX_F2ED5051F6BD1646 (site_id), INDEX IDX_F2ED5051BE04EA9 (job_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB;
+CREATE TABLE static_site (id INT UNSIGNED AUTO_INCREMENT NOT NULL, owner_id INT DEFAULT NULL, site_id INT NOT NULL, job_id INT DEFAULT NULL, created DATETIME NOT NULL, `label` VARCHAR(255) NOT NULL, directory_name VARCHAR(255) DEFAULT NULL, data LONGTEXT NOT NULL COMMENT '(DC2Type:json)', INDEX IDX_F2ED50517E3C61F9 (owner_id), INDEX IDX_F2ED5051F6BD1646 (site_id), INDEX IDX_F2ED5051BE04EA9 (job_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB;
 ALTER TABLE static_site ADD CONSTRAINT FK_F2ED50517E3C61F9 FOREIGN KEY (owner_id) REFERENCES user (id) ON DELETE SET NULL;
 ALTER TABLE static_site ADD CONSTRAINT FK_F2ED5051F6BD1646 FOREIGN KEY (site_id) REFERENCES site (id) ON DELETE CASCADE;
 ALTER TABLE static_site ADD CONSTRAINT FK_F2ED5051BE04EA9 FOREIGN KEY (job_id) REFERENCES job (id) ON DELETE SET NULL;
@@ -39,7 +39,7 @@ SQL;
         $conn->exec('DROP TABLE IF EXISTS static_site;');
         $conn->exec('SET FOREIGN_KEY_CHECKS=1;');
 
-        $settings->delete('static_site_export_directory_path');
+        $settings->delete('static_site_export_sites_directory_path');
     }
 
     public function getConfigForm(PhpRenderer $renderer)
@@ -48,7 +48,7 @@ SQL;
         $settings = $services->get('Omeka\Settings');
         $form = $services->get('FormElementManager')->get(ModuleConfigForm::class);
         $form->setData([
-            'directory_path' => $settings->get('static_site_export_directory_path'),
+            'sites_directory_path' => $settings->get('static_site_export_sites_directory_path'),
         ]);
         return $renderer->formCollection($form, false);
     }
@@ -61,7 +61,7 @@ SQL;
         $form->setData($controller->params()->fromPost());
         if ($form->isValid()) {
             $formData = $form->getData();
-            $settings->set('static_site_export_directory_path', $formData['directory_path']);
+            $settings->set('static_site_export_sites_directory_path', $formData['sites_directory_path']);
             return true;
         }
         $controller->messenger()->addErrors($form->getMessages());
@@ -72,8 +72,8 @@ SQL;
     {
     }
 
-    public static function directoryPathIsValid(string $directoryPath)
+    public static function sitesDirectoryPathIsValid(string $sitesDirectoryPath)
     {
-        return (is_dir($directoryPath) && is_writable($directoryPath));
+        return (is_dir($sitesDirectoryPath) && is_writable($sitesDirectoryPath));
     }
 }

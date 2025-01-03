@@ -56,7 +56,8 @@ class IndexController extends AbstractActionController
                     'exclude_pages' => $formData['exclude_pages'],
                     'exclude_private' => $formData['exclude_private'],
                 ];
-                $formData['o:site'] = ['o:id' => $this->currentSite()->id()];
+                $site = $this->currentSite();
+                $formData['o:site'] = ['o:id' => $site->id()];
                 // Create the static site resource.
                 $response = $this->api($form)->create('static_site_export_static_sites', $formData);
                 if ($response) {
@@ -66,9 +67,11 @@ class IndexController extends AbstractActionController
                         ExportStaticSite::class,
                         ['static_site_id' => $staticSite->id()]
                     );
-                    // Set the job to the static site entity.
+                    // Set the job and directory name to the static site entity.
                     $staticSiteEntity = $this->entityManager->find('StaticSiteExport\Entity\StaticSite', $staticSite->id());
                     $staticSiteEntity->setJob($job);
+                    $directoryName = sprintf('%s-%s', $site->slug(), $job->getId());
+                    $staticSiteEntity->setDirectoryName($directoryName);
                     $this->entityManager->flush();
                     // Set the message and redirect to browse.
                     $message = new Message(

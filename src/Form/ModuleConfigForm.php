@@ -12,18 +12,19 @@ class ModuleConfigForm extends Form
     {
         $this->add([
             'type' => LaminasElement\Text::class,
-            'name' => 'directory_path',
+            'name' => 'sites_directory_path',
             'options' => [
-                'label' => 'Directory path', // @translate
+                'label' => 'Sites directory path', // @translate
+                'info' => 'Enter the path to the directory where your static sites will be saved. The path must exist and be writable by the web server.', // @translate
             ],
             'attributes' => [
-                'id' => 'directory_path',
+                'id' => 'sites_directory_path',
                 'required' => true,
             ],
         ]);
         $inputFilter = $this->getInputFilter();
         $inputFilter->add([
-            'name' => 'directory_path',
+            'name' => 'sites_directory_path',
             'required' => true,
             'filters' => [
                 ['name' => 'StringTrim'],
@@ -33,9 +34,9 @@ class ModuleConfigForm extends Form
                     'name' => 'Callback',
                     'options' => [
                         'messages' => [
-                            Callback::INVALID_VALUE => 'Invalid directory path. The directory path must exist and be writable by the web server.', // @translate
+                            Callback::INVALID_VALUE => 'Invalid sites directory path. The path must exist and be writable by the web server.', // @translate
                         ],
-                        'callback' => [Module::class, 'directoryPathIsValid'],
+                        'callback' => [Module::class, 'sitesDirectoryPathIsValid'],
                     ],
                 ],
             ],
