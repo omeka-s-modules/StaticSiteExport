@@ -76,13 +76,10 @@ return [
         'resource_page_block_layouts' => [
             'invokables' => [
                 'itemSets' => ResourcePageBlockLayout\ItemSets::class,
-                // 'lightboxGallery' => ResourcePageBlockLayout\LightboxGallery::class,
                 'linkedResources' => ResourcePageBlockLayout\LinkedResources::class,
-                // 'mediaEmbeds' => ResourcePageBlockLayout\MediaEmbeds::class,
                 'mediaList' => ResourcePageBlockLayout\MediaList::class,
                 'mediaRender' => ResourcePageBlockLayout\MediaRender::class,
-                // 'resourceClass' => ResourcePageBlockLayout\ResourceClass::class,
-                // 'sitePages' => ResourcePageBlockLayout\SitePages::class,
+                'resourceClass' => ResourcePageBlockLayout\ResourceClass::class,
                 'values' => ResourcePageBlockLayout\Values::class,
             ],
         ],

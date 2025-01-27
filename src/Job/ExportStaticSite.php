@@ -196,7 +196,7 @@ class ExportStaticSite extends AbstractJob
         $page[] = json_encode($frontMatter, JSON_PRETTY_PRINT);
 
         // Iterate resource page blocks.
-        $blockNames = ['values', 'itemSets', 'linkedResources', 'mediaList'];
+        $blockNames = ['resourceClass', 'values', 'itemSets', 'linkedResources', 'mediaList'];
         foreach ($blockNames as $blockName) {
             $block = $this->get('StaticSiteExport\ResourcePageBlockLayoutManager')->get($blockName);
             $page[] = $block->getMarkup($item, $this);
@@ -221,7 +221,7 @@ class ExportStaticSite extends AbstractJob
         $page[] = json_encode($frontMatter, JSON_PRETTY_PRINT);
 
         // Iterate resource page blocks.
-        $blockNames = ['mediaRender', 'values', 'linkedResources'];
+        $blockNames = ['resourceClass', 'mediaRender', 'values', 'linkedResources'];
         foreach ($blockNames as $blockName) {
             $block = $this->get('StaticSiteExport\ResourcePageBlockLayoutManager')->get($blockName);
             $page[] = $block->getMarkup($media, $this);
@@ -246,7 +246,7 @@ class ExportStaticSite extends AbstractJob
         $page[] = json_encode($frontMatter, JSON_PRETTY_PRINT);
 
         // Iterate resource page blocks.
-        $blockNames = ['values', 'linkedResources'];
+        $blockNames = ['resourceClass', 'values', 'linkedResources'];
         foreach ($blockNames as $blockName) {
             $block = $this->get('StaticSiteExport\ResourcePageBlockLayoutManager')->get($blockName);
             $page[] = $block->getMarkup($itemSet, $this);
