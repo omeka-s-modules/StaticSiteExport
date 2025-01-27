@@ -11,6 +11,7 @@ return [
             'omeka-figure' => sprintf('%s/omeka-figure.html', $shortcodesPath),
             'omeka-html' => sprintf('%s/omeka-html.html', $shortcodesPath),
             'omeka-literal' => sprintf('%s/omeka-literal.html', $shortcodesPath),
+            'omeka-thumbnail' => sprintf('%s/omeka-thumbnail.html', $shortcodesPath),
         ],
         'block_layouts' => [
             'invokables' => [
@@ -80,6 +81,7 @@ return [
                 'mediaList' => ResourcePageBlockLayout\MediaList::class,
                 'mediaRender' => ResourcePageBlockLayout\MediaRender::class,
                 'resourceClass' => ResourcePageBlockLayout\ResourceClass::class,
+                'thumbnail' => ResourcePageBlockLayout\Thumbnail::class,
                 'values' => ResourcePageBlockLayout\Values::class,
             ],
         ],

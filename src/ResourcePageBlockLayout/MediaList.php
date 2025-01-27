@@ -15,7 +15,8 @@ class MediaList implements ResourcePageBlockLayoutInterface
         $block = [sprintf("## Media\n")];
         foreach ($media as $media) {
             $block[] = sprintf(
-                '- [%s]({{< ref "/media/%s" >}} "%s")',
+                '- %s[%s]({{< ref "/media/%s" >}} "%s")',
+                $job->getThumbnailShortcode($media, 'square', 40),
                 $job->escape(['[', ']'], $media->displayTitle()),
                 $media->id(),
                 $job->escape(['"'], $media->displayTitle()),

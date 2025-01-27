@@ -196,7 +196,7 @@ class ExportStaticSite extends AbstractJob
         $page[] = json_encode($frontMatter, JSON_PRETTY_PRINT);
 
         // Iterate resource page blocks.
-        $blockNames = ['resourceClass', 'values', 'itemSets', 'linkedResources', 'mediaList'];
+        $blockNames = ['thumbnail', 'resourceClass', 'values', 'itemSets', 'linkedResources', 'mediaList'];
         foreach ($blockNames as $blockName) {
             $block = $this->get('StaticSiteExport\ResourcePageBlockLayoutManager')->get($blockName);
             $page[] = $block->getMarkup($item, $this);
@@ -221,7 +221,7 @@ class ExportStaticSite extends AbstractJob
         $page[] = json_encode($frontMatter, JSON_PRETTY_PRINT);
 
         // Iterate resource page blocks.
-        $blockNames = ['resourceClass', 'mediaRender', 'values', 'linkedResources'];
+        $blockNames = ['mediaRender', 'resourceClass', 'values', 'linkedResources'];
         foreach ($blockNames as $blockName) {
             $block = $this->get('StaticSiteExport\ResourcePageBlockLayoutManager')->get($blockName);
             $page[] = $block->getMarkup($media, $this);
@@ -246,7 +246,7 @@ class ExportStaticSite extends AbstractJob
         $page[] = json_encode($frontMatter, JSON_PRETTY_PRINT);
 
         // Iterate resource page blocks.
-        $blockNames = ['resourceClass', 'values', 'linkedResources'];
+        $blockNames = ['thumbnail', 'resourceClass', 'values', 'linkedResources'];
         foreach ($blockNames as $blockName) {
             $block = $this->get('StaticSiteExport\ResourcePageBlockLayoutManager')->get($blockName);
             $page[] = $block->getMarkup($itemSet, $this);
@@ -556,5 +556,60 @@ class ExportStaticSite extends AbstractJob
             $string = str_replace($character, sprintf('\%s', $character), $string);
         }
         return $string;
+    }
+
+    /**
+     * Get the thumbnail shortcode for the passed resource.
+     *
+     * This renders a thumbnail in priority order:
+     *
+     *   1. The resource's asset thumbnail.
+     *   2. The primary media's asset thumbnail.
+     *   3. The primary media's auto-generated thumbnail.
+     *   4. The global thumbnail according to the primary media's file media type.
+     *
+     * The valid thumbnail types are square, medium, and large. Default is large.
+     *
+     * The thumbnail height, if provided, will preserve aspect ratio. Default is no height.
+     */
+    public function getThumbnailShortcode($resource, string $thumbnailType, ?int $thumbnailHeight = null)
+    {
+        $thumbnailPage = null;
+        $thumbnailResource = null;
+        $thumbnailType = in_array($thumbnailType, ['square', 'medium', 'large']) ? $thumbnailType : 'large';
+        $primaryMedia = $resource->primaryMedia();
+
+        if ($resource->thumbnail()) {
+            $thumbnailPage = sprintf('/assets/%s', $resource->thumbnail()->id());
+            $thumbnailResource = 'file';
+        } elseif ($primaryMedia && $primaryMedia->thumbnail()) {
+            $thumbnailPage = sprintf('/assets/%s', $primaryMedia->thumbnail()->id());
+            $thumbnailResource = 'file';
+        } elseif ($primaryMedia && $primaryMedia->hasThumbnails()) {
+            $thumbnailPage = sprintf('/media/%s', $primaryMedia->id());
+            $thumbnailResource = sprintf('thumbnail_%s', $thumbnailType);
+        } elseif ($primaryMedia && $primaryMedia->hasOriginal()) {
+            $mediaType = strstr($primaryMedia->mediaType(), '/', true);
+            if ('audio' === $mediaType) {
+                $thumbnailResource = '/thumbnails/audio.png';
+            } elseif ('video' === $mediaType) {
+                $thumbnailResource = '/thumbnails/video.png';
+            } elseif ('image' === $mediaType) {
+                $thumbnailResource = '/thumbnails/image.png';
+            } else {
+                $thumbnailResource = '/thumbnails/default.png';
+            }
+        }
+
+        if (!$thumbnailResource) {
+            return '';
+        }
+
+        return sprintf(
+            '{{< omeka-thumbnail page="%s" resource="%s" height="%s" >}}',
+            $thumbnailPage,
+            $thumbnailResource,
+            $thumbnailHeight
+        );
     }
 }
