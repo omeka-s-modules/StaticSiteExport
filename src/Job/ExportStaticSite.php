@@ -189,14 +189,14 @@ class ExportStaticSite extends AbstractJob
 
         // Add Hugo front matter.
         $frontMatter = [
-            'date' => date('c'),
+            'date' => $item->created()->format('c'),
             'title' => $item->displayTitle(),
             'draft' => $item->isPublic() ? false : true,
         ];
         $page[] = json_encode($frontMatter, JSON_PRETTY_PRINT);
 
         // Iterate resource page blocks.
-        $blockNames = ['thumbnail', 'resourceClass', 'values', 'itemSets', 'linkedResources', 'mediaList'];
+        $blockNames = ['thumbnail', 'resourceClass', 'values', 'itemSets', 'mediaList', 'linkedResources'];
         foreach ($blockNames as $blockName) {
             $block = $this->get('StaticSiteExport\ResourcePageBlockLayoutManager')->get($blockName);
             $page[] = $block->getMarkup($item, $this);
@@ -214,7 +214,7 @@ class ExportStaticSite extends AbstractJob
 
         // Add Hugo front matter.
         $frontMatter = [
-            'date' => date('c'),
+            'date' => $media->created()->format('c'),
             'title' => $media->displayTitle(),
             'draft' => $media->isPublic() ? false : true,
         ];
@@ -239,7 +239,7 @@ class ExportStaticSite extends AbstractJob
 
         // Add Hugo front matter.
         $frontMatter = [
-            'date' => date('c'),
+            'date' => $itemSet->created()->format('c'),
             'title' => $itemSet->displayTitle(),
             'draft' => $itemSet->isPublic() ? false : true,
         ];
