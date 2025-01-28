@@ -8,6 +8,19 @@ class Thumbnail implements FileRendererInterface
 {
     public function getMarkup(MediaRepresentation $media, JobInterface $job) : string
     {
+        if ($media->thumbnail()) {
+            return sprintf(
+                '{{< omeka-figure
+                    type="image"
+                    linkPage="/media/%s"
+                    linkResource="file"
+                    imgPage="/assets/%s"
+                    imgResource="file"
+                >}}',
+                $media->id(),
+                $media->thumbnail()->id()
+            );
+        }
         if ($media->hasThumbnails()) {
             return sprintf(
                 '{{< omeka-figure

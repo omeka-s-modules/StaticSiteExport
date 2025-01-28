@@ -3,6 +3,7 @@ namespace StaticSiteExport\Job;
 
 use DateTime;
 use Doctrine\DBAL\Connection;
+use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
 use Omeka\Api\Representation\AssetRepresentation;
 use Omeka\Api\Representation\ItemRepresentation;
 use Omeka\Api\Representation\ItemSetRepresentation;
@@ -196,7 +197,7 @@ class ExportStaticSite extends AbstractJob
         $page[] = json_encode($frontMatter, JSON_PRETTY_PRINT);
 
         // Iterate resource page blocks.
-        $blockNames = ['thumbnail', 'resourceClass', 'values', 'itemSets', 'mediaList', 'linkedResources'];
+        $blockNames = ['mediaRender', 'resourceClass', 'values', 'itemSets', 'mediaList', 'linkedResources'];
         foreach ($blockNames as $blockName) {
             $block = $this->get('StaticSiteExport\ResourcePageBlockLayoutManager')->get($blockName);
             $page[] = $block->getMarkup($item, $this);
@@ -246,7 +247,7 @@ class ExportStaticSite extends AbstractJob
         $page[] = json_encode($frontMatter, JSON_PRETTY_PRINT);
 
         // Iterate resource page blocks.
-        $blockNames = ['thumbnail', 'resourceClass', 'values', 'linkedResources'];
+        $blockNames = ['mediaRender', 'resourceClass', 'values', 'linkedResources'];
         foreach ($blockNames as $blockName) {
             $block = $this->get('StaticSiteExport\ResourcePageBlockLayoutManager')->get($blockName);
             $page[] = $block->getMarkup($itemSet, $this);
@@ -572,7 +573,7 @@ class ExportStaticSite extends AbstractJob
      *
      * The thumbnail height, if provided, will preserve aspect ratio. Default is no height.
      */
-    public function getThumbnailShortcode($resource, string $thumbnailType, ?int $thumbnailHeight = null)
+    public function getThumbnailShortcode(AbstractResourceEntityRepresentation $resource, string $thumbnailType, ?int $thumbnailHeight = null)
     {
         $thumbnailPage = null;
         $thumbnailResource = null;
@@ -589,12 +590,12 @@ class ExportStaticSite extends AbstractJob
             $thumbnailPage = sprintf('/media/%s', $primaryMedia->id());
             $thumbnailResource = sprintf('thumbnail_%s', $thumbnailType);
         } elseif ($primaryMedia && $primaryMedia->hasOriginal()) {
-            $mediaType = strstr($primaryMedia->mediaType(), '/', true);
-            if ('audio' === $mediaType) {
+            $topLevelType = strstr((string) $media->mediaType(), '/', true);
+            if ('audio' === $topLevelType) {
                 $thumbnailResource = '/thumbnails/audio.png';
-            } elseif ('video' === $mediaType) {
+            } elseif ('video' === $topLevelType) {
                 $thumbnailResource = '/thumbnails/video.png';
-            } elseif ('image' === $mediaType) {
+            } elseif ('image' === $topLevelType) {
                 $thumbnailResource = '/thumbnails/image.png';
             } else {
                 $thumbnailResource = '/thumbnails/default.png';

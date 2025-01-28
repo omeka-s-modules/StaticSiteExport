@@ -8,7 +8,12 @@ class MediaRender implements ResourcePageBlockLayoutInterface
 {
     public function getMarkup(AbstractResourceEntityRepresentation $resource, JobInterface $job) : string
     {
-        $mediaRenderer = $job->get('StaticSiteExport\MediaRendererManager')->get($resource->renderer());
-        return $mediaRenderer->getMarkup($resource, $job);
+        $media = $resource->primaryMedia();
+        if (!$media) {
+            // Account for resources with asset thumbnails.
+            return $job->getThumbnailShortcode($resource, 'large');
+        }
+        $mediaRenderer = $job->get('StaticSiteExport\MediaRendererManager')->get($media->renderer());
+        return $mediaRenderer->getMarkup($media, $job);
     }
 }
