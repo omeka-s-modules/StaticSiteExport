@@ -222,7 +222,7 @@ class ExportStaticSite extends AbstractJob
         $page[] = json_encode($frontMatter, JSON_PRETTY_PRINT);
 
         // Iterate resource page blocks.
-        $blockNames = ['mediaRender', 'resourceClass', 'values', 'linkedResources'];
+        $blockNames = ['mediaRender', 'mediaItem', 'resourceClass', 'values', 'linkedResources'];
         foreach ($blockNames as $blockName) {
             $block = $this->get('StaticSiteExport\ResourcePageBlockLayoutManager')->get($blockName);
             $page[] = $block->getMarkup($media, $this);
@@ -590,7 +590,7 @@ class ExportStaticSite extends AbstractJob
             $thumbnailPage = sprintf('/media/%s', $primaryMedia->id());
             $thumbnailResource = sprintf('thumbnail_%s', $thumbnailType);
         } elseif ($primaryMedia && $primaryMedia->hasOriginal()) {
-            $topLevelType = strstr((string) $media->mediaType(), '/', true);
+            $topLevelType = strstr((string) $primaryMedia->mediaType(), '/', true);
             if ('audio' === $topLevelType) {
                 $thumbnailResource = '/thumbnails/audio.png';
             } elseif ('video' === $topLevelType) {
