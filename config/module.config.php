@@ -81,7 +81,6 @@ return [
                 'mediaList' => ResourcePageBlockLayout\MediaList::class,
                 'mediaRender' => ResourcePageBlockLayout\MediaRender::class,
                 'resourceClass' => ResourcePageBlockLayout\ResourceClass::class,
-                'thumbnail' => ResourcePageBlockLayout\Thumbnail::class,
                 'values' => ResourcePageBlockLayout\Values::class,
             ],
         ],
