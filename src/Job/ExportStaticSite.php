@@ -389,38 +389,15 @@ class ExportStaticSite extends AbstractJob
      */
     public function createSiteDirectory() : void
     {
-        $config = $this->get('Config');
-
-        // Make site directories.
-        $this->makeDirectory('');
-        $this->makeDirectory('assets');
-        $this->makeDirectory('content');
-        $this->makeDirectory('layouts');
-
-        // Copy shortcodes.
-        $this->makeDirectory('layouts/shortcodes');
-        $shortcodes = $config['static_site_export']['shortcodes'];
-        foreach ($shortcodes as $shortcodeName => $shortcodePath) {
-            $command = sprintf(
-                '%s %s %s',
-                $this->get('Omeka\Cli')->getCommandPath('cp'),
-                escapeshellarg($shortcodePath),
-                escapeshellarg(sprintf(
-                    '%s/layouts/shortcodes/%s.html',
-                    $this->getSiteDirectoryPath(),
-                    $shortcodeName
-                ))
-            );
-            $this->execute($command);
-        }
-
-        // Copy thumbnails.
-        $thumbnailsPath = sprintf('%s/modules/StaticSiteExport/data/thumbnails', OMEKA_PATH);
+        // Make the site directory.
         $command = sprintf(
-            '%s --recursive %s %s',
-            $this->get('Omeka\Cli')->getCommandPath('cp'),
-            escapeshellarg($thumbnailsPath),
-            escapeshellarg(sprintf('%s/assets/', $this->getSiteDirectoryPath()))
+            '%s %s -d %s && %s %s %s',
+            $this->get('Omeka\Cli')->getCommandPath('unzip'),
+            sprintf('%s/modules/StaticSiteExport/data/static-site.zip', OMEKA_PATH),
+            $this->getSitesDirectoryPath(),
+            $this->get('Omeka\Cli')->getCommandPath('mv'),
+            sprintf('%s/static-site', $this->getSitesDirectoryPath()),
+            $this->getSiteDirectoryPath()
         );
         $this->execute($command);
 
@@ -429,7 +406,20 @@ class ExportStaticSite extends AbstractJob
             'baseURL' => $this->getStaticSite()->dataValue('base_url'),
             'theme' => $this->getStaticSite()->dataValue('theme'),
             'title' => $this->getStaticSite()->site()->title(),
-            'sectionPagesMenu' => 'main',
+            'menus' => [
+                'main' => [
+                    [
+                        'name' => 'Items',
+                        'pageRef' => '/items',
+                        'weight' => 10,
+                    ],
+                    [
+                        'name' => 'Item sets',
+                        'pageRef' => '/item-sets',
+                        'weight' => 20,
+                    ],
+                ],
+            ],
         ];
         $this->makeFile('hugo.json', json_encode($configContent, JSON_PRETTY_PRINT));
     }

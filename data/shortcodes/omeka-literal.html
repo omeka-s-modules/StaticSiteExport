@@ -1,7 +1,0 @@
-{{/*
-Renders literal string, HTML escaped and new lines to breaks.
-
-@returns {string}
-*/}}
-
-{{ replace (htmlEscape .Inner) "\n" "<br>" | safeHTML }}
