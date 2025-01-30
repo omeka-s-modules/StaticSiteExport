@@ -60,7 +60,7 @@ return [
             'invokables' => [
                 'youtube' => MediaRenderer\Youtube::class,
                 'html' => MediaRenderer\Html::class,
-                // 'iiif' => MediaRenderer\IIIF::class,
+                'iiif' => MediaRenderer\Iiif::class,
                 // 'iiif_presentation' => MediaRenderer\IiifPresentation::class,
                 'file' => MediaRenderer\File::class,
                 'oembed' => MediaRenderer\Oembed::class,
