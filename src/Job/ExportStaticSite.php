@@ -115,6 +115,13 @@ class ExportStaticSite extends AbstractJob
             sprintf('content/media/%s/index.md', $media->id()),
             $this->getMediaPage($media)
         );
+
+        // Copy media data.
+        $this->makeFile(
+            sprintf('content/media/%s/data.json', $media->id()),
+            json_encode($media->mediaData(), JSON_PRETTY_PRINT)
+        );
+
         // Copy the original file.
         if ($media->hasOriginal()) {
             $filePath = sprintf(
@@ -127,6 +134,7 @@ class ExportStaticSite extends AbstractJob
                 ->setUri($media->originalUrl())
                 ->setStream(sprintf('%s/%s', $this->getSiteDirectoryPath(), $filePath))->send();
         }
+
         // Copy the thumbnail files.
         if ($media->hasThumbnails()) {
             foreach (['large', 'medium', 'square'] as $type) {
