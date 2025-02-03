@@ -14,14 +14,14 @@ $ git init && git submodule add https://github.com/theNewDynamic/gohugo-theme-an
 Create the template ZIP file (must run after modifying data/static-site):
 
 ```
-$ cd /path/to/static-site/data
+$ cd /path/to/omeka/modules/StaticSiteExport/data
 $ rm -rf static-site.zip && zip -r static-site.zip static-site/
 ```
 
 Install JS dependencies:
 
 ```
-$ cd /path/to/static-site/data/static-site/static/js
+$ cd /path/to/omeka/modules/StaticSiteExport/data/static-site/static/js
 $ npm install
 ```
 
