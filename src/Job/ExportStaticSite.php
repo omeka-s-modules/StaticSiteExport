@@ -196,20 +196,28 @@ class ExportStaticSite extends AbstractJob
     {
         $page = [];
 
-        // Add Hugo front matter.
-        $frontMatter = [
+        $frontMatter = new \ArrayObject([
             'date' => $item->created()->format('c'),
             'title' => $item->displayTitle(),
             'draft' => $item->isPublic() ? false : true,
-        ];
-        $page[] = json_encode($frontMatter, JSON_PRETTY_PRINT);
+        ]);
 
         // Iterate resource page blocks.
-        $blockNames = ['mediaRender', 'resourceClass', 'values', 'itemSets', 'mediaList', 'linkedResources'];
+        $blockNames = [
+            'mediaRender',
+            'resourceClass',
+            'values',
+            'itemSets',
+            'mediaList',
+            'linkedResources',
+        ];
         foreach ($blockNames as $blockName) {
             $block = $this->get('StaticSiteExport\ResourcePageBlockLayoutManager')->get($blockName);
-            $page[] = $block->getMarkup($item, $this);
+            $page[] = $block->getMarkdown($item, $this, $frontMatter);
         }
+
+        // Add Hugo front matter to top of page.
+        array_unshift($page, json_encode($frontMatter, JSON_PRETTY_PRINT));
 
         return implode("\n\n", $page);
     }
@@ -221,20 +229,27 @@ class ExportStaticSite extends AbstractJob
     {
         $page = [];
 
-        // Add Hugo front matter.
-        $frontMatter = [
+        $frontMatter = new \ArrayObject([
             'date' => $media->created()->format('c'),
             'title' => $media->displayTitle(),
             'draft' => $media->isPublic() ? false : true,
-        ];
-        $page[] = json_encode($frontMatter, JSON_PRETTY_PRINT);
+        ]);
 
         // Iterate resource page blocks.
-        $blockNames = ['mediaRender', 'mediaItem', 'resourceClass', 'values', 'linkedResources'];
+        $blockNames = [
+            'mediaRender',
+            'mediaItem',
+            'resourceClass',
+            'values',
+            'linkedResources',
+        ];
         foreach ($blockNames as $blockName) {
             $block = $this->get('StaticSiteExport\ResourcePageBlockLayoutManager')->get($blockName);
-            $page[] = $block->getMarkup($media, $this);
+            $page[] = $block->getMarkdown($media, $this, $frontMatter);
         }
+
+        // Add Hugo front matter to top of page.
+        array_unshift($page, json_encode($frontMatter, JSON_PRETTY_PRINT));
 
         return implode("\n\n", $page);
     }
@@ -246,20 +261,26 @@ class ExportStaticSite extends AbstractJob
     {
         $page = [];
 
-        // Add Hugo front matter.
-        $frontMatter = [
+        $frontMatter = new \ArrayObject([
             'date' => $itemSet->created()->format('c'),
             'title' => $itemSet->displayTitle(),
             'draft' => $itemSet->isPublic() ? false : true,
-        ];
-        $page[] = json_encode($frontMatter, JSON_PRETTY_PRINT);
+        ]);
 
         // Iterate resource page blocks.
-        $blockNames = ['mediaRender', 'resourceClass', 'values', 'linkedResources'];
+        $blockNames = [
+            'mediaRender',
+            'resourceClass',
+            'values',
+            'linkedResources',
+        ];
         foreach ($blockNames as $blockName) {
             $block = $this->get('StaticSiteExport\ResourcePageBlockLayoutManager')->get($blockName);
-            $page[] = $block->getMarkup($itemSet, $this);
+            $page[] = $block->getMarkdown($itemSet, $this, $frontMatter);
         }
+
+        // Add Hugo front matter to top of page.
+        array_unshift($page, json_encode($frontMatter, JSON_PRETTY_PRINT));
 
         return implode("\n\n", $page);
     }

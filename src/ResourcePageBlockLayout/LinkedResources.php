@@ -1,13 +1,17 @@
 <?php
 namespace StaticSiteExport\ResourcePageBlockLayout;
 
+use ArrayObject;
 use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
 use Omeka\Job\JobInterface;
 
 class LinkedResources implements ResourcePageBlockLayoutInterface
 {
-    public function getMarkup(AbstractResourceEntityRepresentation $resource, JobInterface $job) : string
-    {
+    public function getMarkdown(
+        AbstractResourceEntityRepresentation $resource,
+        JobInterface $job,
+        ArrayObject $frontMatter
+    ): string {
         $resourceEntity = $job->get('Omeka\EntityManager')->find('Omeka\Entity\Resource', $resource->id());
         $adapter = $job->get('Omeka\ApiAdapterManager')->get('items');
         $subjectValues = $adapter->getSubjectValues($resourceEntity);

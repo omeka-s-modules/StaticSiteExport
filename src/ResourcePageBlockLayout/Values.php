@@ -1,13 +1,17 @@
 <?php
 namespace StaticSiteExport\ResourcePageBlockLayout;
 
+use ArrayObject;
 use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
 use Omeka\Job\JobInterface;
 
 class Values implements ResourcePageBlockLayoutInterface
 {
-    public function getMarkup(AbstractResourceEntityRepresentation $resource, JobInterface $job) : string
-    {
+    public function getMarkdown(
+        AbstractResourceEntityRepresentation $resource,
+        JobInterface $job,
+        ArrayObject $frontMatter
+    ): string {
         $allValues = $resource->values();
         if (!$allValues) {
             return '';
@@ -20,7 +24,7 @@ class Values implements ResourcePageBlockLayoutInterface
             $block[] = sprintf("%s", $altLabel ?? $property->label());
             foreach ($valueData['values'] as $value) {
                 $dataType = $job->get('StaticSiteExport\DataTypeManager')->get($value->type());
-                $block[] = sprintf(': %s', $dataType->getMarkup($value, $job));
+                $block[] = sprintf(': %s', $dataType->getMarkdown($value, $job, $frontMatter));
             }
             $block[] = '';
         }

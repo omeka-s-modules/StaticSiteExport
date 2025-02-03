@@ -1,13 +1,17 @@
 <?php
 namespace StaticSiteExport\DataType;
 
+use ArrayObject;
 use Omeka\Api\Representation\ValueRepresentation;
 use Omeka\Job\JobInterface;
 
 class Resource implements DataTypeInterface
 {
-    public function getMarkup(ValueRepresentation $value, JobInterface $job) : string
-    {
+    public function getMarkdown(
+        ValueRepresentation $value,
+        JobInterface $job,
+        ArrayObject $frontMatter
+    ): string {
         $valueResource = $value->valueResource();
         if (in_array($valueResource->id(), $job->getItemIds())) {
             $contentDirectory = 'items';

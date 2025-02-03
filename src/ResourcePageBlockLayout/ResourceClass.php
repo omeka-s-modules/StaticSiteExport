@@ -1,13 +1,17 @@
 <?php
 namespace StaticSiteExport\ResourcePageBlockLayout;
 
+use ArrayObject;
 use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
 use Omeka\Job\JobInterface;
 
 class ResourceClass implements ResourcePageBlockLayoutInterface
 {
-    public function getMarkup(AbstractResourceEntityRepresentation $resource, JobInterface $job) : string
-    {
+    public function getMarkdown(
+        AbstractResourceEntityRepresentation $resource,
+        JobInterface $job,
+        ArrayObject $frontMatter
+    ): string {
         $resourceClass = $resource->resourceClass();
         if (!$resourceClass) {
             return '';
