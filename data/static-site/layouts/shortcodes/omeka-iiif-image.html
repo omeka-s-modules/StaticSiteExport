@@ -1,0 +1,21 @@
+{{ $page := site.GetPage (.Get "page") }}
+{{ $resource := $page.Resources.GetMatch "data.json" }}
+{{ $prefixUrl := urls.RelURL "js/node_modules/openseadragon/build/openseadragon/images/" }}
+
+<div class="openseadragon"
+    id="iiif-image"
+    data-prefix-url="{{ $prefixUrl }}"
+    data-tile-sources="{{ with $resource }}{{ .Content }}{{ end }}"
+    style="height: 400px;">
+</div>
+<script>
+{
+    const openSeadragonDiv = document.getElementById('iiif-image');
+    const viewer = OpenSeadragon({
+        id: 'iiif-image',
+        prefixUrl: openSeadragonDiv.dataset.prefixUrl,
+        tileSources: [JSON.parse(openSeadragonDiv.dataset.tileSources)]
+    });
+}
+</script>
+

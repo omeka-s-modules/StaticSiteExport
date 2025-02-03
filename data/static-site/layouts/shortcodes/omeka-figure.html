@@ -1,0 +1,45 @@
+{{/*
+Renders an HTML figure element in any page context.
+
+@param {string} [type] The type of content in the figure element (audio, video, or image).
+@param {string} [linkPage] The path to a content page object, used for the figure link. If not given, assumes linkResource is the full path to a global (asset) resource.
+@param {string} [linkResource] The resource name (prefix or full), used for the figure link.
+@param {string} [imgPage] The path to a content page object, used for the figure image. If not given, assumes imgResource is the full path to a global (asset) resource.
+@param {string} [imgResource] The resource name (prefix or full), used for the figure image.
+
+@returns {template.HTML}
+*/}}
+
+{{ $type := .Get "type" }}
+{{ $linkResource := false }}
+{{ $imgResource := false }}
+
+{{ if .Get "linkPage" }}
+    {{ $linkPage := site.GetPage (.Get "linkPage") }}
+    {{ $linkResource = $linkPage.Resources.GetMatch (printf "%s*" (.Get "linkResource")) }}
+{{ else }}
+    {{ $linkResource = resources.Get (.Get "linkResource") }}
+{{ end }}
+
+{{ if .Get "imgPage" }}
+    {{ $imgPage := site.GetPage (.Get "imgPage") }}
+    {{ $imgResource = $imgPage.Resources.GetMatch (printf "%s*" (.Get "imgResource")) }}
+{{ else }}
+    {{ $imgResource = resources.Get (.Get "imgResource") }}
+{{ end }}
+
+<figure>
+    {{ if eq $type "audio" }}
+    <audio controls src="{{ with $linkResource }}{{ .RelPermalink }}{{ end }}">
+    {{ else if eq $type "video" }}
+    <video controls src="{{ with $linkResource }}{{ .RelPermalink }}{{ end }}">
+    {{ end }}
+    <a href="{{ with $linkResource }}{{ .RelPermalink }}{{ end }}">
+        <img src="{{ with $imgResource }}{{ .RelPermalink }}{{ end }}">
+    </a>
+    {{ if eq $type "audio" }}
+    </audio>
+    {{ else if eq $type "video" }}
+    </video>
+    {{ end }}
+</figure>
