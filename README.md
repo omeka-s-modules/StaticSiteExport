@@ -4,25 +4,32 @@ An [Omeka S](https://omeka.org/s/) module for exporting static sites.
 
 ## Developer notes
 
-Build the static site (note we're installing a test theme):
+The "static-site template" is a directory containing Hugo layouts, static files,
+and default site configuration that the export job copies to the sites directory
+then modifies according to the export settings. Once exported, you may use Hugo
+to build the static site (see below).
+
+If you need to add a JS package to the static-site template:
 
 ```
-$ cd /path/to/static-site
-$ git init && git submodule add https://github.com/theNewDynamic/gohugo-theme-ananke.git themes/ananke && hugo server
+$ cd /path/to/omeka/modules/StaticSiteExport/data/static-site/static/js
+$ npm install <package_name>
 ```
 
-Create the template ZIP file (must run after modifying data/static-site):
+If you made changes to the static-site template, make sure you create the template
+ZIP file before pushing changes:
 
 ```
 $ cd /path/to/omeka/modules/StaticSiteExport/data
 $ rm -rf static-site.zip && zip -r static-site.zip static-site/
 ```
 
-Install JS dependencies:
+After exporting a static site, you can use Hugo to build the static site (note that
+this installs a test theme):
 
 ```
-$ cd /path/to/omeka/modules/StaticSiteExport/data/static-site/static/js
-$ npm install
+$ cd /path/to/static-sites/<export_name>
+$ git init && git submodule add https://github.com/theNewDynamic/gohugo-theme-ananke.git themes/ananke && hugo server
 ```
 
 # Copyright
