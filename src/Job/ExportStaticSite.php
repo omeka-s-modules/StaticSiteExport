@@ -52,6 +52,13 @@ class ExportStaticSite extends AbstractJob
     protected $itemSetIds;
 
     /**
+     * An array of resource page blocks configured in the site's theme.
+     *
+     * @var array
+     */
+    protected $resourcePageBlocks;
+
+    /**
      * Export the static site.
      */
     public function perform() : void
@@ -203,14 +210,7 @@ class ExportStaticSite extends AbstractJob
         ]);
 
         // Iterate resource page blocks.
-        $blockNames = [
-            'mediaRender',
-            'resourceClass',
-            'values',
-            'itemSets',
-            'mediaList',
-            'linkedResources',
-        ];
+        $blockNames = $this->getResourcePageBlocks()['items'];
         foreach ($blockNames as $blockName) {
             $block = $this->get('StaticSiteExport\ResourcePageBlockLayoutManager')->get($blockName);
             $page[] = $block->getMarkdown($item, $this, $frontMatter);
@@ -236,13 +236,7 @@ class ExportStaticSite extends AbstractJob
         ]);
 
         // Iterate resource page blocks.
-        $blockNames = [
-            'mediaRender',
-            'mediaItem',
-            'resourceClass',
-            'values',
-            'linkedResources',
-        ];
+        $blockNames = $this->getResourcePageBlocks()['media'];
         foreach ($blockNames as $blockName) {
             $block = $this->get('StaticSiteExport\ResourcePageBlockLayoutManager')->get($blockName);
             $page[] = $block->getMarkdown($media, $this, $frontMatter);
@@ -268,12 +262,7 @@ class ExportStaticSite extends AbstractJob
         ]);
 
         // Iterate resource page blocks.
-        $blockNames = [
-            'mediaRender',
-            'resourceClass',
-            'values',
-            'linkedResources',
-        ];
+        $blockNames = $this->getResourcePageBlocks()['item_sets'];
         foreach ($blockNames as $blockName) {
             $block = $this->get('StaticSiteExport\ResourcePageBlockLayoutManager')->get($blockName);
             $page[] = $block->getMarkdown($itemSet, $this, $frontMatter);
@@ -550,22 +539,57 @@ class ExportStaticSite extends AbstractJob
     }
 
     /**
-     * Get a named service.
+     * Get the resource page blocks configuration from the site's theme.
+     */
+    public function getResourcePageBlocks()
+    {
+        if (null === $this->resourcePageBlocks) {
+            // Must set some things before fetching the resolved resource page
+            // blocks from the theme configuration.
+            $themeManager = $this->get('Omeka\Site\ThemeManager');
+            $resourcePageBlockLayoutManager = $this->get('Omeka\ResourcePageBlockLayoutManager');
+            $siteSettings = $this->get('Omeka\Settings\Site');
+
+            $site = $this->getStaticSite()->site();
+            $currentTheme = $themeManager->getTheme($site->theme());
+            $themeManager->setCurrentTheme($currentTheme);
+            $siteSettings->setTargetId($site->id());
+            $resourceTypes = $resourcePageBlockLayoutManager->getResourcePageBlocks($currentTheme);
+
+            // Flatten the layouts for each resource type, prioritizing the
+            // "main" region. We do this because the static site's resource
+            // pages do not have regions.
+            $itemsMain = $resourceTypes['items']['main'] ?? [];
+            $itemsSetsMain = $resourceTypes['item_sets']['main'] ?? [];
+            $mediaMain = $resourceTypes['media']['main'] ?? [];
+            unset(
+                $resourceTypes['items']['main'],
+                $resourceTypes['item_sets']['main'],
+                $resourceTypes['media']['main']
+            );
+            $resourcePageBlocks = [
+                'items' => $itemsMain,
+                'item_sets' => $itemSetsMain,
+                'media' => $mediaMain,
+            ];
+            foreach ($resourceTypes as $resourceType => $regions) {
+                foreach ($regions as $region => $layouts) {
+                    foreach ($layouts as $layout) {
+                        $resourcePageBlocks[$resourceType][] = $layout;
+                    }
+                }
+            }
+            $this->resourcePageBlocks = $resourcePageBlocks;
+        }
+        return $this->resourcePageBlocks;
+    }
+
+    /**
+     * Get a named service. Proxy to $this->getServiceLocator().
      */
     public function get(string $serviceName)
     {
-        switch ($serviceName) {
-            case 'Omeka\Settings\Site':
-                $site = $this->getStaticSite()->site();
-                $siteSettings = $services->get('Omeka\Settings\Site');
-                $siteSettings->setTargetId($site->id());
-                $service = $siteSettings;
-                break;
-            default:
-                $service = $this->getServiceLocator()->get($serviceName);
-                break;
-        }
-        return $service;
+        return $this->getServiceLocator()->get($serviceName);
     }
 
     /**
