@@ -492,8 +492,13 @@ class ExportStaticSite extends AbstractJob
             // Stop the job. Note that the Cli service already logged an error.
             throw new Exception\RuntimeException;
         }
-        // Log every command output.
-        $this->get('Omeka\Logger')->notice(sprintf("Output for command: %s\n%s", $command, $output));
+        // Log every command output if configured to do so. Note that this is
+        // off by default because for large sites the log will likely grow to
+        // surpass the memory limit.
+        $logCommands = $this->get('Config')['static_site_export']['log_commands'];
+        if ($logCommands) {
+            $this->get('Omeka\Logger')->notice(sprintf("Output for command: %s\n%s", $command, $output));
+        }
     }
 
     /**

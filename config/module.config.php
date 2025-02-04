@@ -5,6 +5,7 @@ use Laminas\Router\Http;
 
 return [
     'static_site_export' => [
+        'log_commands' => false,
         'block_layouts' => [
             'invokables' => [
                 'pageTitle' => BlockLayout\PageTitle::class,
