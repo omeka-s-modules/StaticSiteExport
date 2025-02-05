@@ -1,0 +1,9 @@
+{{ $id := printf "a%s" (math.Rand | md5) }}
+{{ $manifestId := .Get "manifestId" }}
+
+<div class="omeka-iiif-viewer mirador"
+    id="{{ $id }}"
+    data-manifest-id="{{ $manifestId }}"
+    style="width: 100%; height: 700px; position: relative;">
+</div>
+
