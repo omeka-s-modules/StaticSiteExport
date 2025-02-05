@@ -52,6 +52,13 @@ class ExportStaticSite extends AbstractJob
     protected $itemSetIds;
 
     /**
+     * An array of all asset IDs assigned to this site.
+     *
+     * @var array
+     */
+    protected $assetIds;
+
+    /**
      * An array of resource page blocks configured in the site's theme.
      *
      * @var array
@@ -561,7 +568,7 @@ class ExportStaticSite extends AbstractJob
             // "main" region. We do this because the static site's resource
             // pages do not have regions.
             $itemsMain = $resourceTypes['items']['main'] ?? [];
-            $itemsSetsMain = $resourceTypes['item_sets']['main'] ?? [];
+            $itemSetsMain = $resourceTypes['item_sets']['main'] ?? [];
             $mediaMain = $resourceTypes['media']['main'] ?? [];
             unset(
                 $resourceTypes['items']['main'],
