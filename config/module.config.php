@@ -72,7 +72,7 @@ return [
                 'itemSets' => ResourcePageBlockLayout\ItemSets::class,
                 'linkedResources' => ResourcePageBlockLayout\LinkedResources::class,
                 'mediaList' => ResourcePageBlockLayout\MediaList::class,
-                'mediaItem' => ResourcePageBlockLayout\MediaItem::class,
+                'mediaEmbeds' => ResourcePageBlockLayout\MediaEmbeds::class,
                 'mediaRender' => ResourcePageBlockLayout\MediaRender::class,
                 'resourceClass' => ResourcePageBlockLayout\ResourceClass::class,
                 'values' => ResourcePageBlockLayout\Values::class,

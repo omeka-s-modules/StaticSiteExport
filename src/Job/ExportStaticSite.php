@@ -233,6 +233,7 @@ class ExportStaticSite extends AbstractJob
             'date' => $media->created()->format('c'),
             'title' => $media->displayTitle(),
             'draft' => $media->isPublic() ? false : true,
+            'itemId' => $media->item()->id(),
         ]);
 
         // Iterate resource page blocks.
