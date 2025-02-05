@@ -9,14 +9,8 @@ and default site configuration that the export job copies to the sites directory
 then modifies according to the export settings. Once exported, you may use Hugo
 to build the static site (see below).
 
-If you need to add a JS package to the static-site template:
 
-```
-$ cd /path/to/omeka/modules/StaticSiteExport/data/static-site/static/js
-$ npm install <package_name>
-```
-
-If you made changes to the static-site template, make sure you create the template
+If you made changes to the static-site template, make sure you update the template
 ZIP file before pushing changes:
 
 ```
@@ -24,8 +18,8 @@ $ cd /path/to/omeka/modules/StaticSiteExport/data
 $ rm -rf static-site.zip && zip -r static-site.zip static-site/
 ```
 
-After exporting a static site, you can use Hugo to build the static site (note that
-this installs a test theme):
+After exporting a static site and unzipping the resulting ZIP file, you can use
+Hugo to build the static site (note that this installs a test theme):
 
 ```
 $ cd /path/to/static-sites/<export_name>
