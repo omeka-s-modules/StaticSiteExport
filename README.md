@@ -4,6 +4,8 @@ An [Omeka S](https://omeka.org/s/) module for exporting static sites.
 
 ## Developer notes
 
+### Static-site template
+
 The "static-site template" is a directory containing Hugo layouts, static files,
 and default site configuration that the export job copies to the sites directory
 then modifies according to the export settings. Once exported, you may use Hugo
@@ -24,6 +26,35 @@ Hugo to build the static site (note that this installs a test theme):
 ```
 $ cd /path/to/static-sites/<export_name>
 $ git init && git submodule add https://github.com/theNewDynamic/gohugo-theme-ananke.git themes/ananke && hugo server
+```
+
+### JS dependencies
+
+Modules can add JavaScript dependencies by registering them in module configuration:
+
+```
+'static_site_export' => [
+    'js_dependencies' => [
+        'vendor-directory-name' => '/path/to/js/directory',
+    ],
+]
+```
+
+Where "vendor-directory-name" is the name of the directory that will be created
+in the static-site JS vendor directory; and "/path/to/js/directory" is the absolute
+path of the directory that contains all assets needed for the JS dependency. These
+assets will be copied to the new vendor directory.
+
+### Log commands
+
+The export job executes quite a few shell commands. These are not logged by default
+because for large sites the log will likely grow to surpass the memory limit. For
+debugging, modules can turn on command logging in module configuration:
+
+```
+'static_site_export' => [
+    'log_commands' => true,
+]
 ```
 
 # Copyright

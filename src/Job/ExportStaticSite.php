@@ -427,6 +427,22 @@ class ExportStaticSite extends AbstractJob
         );
         $this->execute($command);
 
+        // Copy JS dependencies provided by modules.
+        $jsDependencies = $this->get('Config')['static_site_export']['js_dependencies'];
+        foreach ($jsDependencies as $toDirectoryName => $fromDirectoryPath) {
+            // Make the dependency directory under vendor.
+            $toDirectory = sprintf('static/js/vendor/%s', $toDirectoryName);
+            $this->makeDirectory($toDirectory);
+            // Copy dependencies into the dependency directory.
+            $command = sprintf(
+                '%s --recursive %s %s',
+                $this->get('Omeka\Cli')->getCommandPath('cp'),
+                sprintf('%s/*', escapeshellarg($fromDirectoryPath)),
+                escapeshellarg(sprintf('%s/%s', $this->getSiteDirectoryPath(), $toDirectory))
+            );
+            $this->execute($command);
+        }
+
         // Make the hugo.json configuration file.
         $configContent = [
             'baseURL' => $this->getStaticSite()->dataValue('base_url'),
