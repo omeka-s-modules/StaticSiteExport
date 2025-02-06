@@ -35,15 +35,15 @@ Modules can add JavaScript dependencies by registering them in module configurat
 ```
 'static_site_export' => [
     'js_dependencies' => [
-        'vendor-directory-name' => '/path/to/js/directory',
+        'directory-name' => '/path/to/js/directory',
     ],
 ]
 ```
 
-Where "vendor-directory-name" is the name of the directory that will be created
-in the static-site JS vendor directory; and "/path/to/js/directory" is the absolute
-path of the directory that contains all assets needed for the JS dependency. These
-assets will be copied to the new vendor directory.
+Where "directory-name" is the name of the directory that will be created in the
+static-site JS directory; and "/path/to/js/directory" is the absolute path of the
+directory that contains all assets needed for the JS dependency. These assets will
+be copied to the newly created directory.
 
 ### Log commands
 

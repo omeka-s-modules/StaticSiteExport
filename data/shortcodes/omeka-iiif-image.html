@@ -1,6 +1,6 @@
 {{ $page := site.GetPage (.Get "page") }}
 {{ $resource := $page.Resources.GetMatch "data.json" }}
-{{ $prefixUrl := urls.RelURL "js/vendor/openseadragon/images/" }}
+{{ $prefixUrl := urls.RelURL "js/openseadragon/images/" }}
 
 <div class="omeka-iiif-image openseadragon"
     data-prefix-url="{{ $prefixUrl }}"

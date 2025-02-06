@@ -8,7 +8,11 @@ $modulePath = sprintf('%s/modules/StaticSiteExport', OMEKA_PATH);
 return [
     'static_site_export' => [
         'log_commands' => false,
-        'js_dependencies' => [],
+        'js_dependencies' => [
+            'omeka' => sprintf('%s/data/js/omeka', $modulePath),
+            'mirador' => sprintf('%s/data/js/mirador', $modulePath),
+            'openseadragon' => sprintf('%s/data/js/openseadragon', $modulePath),
+        ],
         'shortcodes' => [
             'omeka-figure' => sprintf('%s/data/shortcodes/omeka-figure.html', $modulePath),
             'omeka-html' => sprintf('%s/data/shortcodes/omeka-html.html', $modulePath),

@@ -465,7 +465,7 @@ class ExportStaticSite extends AbstractJob
         $jsDependencies = $this->get('Config')['static_site_export']['js_dependencies'];
         foreach ($jsDependencies as $toDirectoryName => $fromDirectoryPath) {
             // Make the dependency directory under vendor.
-            $toDirectory = sprintf('static/js/vendor/%s', $toDirectoryName);
+            $toDirectory = sprintf('static/js/%s', $toDirectoryName);
             $this->makeDirectory($toDirectory);
             // Copy dependencies into the dependency directory.
             $command = sprintf(

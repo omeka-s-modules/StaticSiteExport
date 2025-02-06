@@ -12,8 +12,8 @@ class IiifPresentation implements MediaRendererInterface
         JobInterface $job,
         ArrayObject $frontMatter
     ): string {
-        $frontMatter['js'][] = 'js/vendor/mirador/mirador.min.js';
-        $frontMatter['js'][] = 'js/omeka-iiif-viewer.js';
+        $frontMatter['js'][] = 'js/mirador/mirador.min.js';
+        $frontMatter['js'][] = 'js/omeka/iiif-viewer.js';
         return sprintf('{{< omeka-iiif-viewer manifestId="%s" >}}', $media->source());
     }
 }
