@@ -477,6 +477,18 @@ class ExportStaticSite extends AbstractJob
             $this->execute($command);
         }
 
+        // Copy Hugo shortcodes provided by modules.
+        $shortcodes = $this->get('Config')['static_site_export']['shortcodes'];
+        foreach ($shortcodes as $toShortcodeName => $fromShortcodePath) {
+            $command = sprintf(
+                '%s %s %s',
+                $this->get('Omeka\Cli')->getCommandPath('cp'),
+                escapeshellarg($fromShortcodePath),
+                escapeshellarg(sprintf('%s/layouts/shortcodes/%s.html', $this->getSiteDirectoryPath(), $toShortcodeName))
+            );
+            $this->execute($command);
+        }
+
         // Make the hugo.json configuration file.
         $configContent = [
             'baseURL' => $this->getStaticSite()->dataValue('base_url'),

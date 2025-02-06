@@ -3,10 +3,20 @@ namespace StaticSiteExport;
 
 use Laminas\Router\Http;
 
+$modulePath = sprintf('%s/modules/StaticSiteExport', OMEKA_PATH);
+
 return [
     'static_site_export' => [
         'log_commands' => false,
         'js_dependencies' => [],
+        'shortcodes' => [
+            'omeka-figure' => sprintf('%s/data/shortcodes/omeka-figure.html', $modulePath),
+            'omeka-html' => sprintf('%s/data/shortcodes/omeka-html.html', $modulePath),
+            'omeka-iiif-image' => sprintf('%s/data/shortcodes/omeka-iiif-image.html', $modulePath),
+            'omeka-iiif-viewer' => sprintf('%s/data/shortcodes/omeka-iiif-viewer.html', $modulePath),
+            'omeka-literal' => sprintf('%s/data/shortcodes/omeka-literal.html', $modulePath),
+            'omeka-thumbnail' => sprintf('%s/data/shortcodes/omeka-thumbnail.html', $modulePath),
+        ],
         'block_layouts' => [
             'invokables' => [
                 'pageTitle' => BlockLayout\PageTitle::class,
