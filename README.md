@@ -57,6 +57,28 @@ debugging, modules can turn on command logging in module configuration:
 ]
 ```
 
+### Events
+
+There are several events that modules can use to modify resource pages:
+
+#### static_site_export.item_page
+
+- `item`: The item representation
+- `frontMatter`: An `ArrayObject` containing page front matter
+- `markdown`: An `ArrayObject` containing page Markdown
+
+#### static_site_export.media_page
+
+- `media`: The media representation
+- `frontMatter`: An `ArrayObject` containing page front matter
+- `markdown`: An `ArrayObject` containing page Markdown
+
+#### static_site_export.item_set_page
+
+- `itemSet`: The item set representation
+- `frontMatter`: An `ArrayObject` containing page front matter
+- `markdown`: An `ArrayObject` containing page Markdown
+
 # Copyright
 
 StaticSiteExport is Copyright © 2020-present Corporation for Digital Scholarship, Vienna, Virginia, USA http://digitalscholar.org

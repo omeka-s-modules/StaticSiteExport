@@ -1,8 +1,10 @@
 <?php
 namespace StaticSiteExport\Job;
 
+use ArrayObject;
 use DateTime;
 use Doctrine\DBAL\Connection;
+use Laminas\EventManager\Event;
 use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
 use Omeka\Api\Representation\AssetRepresentation;
 use Omeka\Api\Representation\ItemRepresentation;
@@ -208,25 +210,35 @@ class ExportStaticSite extends AbstractJob
      */
     public function getItemPage(ItemRepresentation $item) : string
     {
-        $page = [];
-
-        $frontMatter = new \ArrayObject([
+        $frontMatter = new ArrayObject([
             'date' => $item->created()->format('c'),
             'title' => $item->displayTitle(),
             'draft' => $item->isPublic() ? false : true,
         ]);
+        $markdown = new ArrayObject;
 
         // Iterate resource page blocks.
         $blockNames = $this->getResourcePageBlocks()['items'];
         foreach ($blockNames as $blockName) {
             $block = $this->get('StaticSiteExport\ResourcePageBlockLayoutManager')->get($blockName);
-            $page[] = $block->getMarkdown($item, $this, $frontMatter);
+            $markdown[] = $block->getMarkdown($item, $this, $frontMatter);
         }
 
-        // Add Hugo front matter to top of page.
-        array_unshift($page, json_encode($frontMatter, JSON_PRETTY_PRINT));
+        // Trigger the "static_site_export.item_page" event.
+        $this->triggerEvent(
+            'static_site_export.item_page',
+            [
+                'item' => $item,
+                'frontMatter' => $frontMatter,
+                'markdown' => $markdown,
+            ]
+        );
 
-        return implode("\n\n", $page);
+        // Add Hugo front matter to top of page.
+        $markdown = $markdown->getArrayCopy();
+        array_unshift($markdown, json_encode($frontMatter, JSON_PRETTY_PRINT));
+
+        return implode("\n\n", $markdown);
     }
 
     /**
@@ -234,26 +246,37 @@ class ExportStaticSite extends AbstractJob
      */
     public function getMediaPage(MediaRepresentation $media) : string
     {
-        $page = [];
-
-        $frontMatter = new \ArrayObject([
+        $frontMatter = new ArrayObject([
             'date' => $media->created()->format('c'),
             'title' => $media->displayTitle(),
             'draft' => $media->isPublic() ? false : true,
             'itemId' => $media->item()->id(),
         ]);
+        $markdown = new ArrayObject;
+
 
         // Iterate resource page blocks.
         $blockNames = $this->getResourcePageBlocks()['media'];
         foreach ($blockNames as $blockName) {
             $block = $this->get('StaticSiteExport\ResourcePageBlockLayoutManager')->get($blockName);
-            $page[] = $block->getMarkdown($media, $this, $frontMatter);
+            $markdown[] = $block->getMarkdown($media, $this, $frontMatter);
         }
 
-        // Add Hugo front matter to top of page.
-        array_unshift($page, json_encode($frontMatter, JSON_PRETTY_PRINT));
+        // Trigger the "static_site_export.media_page" event.
+        $this->triggerEvent(
+            'static_site_export.media_page',
+            [
+                'media' => $media,
+                'frontMatter' => $frontMatter,
+                'markdown' => $markdown,
+            ]
+        );
 
-        return implode("\n\n", $page);
+        // Add Hugo front matter to top of page.
+        $markdown = $markdown->getArrayCopy();
+        array_unshift($markdown, json_encode($frontMatter, JSON_PRETTY_PRINT));
+
+        return implode("\n\n", $markdown);
     }
 
     /**
@@ -261,25 +284,36 @@ class ExportStaticSite extends AbstractJob
      */
     public function getItemSetPage(ItemSetRepresentation $itemSet) : string
     {
-        $page = [];
-
         $frontMatter = new \ArrayObject([
             'date' => $itemSet->created()->format('c'),
             'title' => $itemSet->displayTitle(),
             'draft' => $itemSet->isPublic() ? false : true,
         ]);
+        $markdown = new ArrayObject;
+
 
         // Iterate resource page blocks.
         $blockNames = $this->getResourcePageBlocks()['item_sets'];
         foreach ($blockNames as $blockName) {
             $block = $this->get('StaticSiteExport\ResourcePageBlockLayoutManager')->get($blockName);
-            $page[] = $block->getMarkdown($itemSet, $this, $frontMatter);
+            $markdown[] = $block->getMarkdown($itemSet, $this, $frontMatter);
         }
 
-        // Add Hugo front matter to top of page.
-        array_unshift($page, json_encode($frontMatter, JSON_PRETTY_PRINT));
+        // Trigger the "static_site_export.item_set_page" event.
+        $this->triggerEvent(
+            'static_site_export.item_set_page',
+            [
+                'itemSet' => $itemSet,
+                'frontMatter' => $frontMatter,
+                'markdown' => $markdown,
+            ]
+        );
 
-        return implode("\n\n", $page);
+        // Add Hugo front matter to top of page.
+        $markdown = $markdown->getArrayCopy();
+        array_unshift($markdown, json_encode($frontMatter, JSON_PRETTY_PRINT));
+
+        return implode("\n\n", $markdown);
     }
 
     /**
@@ -614,6 +648,17 @@ class ExportStaticSite extends AbstractJob
     public function get(string $serviceName)
     {
         return $this->getServiceLocator()->get($serviceName);
+    }
+
+    /**
+     * Trigger an event.
+     */
+    public function triggerEvent(string $eventName, array $eventParams)
+    {
+        $event = new Event($eventName, $this, $eventParams);
+        $events = $this->get('EventManager');
+        $events->setIdentifiers([self::class]);
+        $events->triggerEvent($event);
     }
 
     /**
