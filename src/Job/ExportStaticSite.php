@@ -10,6 +10,7 @@ use Omeka\Api\Representation\AssetRepresentation;
 use Omeka\Api\Representation\ItemRepresentation;
 use Omeka\Api\Representation\ItemSetRepresentation;
 use Omeka\Api\Representation\MediaRepresentation;
+use Omeka\Api\Representation\SitePageRepresentation;
 use Omeka\Job\AbstractJob;
 use Omeka\Job\Exception;
 use StaticSiteExport\Api\Representation\StaticSiteRepresentation;
@@ -101,6 +102,11 @@ class ExportStaticSite extends AbstractJob
             foreach ($assetIdsChunk as $assetId) {
                 $this->createAssetBundle($assetId);
             }
+        }
+        // Create page bundles.
+        $sitePages = $this->getStaticSite()->site()->pages();
+        foreach ($sitePages as $sitePage) {
+            $this->createSitePageBundle($sitePage);
         }
 
         $this->createSiteArchive();
@@ -203,6 +209,18 @@ class ExportStaticSite extends AbstractJob
         $client = $this->get('Omeka\HttpClient')
             ->setUri($asset->assetUrl())
             ->setStream(sprintf('%s/%s', $this->getSiteDirectoryPath(), $filePath))->send();
+    }
+
+    /**
+     * Create a site page bundle.
+     */
+    public function createSitePageBundle(SitePageRepresentation $sitePage) : void
+    {
+        $this->makeDirectory(sprintf('content/pages/%s', $sitePage->slug()));
+        $this->makeFile(
+            sprintf('content/pages/%s/index.md', $sitePage->slug()),
+            $this->getSitePagePage($sitePage)
+        );
     }
 
     /**
@@ -344,6 +362,42 @@ class ExportStaticSite extends AbstractJob
         );
 
         return implode("\n\n", $page);
+    }
+
+    /**
+     * Get site page content (in markdown).
+     */
+    public function getSitePagePage(SitePageRepresentation $sitePage) : string
+    {
+        $frontMatter = new ArrayObject([
+            'date' => $sitePage->created()->format('c'),
+            'title' => $sitePage->title(),
+            'draft' => $sitePage->isPublic() ? false : true,
+        ]);
+        $markdown = new ArrayObject;
+
+        // @todo: Use named services to return block Markdown.
+        // Iterate site page blocks.
+        // foreach ($sitePage->blocks() as $sitePageBlock) {
+        //     $block = $this->get('StaticSiteExport\BlockLayoutManager')->get($sitePageBlock->layout());
+        //     $markdown[] = $block->getMarkdown($sitePageBlock, $this, $frontMatter);
+        // }
+
+        // Trigger the "static_site_export.site_page_page" event.
+        $this->triggerEvent(
+            'static_site_export.site_page_page',
+            [
+                'site_page' => $sitePage,
+                'frontMatter' => $frontMatter,
+                'markdown' => $markdown,
+            ]
+        );
+
+        // Add Hugo front matter to top of page.
+        $markdown = $markdown->getArrayCopy();
+        array_unshift($markdown, json_encode($frontMatter, JSON_PRETTY_PRINT));
+
+        return implode("\n\n", $markdown);
     }
 
     /**
@@ -505,7 +559,7 @@ class ExportStaticSite extends AbstractJob
                             'name' => $sitePage->title(),
                             'identifier' => $id,
                             'parent' => $parentId,
-                            'pageRef' => sprintf('/%s', $sitePage->slug()),
+                            'pageRef' => sprintf('/pages/%s', $sitePage->slug()),
                             'weight' => 10,
                         ];
                         break;
