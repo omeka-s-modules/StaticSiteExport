@@ -8,9 +8,9 @@ use Omeka\Job\JobInterface;
 class Resource implements DataTypeInterface
 {
     public function getMarkdown(
-        ValueRepresentation $value,
         JobInterface $job,
-        ArrayObject $frontMatter
+        ArrayObject $frontMatter,
+        ValueRepresentation $value
     ): string {
         $valueResource = $value->valueResource();
         if (in_array($valueResource->id(), $job->getItemIds())) {

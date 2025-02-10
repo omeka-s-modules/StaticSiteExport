@@ -16,18 +16,18 @@ class Values implements ResourcePageBlockLayoutInterface
         if (!$allValues) {
             return '';
         }
-        $block = [sprintf("## Values\n")];
+        $markdown = [sprintf("## Values\n")];
         foreach ($allValues as $term => $valueData) {
             $property = $valueData['property'];
             $altLabel = $valueData['alternate_label'];
             $altComment = $valueData['alternate_comment'];
-            $block[] = sprintf("%s", $altLabel ?? $property->label());
+            $markdown[] = sprintf("%s", $altLabel ?? $property->label());
             foreach ($valueData['values'] as $value) {
                 $dataType = $job->get('StaticSiteExport\DataTypeManager')->get($value->type());
-                $block[] = sprintf(': %s', $dataType->getMarkdown($value, $job, $frontMatter));
+                $markdown[] = sprintf(': %s', $dataType->getMarkdown($job, $frontMatter, $value));
             }
-            $block[] = '';
+            $markdown[] = '';
         }
-        return implode("\n", $block);
+        return implode("\n", $markdown);
     }
 }

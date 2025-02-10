@@ -8,15 +8,15 @@ use Omeka\Job\JobInterface;
     /**
      * Get the Markdown for a data type.
      *
-     * @param ValueRepresentation $value The Omeka value
      * @param JobInterface $job The export job, use for convenience methods
      * @param ArrayObject $frontMatter The page's front matter
+     * @param ValueRepresentation $value The Omeka value
      */
     interface DataTypeInterface
 {
     public function getMarkdown(
-        ValueRepresentation $value,
         JobInterface $job,
-        ArrayObject $frontMatter
+        ArrayObject $frontMatter,
+        ValueRepresentation $value
     ): string;
 }

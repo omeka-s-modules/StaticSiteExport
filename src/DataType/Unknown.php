@@ -8,9 +8,9 @@ use Omeka\Job\JobInterface;
 class Unknown implements DataTypeInterface
 {
     public function getMarkdown(
-        ValueRepresentation $value,
         JobInterface $job,
-        ArrayObject $frontMatter
+        ArrayObject $frontMatter,
+        ValueRepresentation $value
     ): string {
         return '';
     }

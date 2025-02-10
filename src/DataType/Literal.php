@@ -8,9 +8,9 @@ use Omeka\Job\JobInterface;
 class Literal implements DataTypeInterface
 {
     public function getMarkdown(
-        ValueRepresentation $value,
         JobInterface $job,
-        ArrayObject $frontMatter
+        ArrayObject $frontMatter,
+        ValueRepresentation $value
     ): string {
         return sprintf('{{< omeka-literal >}}%s{{< /omeka-literal >}}', $value->value());
     }

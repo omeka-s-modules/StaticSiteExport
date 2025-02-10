@@ -8,9 +8,9 @@ use Omeka\Job\JobInterface;
 class Uri implements DataTypeInterface
 {
     public function getMarkdown(
-        ValueRepresentation $value,
         JobInterface $job,
-        ArrayObject $frontMatter
+        ArrayObject $frontMatter,
+        ValueRepresentation $value
     ): string {
         $uri = $value->uri();
         $label = $value->value();
