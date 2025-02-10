@@ -543,62 +543,26 @@ class ExportStaticSite extends AbstractJob
             $this->execute($command);
         }
 
-        // Build the menu.
-        // @todo: Use named services (page, url, browse, etc.) to return menu config.
-        // @todo: Use correct "weight" integers
+        // Build the Hugo menu from Omeka site navigation.
         $menu = new ArrayObject;
-        $recurseNav = function (array $navItems, $parentId = null) use (&$recurseNav, $menu) {
-            foreach ($navItems as $navItem) {
+        $recurseNav = function (
+            array $navLinks,
+            ?string $parentId = null,
+            int $weight = 0
+        ) use (&$recurseNav, $menu) {
+            foreach ($navLinks as $navLink) {
                 $id = sprintf('a%s', md5(rand()));
-                switch ($navItem['type']) {
-                    case 'page':
-                        $sitePage = $this->get('Omeka\ApiManager')
-                            ->read('site_pages', $navItem['data']['id'])
-                            ->getContent();
-                        $menu[] = [
-                            'name' => $sitePage->title(),
-                            'identifier' => $id,
-                            'parent' => $parentId,
-                            'pageRef' => sprintf('/pages/%s', $sitePage->slug()),
-                            'weight' => 10,
-                        ];
-                        break;
-                    case 'url':
-                        $menu[] = [
-                            'name' => $navItem['data']['label'] ?: 'URL',
-                            'identifier' => $id,
-                            'parent' => $parentId,
-                            'url' => $navItem['data']['url'],
-                            'weight' => 10,
-                        ];
-                        break;
-                    case 'browse':
-                        $menu[] = [
-                            'name' => $navItem['data']['label'] ?: 'Browse items',
-                            'identifier' => $id,
-                            'parent' => $parentId,
-                            'pageRef' => '/items',
-                            'weight' => 10,
-                        ];
-                        break;
-                    case 'browseItemSets':
-                        $menu[] = [
-                            'name' => $navItem['data']['label'] ?: 'Browse item sets',
-                            'identifier' => $id,
-                            'parent' => $parentId,
-                            'pageRef' => '/item-sets',
-                            'weight' => 10,
-                        ];
-                        break;
-                    default:
-                }
-                if ($navItem['links']) {
-                    $recurseNav($navItem['links'], $id);
+                $weight++;
+                $this->get('StaticSiteExport\NavigationLinkManager')
+                    ->get($navLink['type'])
+                    ->setMenuEntry($this, $menu, $navLink, $id, $parentId, $weight);
+                if ($navLink['links']) {
+                    $recurseNav($navLink['links'], $id, $weight);
                 }
             }
         };
-        $navItems = $this->getStaticSite()->site()->navigation();
-        $recurseNav($navItems);
+        $navLinks = $this->getStaticSite()->site()->navigation();
+        $recurseNav($navLinks);
 
         // Make the hugo.json configuration file.
         $configContent = [
