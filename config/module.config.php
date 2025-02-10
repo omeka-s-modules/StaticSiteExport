@@ -21,14 +21,6 @@ return [
             'omeka-literal' => sprintf('%s/data/shortcodes/omeka-literal.html', $modulePath),
             'omeka-thumbnail' => sprintf('%s/data/shortcodes/omeka-thumbnail.html', $modulePath),
         ],
-        'navigation_links' => [
-            'invokables' => [
-                'page' => NavigationLink\Page::class,
-                'url' => NavigationLink\Url::class,
-                'browse' => NavigationLink\Browse::class,
-                'browseItemSets' => NavigationLink\BrowseItemSets::class,
-            ],
-        ],
         'block_layouts' => [
             'invokables' => [
                 'pageTitle' => BlockLayout\PageTitle::class,
@@ -88,6 +80,14 @@ return [
                 'iiif_presentation' => MediaRenderer\IiifPresentation::class,
                 'file' => MediaRenderer\File::class,
                 'oembed' => MediaRenderer\Oembed::class,
+            ],
+        ],
+        'navigation_links' => [
+            'invokables' => [
+                'page' => NavigationLink\Page::class,
+                'url' => NavigationLink\Url::class,
+                'browse' => NavigationLink\Browse::class,
+                'browseItemSets' => NavigationLink\BrowseItemSets::class,
             ],
         ],
         'resource_page_block_layouts' => [

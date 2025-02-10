@@ -45,6 +45,13 @@ static-site JS directory; and "/path/to/js/directory" is the absolute path of th
 directory that contains all assets needed for the JS dependency. These assets will
 be copied to the newly created directory.
 
+To include a script on a page, add the script's path the "js" array on the page's
+front matter:
+
+```
+$frontMatter['js'][] = 'js/path/to/script.js';
+```
+
 ### Log commands
 
 The export job executes quite a few shell commands. These are not logged by default
@@ -56,6 +63,20 @@ debugging, modules can turn on command logging in module configuration:
     'log_commands' => true,
 ]
 ```
+
+### Services
+
+Modules can add content to their static sites via the provided services in module
+configuration:
+
+- `['static_site_export']['block_layouts']`: Add site page block layouts (Hugo page content)
+- `['static_site_export']['data_types']`: Add data types (Hugo page content)
+- `['static_site_export']['file_renderers']`: Add file renderers (Hugo page content)
+- `['static_site_export']['media_renderers']`: Add media renderers (Hugo page content)
+- `['static_site_export']['navigation_links']`: Add naigation links (Hugo menu entries)
+- `['static_site_export']['resource_page_block_layouts']`: Add resource page block layouts (Hugo page content)
+
+See their respective interfaces to see how to implement them.
 
 ### Events
 
