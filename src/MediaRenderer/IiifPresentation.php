@@ -8,9 +8,9 @@ use Omeka\Job\JobInterface;
 class IiifPresentation implements MediaRendererInterface
 {
     public function getMarkdown(
-        MediaRepresentation $media,
         JobInterface $job,
-        ArrayObject $frontMatter
+        ArrayObject $frontMatter,
+        MediaRepresentation $media
     ): string {
         $frontMatter['js'][] = 'js/mirador/mirador.min.js';
         $frontMatter['js'][] = 'js/omeka/iiif-viewer.js';

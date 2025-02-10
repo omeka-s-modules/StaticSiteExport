@@ -18,6 +18,6 @@ class MediaRender implements ResourcePageBlockLayoutInterface
             return $job->getThumbnailShortcode($resource, 'large');
         }
         $mediaRenderer = $job->get('StaticSiteExport\MediaRendererManager')->get($media->renderer());
-        return $mediaRenderer->getMarkdown($media, $job, $frontMatter);
+        return $mediaRenderer->getMarkdown($job, $frontMatter, $media);
     }
 }

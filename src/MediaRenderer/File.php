@@ -9,9 +9,9 @@ use Omeka\Job\JobInterface;
 class File implements MediaRendererInterface
 {
     public function getMarkdown(
-        MediaRepresentation $media,
         JobInterface $job,
-        ArrayObject $frontMatter
+        ArrayObject $frontMatter,
+        MediaRepresentation $media
     ): string {
         $fileRendererManager = $fileRenderer = $job->get('StaticSiteExport\FileRendererManager');
         try {

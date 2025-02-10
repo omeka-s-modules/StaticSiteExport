@@ -8,9 +8,9 @@ use Omeka\Job\JobInterface;
 class Iiif implements MediaRendererInterface
 {
     public function getMarkdown(
-        MediaRepresentation $media,
         JobInterface $job,
-        ArrayObject $frontMatter
+        ArrayObject $frontMatter,
+        MediaRepresentation $media
     ): string {
         $frontMatter['js'][] = 'js/openseadragon/openseadragon.min.js';
         $frontMatter['js'][] = 'js/omeka/iiif-image.js';

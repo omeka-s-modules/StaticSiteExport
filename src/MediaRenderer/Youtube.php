@@ -8,9 +8,9 @@ use Omeka\Job\JobInterface;
 class Youtube implements MediaRendererInterface
 {
     public function getMarkdown(
-        MediaRepresentation $media,
         JobInterface $job,
-        ArrayObject $frontMatter
+        ArrayObject $frontMatter,
+        MediaRepresentation $media
     ): string {
         $data = $media->mediaData();
         return sprintf('{{< youtube id="%s" >}}', $data['id']);

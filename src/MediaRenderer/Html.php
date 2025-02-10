@@ -8,9 +8,9 @@ use Omeka\Job\JobInterface;
 class Html implements MediaRendererInterface
 {
     public function getMarkdown(
-        MediaRepresentation $media,
         JobInterface $job,
-        ArrayObject $frontMatter
+        ArrayObject $frontMatter,
+        MediaRepresentation $media
     ): string {
         $data = $media->mediaData();
         return sprintf('{{< omeka-html >}}%s{{< /omeka-html >}}', $data['html']);
