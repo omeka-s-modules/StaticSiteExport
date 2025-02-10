@@ -23,6 +23,6 @@ class File implements MediaRendererInterface
                 $fileRenderer = $fileRendererManager->get('thumbnail');
             }
         }
-        return $fileRenderer->getMarkdown($media, $job, $frontMatter);
+        return $fileRenderer->getMarkdown($job, $frontMatter, $media);
     }
 }

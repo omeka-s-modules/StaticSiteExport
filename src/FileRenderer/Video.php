@@ -8,9 +8,9 @@ use Omeka\Job\JobInterface;
 class Video implements FileRendererInterface
 {
     public function getMarkdown(
-        MediaRepresentation $media,
         JobInterface $job,
-        ArrayObject $frontMatter
+        ArrayObject $frontMatter,
+        MediaRepresentation $media
     ): string {
         return sprintf(
             '{{< omeka-figure
