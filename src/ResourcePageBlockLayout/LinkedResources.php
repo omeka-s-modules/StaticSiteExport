@@ -8,9 +8,9 @@ use Omeka\Job\JobInterface;
 class LinkedResources implements ResourcePageBlockLayoutInterface
 {
     public function getMarkdown(
-        AbstractResourceEntityRepresentation $resource,
         JobInterface $job,
-        ArrayObject $frontMatter
+        ArrayObject $frontMatter,
+        AbstractResourceEntityRepresentation $resource
     ): string {
         $resourceEntity = $job->get('Omeka\EntityManager')->find('Omeka\Entity\Resource', $resource->id());
         $adapter = $job->get('Omeka\ApiAdapterManager')->get('items');

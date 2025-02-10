@@ -8,9 +8,9 @@ use Omeka\Job\JobInterface;
 class Unknown implements ResourcePageBlockLayoutInterface
 {
     public function getMarkdown(
-        AbstractResourceEntityRepresentation $resource,
         JobInterface $job,
-        ArrayObject $frontMatter
+        ArrayObject $frontMatter,
+        AbstractResourceEntityRepresentation $resource
     ): string {
         return '';
     }

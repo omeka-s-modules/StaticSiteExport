@@ -239,7 +239,7 @@ class ExportStaticSite extends AbstractJob
         $blockNames = $this->getResourcePageBlocks()['items'];
         foreach ($blockNames as $blockName) {
             $block = $this->get('StaticSiteExport\ResourcePageBlockLayoutManager')->get($blockName);
-            $markdown[] = $block->getMarkdown($item, $this, $frontMatter);
+            $markdown[] = $block->getMarkdown($this, $frontMatter, $item);
         }
 
         // Trigger the "static_site_export.item_page" event.
@@ -277,7 +277,7 @@ class ExportStaticSite extends AbstractJob
         $blockNames = $this->getResourcePageBlocks()['media'];
         foreach ($blockNames as $blockName) {
             $block = $this->get('StaticSiteExport\ResourcePageBlockLayoutManager')->get($blockName);
-            $markdown[] = $block->getMarkdown($media, $this, $frontMatter);
+            $markdown[] = $block->getMarkdown($this, $frontMatter, $media);
         }
 
         // Trigger the "static_site_export.media_page" event.
@@ -314,7 +314,7 @@ class ExportStaticSite extends AbstractJob
         $blockNames = $this->getResourcePageBlocks()['item_sets'];
         foreach ($blockNames as $blockName) {
             $block = $this->get('StaticSiteExport\ResourcePageBlockLayoutManager')->get($blockName);
-            $markdown[] = $block->getMarkdown($itemSet, $this, $frontMatter);
+            $markdown[] = $block->getMarkdown($this, $frontMatter, $itemSet);
         }
 
         // Trigger the "static_site_export.item_set_page" event.

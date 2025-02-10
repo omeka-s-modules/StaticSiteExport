@@ -10,13 +10,13 @@ interface ResourcePageBlockLayoutInterface
     /**
      * Get the Markdown for a resource page block layout.
      *
-     * @param AbstractResourceEntityRepresentation $resource The Omeka resource
      * @param JobInterface $job The export job, use for convenience methods
      * @param ArrayObject $frontMatter The page's front matter
+     * @param AbstractResourceEntityRepresentation $resource The Omeka resource
      */
     public function getMarkdown(
-        AbstractResourceEntityRepresentation $resource,
         JobInterface $job,
-        ArrayObject $frontMatter
+        ArrayObject $frontMatter,
+        AbstractResourceEntityRepresentation $resource
     ): string;
 }
