@@ -4,21 +4,7 @@ An [Omeka S](https://omeka.org/s/) module for exporting static sites.
 
 ## Developer notes
 
-### Static-site template
-
-The "static-site template" is a directory containing Hugo layouts, static files,
-and default site configuration that the export job copies to the sites directory
-then modifies according to the export settings. Once exported, you may use Hugo
-to build the static site (see below).
-
-
-If you made changes to the static-site template, make sure you update the template
-ZIP file before pushing changes:
-
-```
-$ cd /path/to/omeka/modules/StaticSiteExport/data
-$ rm -rf static-site.zip && zip -r static-site.zip static-site/
-```
+### Building your static-site
 
 After exporting a static site and unzipping the resulting ZIP file, you can use
 Hugo to build the static site (note that this installs a test theme):

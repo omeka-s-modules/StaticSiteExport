@@ -21,6 +21,10 @@ return [
             'omeka-literal' => sprintf('%s/data/shortcodes/omeka-literal.html', $modulePath),
             'omeka-thumbnail' => sprintf('%s/data/shortcodes/omeka-thumbnail.html', $modulePath),
         ],
+        'partials' => [
+            'site-navigation' => sprintf('%s/data/partials/site-navigation.html', $modulePath),
+            'site-scripts' => sprintf('%s/data/partials/site-scripts.html', $modulePath),
+        ],
         'block_layouts' => [
             'invokables' => [
                 'pageTitle' => BlockLayout\PageTitle::class,

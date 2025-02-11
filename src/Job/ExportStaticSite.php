@@ -504,16 +504,17 @@ class ExportStaticSite extends AbstractJob
     public function createSiteDirectory() : void
     {
         // Make the site directory.
-        $command = sprintf(
-            '%s %s -d %s && %s %s %s',
-            $this->get('Omeka\Cli')->getCommandPath('unzip'),
-            sprintf('%s/modules/StaticSiteExport/data/static-site.zip', OMEKA_PATH),
-            $this->getSitesDirectoryPath(),
-            $this->get('Omeka\Cli')->getCommandPath('mv'),
-            sprintf('%s/static-site', $this->getSitesDirectoryPath()),
-            $this->getSiteDirectoryPath()
-        );
-        $this->execute($command);
+        $this->makeDirectory('archetypes');
+        $this->makeDirectory('assets');
+        $this->makeDirectory('content');
+        $this->makeDirectory('data');
+        $this->makeDirectory('i18n');
+        $this->makeDirectory('layouts');
+        $this->makeDirectory('layouts/partials');
+        $this->makeDirectory('layouts/shortcodes');
+        $this->makeDirectory('static');
+        $this->makeDirectory('static/js');
+        $this->makeDirectory('themes');
 
         // Copy JS dependencies provided by modules.
         $jsDependencies = $this->get('Config')['static_site_export']['js_dependencies'];
@@ -539,6 +540,18 @@ class ExportStaticSite extends AbstractJob
                 $this->get('Omeka\Cli')->getCommandPath('cp'),
                 escapeshellarg($fromShortcodePath),
                 escapeshellarg(sprintf('%s/layouts/shortcodes/%s.html', $this->getSiteDirectoryPath(), $toShortcodeName))
+            );
+            $this->execute($command);
+        }
+
+        // Copy Hugo partials provided by modules.
+        $partials = $this->get('Config')['static_site_export']['partials'];
+        foreach ($partials as $toPartialName => $fromPartialPath) {
+            $command = sprintf(
+                '%s %s %s',
+                $this->get('Omeka\Cli')->getCommandPath('cp'),
+                escapeshellarg($fromPartialPath),
+                escapeshellarg(sprintf('%s/layouts/partials/%s.html', $this->getSiteDirectoryPath(), $toPartialName))
             );
             $this->execute($command);
         }
