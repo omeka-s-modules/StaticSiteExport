@@ -38,8 +38,6 @@ SQL;
         $conn->exec('SET FOREIGN_KEY_CHECKS=0;');
         $conn->exec('DROP TABLE IF EXISTS static_site;');
         $conn->exec('SET FOREIGN_KEY_CHECKS=1;');
-
-        $settings->delete('static_site_export_sites_directory_path');
     }
 
     public function getConfigForm(PhpRenderer $view)

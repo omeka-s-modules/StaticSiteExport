@@ -523,7 +523,7 @@ class ExportStaticSite extends AbstractJob
         $command = sprintf(
             '%s %s -d %s',
             $this->get('Omeka\Cli')->getCommandPath('unzip'),
-            sprintf('%s/data/omeka-hugo-theme.zip', $modulePath),
+            sprintf('%s/data/gohugo-theme-omeka-s.zip', $modulePath),
             sprintf('%s/themes/', $this->getSiteDirectoryPath())
         );
         $this->execute($command);

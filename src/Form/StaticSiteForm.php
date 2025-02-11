@@ -27,7 +27,7 @@ class StaticSiteForm extends Form
             ],
             'attributes' => [
                 'id' => 'theme',
-                'value' => 'ananke',
+                'value' => 'gohugo-theme-omeka-s',
             ],
         ]);
         $this->add([

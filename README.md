@@ -2,24 +2,44 @@
 
 An [Omeka S](https://omeka.org/s/) module for exporting static sites.
 
+## Building a static site
+
+After exporting a static site using the provided "gohugo-theme-omeka-s" theme, you
+can unzip the resulting ZIP file and immediately use Hugo to build the static site:
+
+```
+$ cd /path/to/static-sites/
+$ unzip <export-name>.zip
+$ cd <export-name>/
+$ hugo server
+```
+
+You could instead install a different theme. For example, [Ananke](https://github.com/theNewDynamic/gohugo-theme-ananke)
+by The New Dynamic:
+
+```
+$ cd /path/to/static-sites/
+$ unzip <export-name>.zip
+$ cd <export-name>/
+$ git init
+$ git submodule add https://github.com/theNewDynamic/gohugo-theme-ananke.git themes/ananke
+$ hugo server
+```
+
+For this to work, you'll have to set the correct theme name during export, or change
+the theme name directly in `hugo.json`. Bear in mind that there's no guarantee that
+third-party themes will work with Omeka content.
+
 ## Developer notes
 
-### Building your static-site
+### The Omeka theme
 
-After exporting a static site and unzipping the resulting ZIP file, you can use
-Hugo to build the static site (note that this installs a test theme):
-
-```
-$ cd /path/to/static-sites/<export_name>
-$ git init && git submodule add https://github.com/theNewDynamic/gohugo-theme-ananke.git themes/ananke && hugo server
-```
-
-If you made changes to the theme provided by Omeka, make sure you update the theme
+If you made changes to the provided "gohugo-theme-omeka-s" theme, make sure you update the theme
 ZIP file before pushing changes:
 
 ```
 $ cd /path/to/omeka/modules/StaticSiteExport/data
-$ rm -rf omeka-hugo-theme.zip && zip -r omeka-hugo-theme.zip omeka-hugo-theme/
+$ rm -rf gohugo-theme-omeka-s.zip && zip -r gohugo-theme-omeka-s.zip gohugo-theme-omeka-s/
 ```
 
 ### JS dependencies
