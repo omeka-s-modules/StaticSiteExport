@@ -528,24 +528,6 @@ class ExportStaticSite extends AbstractJob
         );
         $this->execute($command);
 
-        // Copy partials.
-        $command = sprintf(
-            '%s %s %s',
-            $this->get('Omeka\Cli')->getCommandPath('cp'),
-            escapeshellarg(sprintf('%s/data/partials/', $modulePath)) . '*',
-            escapeshellarg(sprintf('%s/layouts/partials/', $this->getSiteDirectoryPath()))
-        );
-        $this->execute($command);
-
-        // Copy thumbnails.
-        $command = sprintf(
-            '%s %s %s',
-            $this->get('Omeka\Cli')->getCommandPath('cp'),
-            escapeshellarg(sprintf('%s/data/thumbnails/', $modulePath)) . '*',
-            escapeshellarg(sprintf('%s/assets/thumbnails/', $this->getSiteDirectoryPath()))
-        );
-        $this->execute($command);
-
         // Copy shortcodes provided by modules.
         $shortcodes = $this->get('Config')['static_site_export']['shortcodes'];
         foreach ($shortcodes as $toShortcodeName => $fromShortcodePath) {
