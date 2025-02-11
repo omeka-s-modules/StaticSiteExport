@@ -57,7 +57,7 @@ Modules can add JavaScript dependencies by registering them in module configurat
 Where "directory-name" is the name of the directory that will be created in the
 static-site JS directory; and "/path/to/js/directory" is the absolute path of the
 directory that contains all assets needed for the JS dependency. These assets will
-be copied to the newly created directory.
+be copied to the newly created static site directory.
 
 To include a script on a page, add the script's path the "js" array on the page's
 front matter:
@@ -65,6 +65,22 @@ front matter:
 ```
 $frontMatter['js'][] = 'js/path/to/script.js';
 ```
+
+### Shortcodes
+
+Modules can add Hugo shortcodes by registering them in module configuration:
+
+```
+'static_site_export' => [
+    'shortcodes' => [
+        'shortcode-name' => '/path/to/shortcode-name.html',
+    ],
+]
+```
+
+Where "shortcode-name" is the name of the shortcode; and "/path/to/shortcode-name.html"
+is the absolute path of the shortcode file. These shortcodes will be copied to the
+newly created static site directory.
 
 ### Log commands
 
