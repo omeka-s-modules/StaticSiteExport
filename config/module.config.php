@@ -8,18 +8,11 @@ $modulePath = sprintf('%s/modules/StaticSiteExport', OMEKA_PATH);
 return [
     'static_site_export' => [
         'log_commands' => false,
+        'shortcodes' => [],
         'js_dependencies' => [
             'omeka' => sprintf('%s/data/js/omeka', $modulePath),
             'mirador' => sprintf('%s/data/js/mirador', $modulePath),
             'openseadragon' => sprintf('%s/data/js/openseadragon', $modulePath),
-        ],
-        'shortcodes' => [
-            'omeka-figure' => sprintf('%s/data/shortcodes/omeka-figure.html', $modulePath),
-            'omeka-html' => sprintf('%s/data/shortcodes/omeka-html.html', $modulePath),
-            'omeka-iiif-image' => sprintf('%s/data/shortcodes/omeka-iiif-image.html', $modulePath),
-            'omeka-iiif-viewer' => sprintf('%s/data/shortcodes/omeka-iiif-viewer.html', $modulePath),
-            'omeka-literal' => sprintf('%s/data/shortcodes/omeka-literal.html', $modulePath),
-            'omeka-thumbnail' => sprintf('%s/data/shortcodes/omeka-thumbnail.html', $modulePath),
         ],
         'block_layouts' => [
             'invokables' => [
