@@ -14,6 +14,14 @@ $ cd /path/to/static-sites/<export_name>
 $ git init && git submodule add https://github.com/theNewDynamic/gohugo-theme-ananke.git themes/ananke && hugo server
 ```
 
+If you made changes to the theme provided by Omeka, make sure you update the theme
+ZIP file before pushing changes:
+
+```
+$ cd /path/to/omeka/modules/StaticSiteExport/data
+$ rm -rf omeka-hugo-theme.zip && zip -r omeka-hugo-theme.zip omeka-hugo-theme/
+```
+
 ### JS dependencies
 
 Modules can add JavaScript dependencies by registering them in module configuration:

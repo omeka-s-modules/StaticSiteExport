@@ -503,9 +503,12 @@ class ExportStaticSite extends AbstractJob
      */
     public function createSiteDirectory() : void
     {
+        $modulePath = sprintf('%s/modules/StaticSiteExport', OMEKA_PATH);
+
         // Make the site directory.
         $this->makeDirectory('archetypes');
         $this->makeDirectory('assets');
+        $this->makeDirectory('assets/thumbnails');
         $this->makeDirectory('content');
         $this->makeDirectory('data');
         $this->makeDirectory('i18n');
@@ -515,6 +518,45 @@ class ExportStaticSite extends AbstractJob
         $this->makeDirectory('static');
         $this->makeDirectory('static/js');
         $this->makeDirectory('themes');
+
+        // Unzip the Omeka theme into the Hugo themes directory.
+        $command = sprintf(
+            '%s %s -d %s',
+            $this->get('Omeka\Cli')->getCommandPath('unzip'),
+            sprintf('%s/data/omeka-hugo-theme.zip', $modulePath),
+            sprintf('%s/themes/', $this->getSiteDirectoryPath())
+        );
+        $this->execute($command);
+
+        // Copy partials.
+        $command = sprintf(
+            '%s %s %s',
+            $this->get('Omeka\Cli')->getCommandPath('cp'),
+            escapeshellarg(sprintf('%s/data/partials/', $modulePath)) . '*',
+            escapeshellarg(sprintf('%s/layouts/partials/', $this->getSiteDirectoryPath()))
+        );
+        $this->execute($command);
+
+        // Copy thumbnails.
+        $command = sprintf(
+            '%s %s %s',
+            $this->get('Omeka\Cli')->getCommandPath('cp'),
+            escapeshellarg(sprintf('%s/data/thumbnails/', $modulePath)) . '*',
+            escapeshellarg(sprintf('%s/assets/thumbnails/', $this->getSiteDirectoryPath()))
+        );
+        $this->execute($command);
+
+        // Copy shortcodes provided by modules.
+        $shortcodes = $this->get('Config')['static_site_export']['shortcodes'];
+        foreach ($shortcodes as $toShortcodeName => $fromShortcodePath) {
+            $command = sprintf(
+                '%s %s %s',
+                $this->get('Omeka\Cli')->getCommandPath('cp'),
+                escapeshellarg($fromShortcodePath),
+                escapeshellarg(sprintf('%s/layouts/shortcodes/%s.html', $this->getSiteDirectoryPath(), $toShortcodeName))
+            );
+            $this->execute($command);
+        }
 
         // Copy JS dependencies provided by modules.
         $jsDependencies = $this->get('Config')['static_site_export']['js_dependencies'];
@@ -528,30 +570,6 @@ class ExportStaticSite extends AbstractJob
                 $this->get('Omeka\Cli')->getCommandPath('cp'),
                 sprintf('%s/*', escapeshellarg($fromDirectoryPath)),
                 escapeshellarg(sprintf('%s/%s', $this->getSiteDirectoryPath(), $toDirectory))
-            );
-            $this->execute($command);
-        }
-
-        // Copy Hugo shortcodes provided by modules.
-        $shortcodes = $this->get('Config')['static_site_export']['shortcodes'];
-        foreach ($shortcodes as $toShortcodeName => $fromShortcodePath) {
-            $command = sprintf(
-                '%s %s %s',
-                $this->get('Omeka\Cli')->getCommandPath('cp'),
-                escapeshellarg($fromShortcodePath),
-                escapeshellarg(sprintf('%s/layouts/shortcodes/%s.html', $this->getSiteDirectoryPath(), $toShortcodeName))
-            );
-            $this->execute($command);
-        }
-
-        // Copy Hugo partials provided by modules.
-        $partials = $this->get('Config')['static_site_export']['partials'];
-        foreach ($partials as $toPartialName => $fromPartialPath) {
-            $command = sprintf(
-                '%s %s %s',
-                $this->get('Omeka\Cli')->getCommandPath('cp'),
-                escapeshellarg($fromPartialPath),
-                escapeshellarg(sprintf('%s/layouts/partials/%s.html', $this->getSiteDirectoryPath(), $toPartialName))
             );
             $this->execute($command);
         }

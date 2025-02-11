@@ -3,4 +3,4 @@
 /.tx/ export-ignore
 /language/*.pot export-ignore
 /language/*.po export-ignore
-/data/static-site export-ignore
+/data/omeka-hugo-theme export-ignore
