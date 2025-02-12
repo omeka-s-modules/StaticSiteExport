@@ -4,9 +4,8 @@ An [Omeka S](https://omeka.org/s/) module for exporting static sites.
 
 ## Building a static site
 
-After exporting a static site using the provided "gohugo-theme-omeka-s" theme, you
-can unzip the resulting ZIP file and immediately use Hugo to build and view the
-static site:
+After exporting a static site, you can unzip the resulting ZIP file and immediately
+use Hugo to build and view the static site:
 
 ```
 $ cd /path/to/static-sites/
@@ -22,8 +21,16 @@ in your browser.
 
 ### The Omeka theme
 
-If you made changes to the provided "gohugo-theme-omeka-s" theme, make sure you update the theme
-ZIP file before pushing changes:
+To make changes to the Omeka theme, extract the theme ZIP file and do whatever work
+you need in the resulting directory:
+
+```
+$ cd /path/to/omeka/modules/StaticSiteExport/data
+$ unzip gohugo-theme-omeka-s.zip
+```
+
+After modifying the theme, make sure you update the theme ZIP file before pushing
+changes:
 
 ```
 $ cd /path/to/omeka/modules/StaticSiteExport/data
@@ -100,23 +107,18 @@ See their respective interfaces to see how to implement them.
 
 There are several events that modules can use to modify resource pages:
 
-#### static_site_export.item_page
-
-- `item`: The item representation
-- `frontMatter`: An `ArrayObject` containing page front matter
-- `markdown`: An `ArrayObject` containing page Markdown
-
-#### static_site_export.media_page
-
-- `media`: The media representation
-- `frontMatter`: An `ArrayObject` containing page front matter
-- `markdown`: An `ArrayObject` containing page Markdown
-
-#### static_site_export.item_set_page
-
-- `itemSet`: The item set representation
-- `frontMatter`: An `ArrayObject` containing page front matter
-- `markdown`: An `ArrayObject` containing page Markdown
+- static_site_export.item_page
+    - `item`: The item representation
+    - `frontMatter`: An `ArrayObject` containing page front matter
+    - `markdown`: An `ArrayObject` containing page Markdown
+- static_site_export.media_page
+    - `media`: The media representation
+    - `frontMatter`: An `ArrayObject` containing page front matter
+    - `markdown`: An `ArrayObject` containing page Markdown
+- static_site_export.item_set_page
+    - `itemSet`: The item set representation
+    - `frontMatter`: An `ArrayObject` containing page front matter
+    - `markdown`: An `ArrayObject` containing page Markdown
 
 # Copyright
 
