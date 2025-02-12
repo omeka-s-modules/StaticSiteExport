@@ -19,35 +19,5 @@ class StaticSiteForm extends Form
                 'value' => 'https://example.org/',
             ],
         ]);
-        $this->add([
-            'type' => LaminasElement\Checkbox::class,
-            'name' => 'exclude_media',
-            'options' => [
-                'label' => 'Exclude media', // @translate
-            ],
-            'attributes' => [
-                'id' => 'exclude_media',
-            ],
-        ]);
-        $this->add([
-            'type' => LaminasElement\Checkbox::class,
-            'name' => 'exclude_item_sets',
-            'options' => [
-                'label' => 'Exclude item sets', // @translate
-            ],
-            'attributes' => [
-                'id' => 'exclude_item_sets',
-            ],
-        ]);
-        $this->add([
-            'type' => LaminasElement\Checkbox::class,
-            'name' => 'exclude_pages',
-            'options' => [
-                'label' => 'Exclude pages', // @translate
-            ],
-            'attributes' => [
-                'id' => 'exclude_pages',
-            ],
-        ]);
     }
 }
