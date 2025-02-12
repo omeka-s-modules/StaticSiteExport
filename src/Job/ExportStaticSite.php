@@ -577,6 +577,20 @@ class ExportStaticSite extends AbstractJob
         $navLinks = $this->getStaticSite()->site()->navigation();
         $recurseNav($navLinks);
 
+        // Get the homepage.
+        $siteHomepage = $this->getStaticSite()->site()->homepage();
+        if ($siteHomepage) {
+            $homepage = sprintf('/pages/%s', $siteHomepage->slug());
+        } else {
+            // Get the first page in navigation.
+            foreach ($menu as $menuEntry) {
+                $query = '/pages/';
+                if (isset($menuEntry['pageRef']) && $query === substr($menuEntry['pageRef'], 0, strlen($query))) {
+                    $homepage = $menuEntry['pageRef'];
+                }
+            }
+        }
+
         // Make the hugo.json configuration file.
         $configContent = [
             'baseURL' => $this->getStaticSite()->dataValue('base_url'),
@@ -584,6 +598,9 @@ class ExportStaticSite extends AbstractJob
             'title' => $this->getStaticSite()->site()->title(),
             'menus' => [
                 'main' => $menu->getArrayCopy(),
+            ],
+            'params' => [
+                'homepage' => $homepage,
             ],
         ];
         $this->makeFile('hugo.json', json_encode($configContent, JSON_PRETTY_PRINT));
