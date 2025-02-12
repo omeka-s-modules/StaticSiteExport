@@ -52,7 +52,6 @@ class IndexController extends AbstractActionController
                 $formData = $form->getData();
                 $formData['o:data'] = [
                     'base_url' => $formData['base_url'],
-                    'theme' => $formData['theme'],
                     'exclude_media' => $formData['exclude_media'],
                     'exclude_item_sets' => $formData['exclude_item_sets'],
                     'exclude_pages' => $formData['exclude_pages'],

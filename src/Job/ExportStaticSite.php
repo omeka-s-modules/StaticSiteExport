@@ -594,7 +594,7 @@ class ExportStaticSite extends AbstractJob
         // Make the hugo.json configuration file.
         $configContent = [
             'baseURL' => $this->getStaticSite()->dataValue('base_url'),
-            'theme' => $this->getStaticSite()->dataValue('theme'),
+            'theme' => 'gohugo-theme-omeka-s',
             'title' => $this->getStaticSite()->site()->title(),
             'menus' => [
                 'main' => $menu->getArrayCopy(),

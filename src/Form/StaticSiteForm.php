@@ -20,17 +20,6 @@ class StaticSiteForm extends Form
             ],
         ]);
         $this->add([
-            'type' => LaminasElement\Text::class,
-            'name' => 'theme',
-            'options' => [
-                'label' => 'Theme name', // @translate
-            ],
-            'attributes' => [
-                'id' => 'theme',
-                'value' => 'gohugo-theme-omeka-s',
-            ],
-        ]);
-        $this->add([
             'type' => LaminasElement\Checkbox::class,
             'name' => 'exclude_media',
             'options' => [
