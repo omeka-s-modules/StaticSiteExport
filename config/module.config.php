@@ -3,17 +3,11 @@ namespace StaticSiteExport;
 
 use Laminas\Router\Http;
 
-$modulePath = sprintf('%s/modules/StaticSiteExport', OMEKA_PATH);
-
 return [
     'static_site_export' => [
         'log_commands' => false,
         'shortcodes' => [],
-        'js_dependencies' => [
-            'omeka' => sprintf('%s/data/js/omeka', $modulePath),
-            'mirador' => sprintf('%s/data/js/mirador', $modulePath),
-            'openseadragon' => sprintf('%s/data/js/openseadragon', $modulePath),
-        ],
+        'js_dependencies' => [],
         'block_layouts' => [
             'invokables' => [
                 'pageTitle' => BlockLayout\PageTitle::class,
