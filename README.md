@@ -5,7 +5,8 @@ An [Omeka S](https://omeka.org/s/) module for exporting static sites.
 ## Building a static site
 
 After exporting a static site using the provided "gohugo-theme-omeka-s" theme, you
-can unzip the resulting ZIP file and immediately use Hugo to build the static site:
+can unzip the resulting ZIP file and immediately use Hugo to build and view the
+static site:
 
 ```
 $ cd /path/to/static-sites/
@@ -14,21 +15,8 @@ $ cd <export-name>/
 $ hugo server
 ```
 
-You could instead install a different theme. For example, [Ananke](https://github.com/theNewDynamic/gohugo-theme-ananke)
-by The New Dynamic:
-
-```
-$ cd /path/to/static-sites/
-$ unzip <export-name>.zip
-$ cd <export-name>/
-$ git init
-$ git submodule add https://github.com/theNewDynamic/gohugo-theme-ananke.git themes/ananke
-$ hugo server
-```
-
-For this to work, you'll have to set the correct theme name during export, or change
-the theme name directly in `hugo.json`. Bear in mind that there's no guarantee that
-third-party themes will work with Omeka content.
+After the build is complete, follow the instructions and go to http://localhost:1313/
+in your browser.
 
 ## Developer notes
 
