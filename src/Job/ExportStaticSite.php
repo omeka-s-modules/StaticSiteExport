@@ -268,10 +268,11 @@ class ExportStaticSite extends AbstractJob
             'date' => $media->created()->format('c'),
             'title' => $media->displayTitle(),
             'draft' => $media->isPublic() ? false : true,
-            'itemId' => $media->item()->id(),
+            'params' => [
+                'itemID' => $media->item()->id(),
+            ],
         ]);
         $markdown = new ArrayObject;
-
 
         // Iterate resource page blocks.
         $blockNames = $this->getResourcePageBlocks()['media'];
