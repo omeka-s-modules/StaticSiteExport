@@ -19,23 +19,28 @@ in your browser.
 
 ## Developer notes
 
-### Modifying the Omeka theme
+### Modifying the Hugo theme
 
-To make changes to the Omeka theme, extract the theme ZIP file and do whatever work
-you need in the resulting directory:
+To modify the Hugo theme, first clone it in the module's data/ directory:
 
 ```
-$ cd /path/to/omeka/modules/StaticSiteExport/data
-$ unzip gohugo-theme-omeka-s.zip
+$ cd /path/to/omeka/modules/StaticSiteExport/data/
+$ git clone git@github.com:omeka/gohugo-theme-omeka-s.git
 ```
 
-After modifying the theme, make sure you update the theme ZIP file before pushing
+Make sure that you clone the repository in the module's data/ direcotry. Here, Git
+will ignore the theme directory so you don't accidentally commit it to the module
+repository.
+
+After modifying the theme, make sure you update the theme's ZIP file before pushing
 changes:
 
 ```
-$ cd /path/to/omeka/modules/StaticSiteExport/data
-$ rm -rf gohugo-theme-omeka-s.zip && zip -r gohugo-theme-omeka-s.zip gohugo-theme-omeka-s/
+$ cd /path/to/omeka/modules/StaticSiteExport/data/
+$ zip --recurse-paths gohugo-theme-omeka-s.zip gohugo-theme-omeka-s/ --exclude '*.git*'
 ```
+
+Note that we're excluding the .git/ directory from the ZIP file.
 
 ### Adding JavaScript dependencies
 
