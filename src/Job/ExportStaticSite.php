@@ -274,6 +274,17 @@ class ExportStaticSite extends AbstractJob
         ]);
         $markdown = new ArrayObject;
 
+        // Add a link to the parent item.
+        $item = $media->item();
+        $markdown[] = sprintf(
+            'Item%s: %s[%s]({{< ref "/items/%s" >}} "%s")',
+            "\n",
+            $this->getThumbnailShortcode($item, 'square', 40),
+            $this->escape(['[', ']'], $item->displayTitle()),
+            $item->id(),
+            $this->escape(['"'], $item->displayTitle()),
+        );
+
         // Iterate resource page blocks.
         $blockNames = $this->getResourcePageBlocks()['media'];
         foreach ($blockNames as $blockName) {
