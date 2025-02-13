@@ -19,7 +19,7 @@ in your browser.
 
 ## Developer notes
 
-### The Omeka theme
+### Modifying the Omeka theme
 
 To make changes to the Omeka theme, extract the theme ZIP file and do whatever work
 you need in the resulting directory:
@@ -37,9 +37,9 @@ $ cd /path/to/omeka/modules/StaticSiteExport/data
 $ rm -rf gohugo-theme-omeka-s.zip && zip -r gohugo-theme-omeka-s.zip gohugo-theme-omeka-s/
 ```
 
-### JS dependencies
+### Adding JavaScript dependencies
 
-Modules can add JavaScript dependencies by registering them in module configuration:
+Modules can add JS dependencies by registering them in module configuration:
 
 ```
 'static_site_export' => [
@@ -61,7 +61,7 @@ front matter:
 $frontMatter['js'][] = 'js/path/to/script.js';
 ```
 
-### Shortcodes
+### Adding Hugo shortcodes
 
 Modules can add Hugo shortcodes by registering them in module configuration:
 
@@ -77,7 +77,58 @@ Where "shortcode-name" is the name of the shortcode; and "/path/to/shortcode-nam
 is the absolute path of the shortcode file. These shortcodes will be copied to the
 newly created static site directory.
 
-### Log commands
+### Using services to add content
+
+Modules can add content to static sites via the provided services in module configuration:
+
+- `['static_site_export']['block_layouts']`: Add site page block layouts (Hugo page content)
+- `['static_site_export']['data_types']`: Add data types (Hugo page content)
+- `['static_site_export']['file_renderers']`: Add file renderers (Hugo page content)
+- `['static_site_export']['media_renderers']`: Add media renderers (Hugo page content)
+- `['static_site_export']['navigation_links']`: Add naigation links (Hugo menu entries)
+- `['static_site_export']['resource_page_block_layouts']`: Add resource page block layouts (Hugo page content)
+
+These services are parallel to existing Omeka services, and have identical purposes,
+but they are for static sites instead of Omeka sites. See the module configuration
+file and the respective interfaces to see how to implement them.
+
+### Using events to add content
+
+Modules can add content to static sites via the provided events `Module::attachListeners()`:
+
+- **static_site_export.item_page**
+    - `item`: The item representation
+    - `frontMatter`: An `ArrayObject` containing page front matter
+    - `markdown`: An `ArrayObject` containing page Markdown
+- **static_site_export.media_page**
+    - `media`: The media representation
+    - `frontMatter`: An `ArrayObject` containing page front matter
+    - `markdown`: An `ArrayObject` containing page Markdown
+- **static_site_export.item_set_page**
+    - `itemSet`: The item set representation
+    - `frontMatter`: An `ArrayObject` containing page front matter
+    - `markdown`: An `ArrayObject` containing page Markdown
+
+In your handler, append Hugo front matter to pages using the `frontMatter` parameter,
+like so:
+
+```
+$frontMatter = $event->getParam('frontMatter');
+$frontMatter['params']['myParam'] = 'foobar';
+```
+
+Also in your handler, append markdown to pages using the `markdown` parameter, like
+so:
+
+```
+$markdown = $event->getParam('markdown');
+$markdown[] = 'foobar';
+```
+
+Note that `frontMatter` and `markdown` are array objects, so you can modify them
+and they will take effect without having to set them back on the event.
+
+### Logging commands
 
 The export job executes quite a few shell commands. These are not logged by default
 because for large sites the log will likely grow to surpass the memory limit. For
@@ -88,37 +139,6 @@ debugging, modules can turn on command logging in module configuration:
     'log_commands' => true,
 ]
 ```
-
-### Services
-
-Modules can add content to their static sites via the provided services in module
-configuration:
-
-- `['static_site_export']['block_layouts']`: Add site page block layouts (Hugo page content)
-- `['static_site_export']['data_types']`: Add data types (Hugo page content)
-- `['static_site_export']['file_renderers']`: Add file renderers (Hugo page content)
-- `['static_site_export']['media_renderers']`: Add media renderers (Hugo page content)
-- `['static_site_export']['navigation_links']`: Add naigation links (Hugo menu entries)
-- `['static_site_export']['resource_page_block_layouts']`: Add resource page block layouts (Hugo page content)
-
-See their respective interfaces to see how to implement them.
-
-### Events
-
-There are several events that modules can use to modify resource pages:
-
-- static_site_export.item_page
-    - `item`: The item representation
-    - `frontMatter`: An `ArrayObject` containing page front matter
-    - `markdown`: An `ArrayObject` containing page Markdown
-- static_site_export.media_page
-    - `media`: The media representation
-    - `frontMatter`: An `ArrayObject` containing page front matter
-    - `markdown`: An `ArrayObject` containing page Markdown
-- static_site_export.item_set_page
-    - `itemSet`: The item set representation
-    - `frontMatter`: An `ArrayObject` containing page front matter
-    - `markdown`: An `ArrayObject` containing page Markdown
 
 # Copyright
 
