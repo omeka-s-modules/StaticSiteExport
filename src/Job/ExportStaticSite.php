@@ -592,13 +592,14 @@ class ExportStaticSite extends AbstractJob
         // Get the homepage.
         $siteHomepage = $this->getStaticSite()->site()->homepage();
         if ($siteHomepage) {
-            $homepage = sprintf('/pages/%s', $siteHomepage->slug());
+            $homepage = sprintf('pages/%s', $siteHomepage->slug());
         } else {
             // Get the first page in navigation.
             foreach ($menu as $menuEntry) {
                 $query = '/pages/';
                 if (isset($menuEntry['pageRef']) && $query === substr($menuEntry['pageRef'], 0, strlen($query))) {
-                    $homepage = $menuEntry['pageRef'];
+                    // Must remove the leading slash so Hugo builds the URL correctly.
+                    $homepage = ltrim($menuEntry['pageRef'], '/');
                 }
             }
         }
