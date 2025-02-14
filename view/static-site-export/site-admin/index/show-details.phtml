@@ -38,18 +38,3 @@ $owner = $staticSite->owner();
     <h4><?php echo $this->translate('Base URL'); ?></h4>
     <div class="value"><?php echo $staticSite->dataValue('base_url'); ?></div>
 </div>
-
-<div class="meta-group">
-    <h4><?php echo $this->translate('Exclude media'); ?></h4>
-    <div class="value"><?php echo $staticSite->dataValue('exclude_media') ? $this->translate('True') : $this->translate('False'); ?></div>
-</div>
-
-<div class="meta-group">
-    <h4><?php echo $this->translate('Exclude item sets'); ?></h4>
-    <div class="value"><?php echo $staticSite->dataValue('exclude_item_sets') ? $this->translate('True') : $this->translate('False'); ?></div>
-</div>
-
-<div class="meta-group">
-    <h4><?php echo $this->translate('Exclude pages'); ?></h4>
-    <div class="value"><?php echo $staticSite->dataValue('exclude_pages') ? $this->translate('True') : $this->translate('False'); ?></div>
-</div>
