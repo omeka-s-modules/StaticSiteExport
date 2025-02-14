@@ -615,11 +615,12 @@ class ExportStaticSite extends AbstractJob
         $recurseNav($navLinks);
 
         // Get the homepage.
-        $siteHomepage = $this->getStaticSite()->site()->homepage();
-        if ($siteHomepage) {
-            $homepage = sprintf('pages/%s', $siteHomepage->slug());
+        $homepage = null;
+        $omekaHomepage = $this->getStaticSite()->site()->homepage();
+        if ($omekaHomepage) {
+            $homepage = sprintf('pages/%s', $omekaHomepage->slug());
         } else {
-            // Get the first page in navigation.
+            // No homepage set. Get the first page in the menu.
             foreach ($menu as $menuEntry) {
                 $query = '/pages/';
                 if (isset($menuEntry['pageRef']) && $query === substr($menuEntry['pageRef'], 0, strlen($query))) {
