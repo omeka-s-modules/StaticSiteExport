@@ -12,8 +12,8 @@ class Iiif implements MediaRendererInterface
         ArrayObject $frontMatter,
         MediaRepresentation $media
     ): string {
-        $frontMatter['js'][] = 'js/openseadragon/openseadragon.min.js';
-        $frontMatter['js'][] = 'js/omeka/iiif-image.js';
+        $frontMatter['js'][] = 'vendor/openseadragon/openseadragon.min.js';
+        $frontMatter['js'][] = 'js/iiif-image.js';
         return sprintf('{{< omeka-iiif-image page="/media/%s" >}}', $media->id());
     }
 }

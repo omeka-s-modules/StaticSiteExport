@@ -7,7 +7,7 @@ return [
     'static_site_export' => [
         'log_commands' => false,
         'shortcodes' => [],
-        'js_dependencies' => [],
+        'vendor_packages' => [],
         'block_layouts' => [
             'invokables' => [
                 'pageTitle' => BlockLayout\PageTitle::class,

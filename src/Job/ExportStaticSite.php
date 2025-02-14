@@ -542,28 +542,37 @@ class ExportStaticSite extends AbstractJob
 
         // Copy shortcodes provided by modules.
         $shortcodes = $this->get('Config')['static_site_export']['shortcodes'];
-        foreach ($shortcodes as $toShortcodeName => $fromShortcodePath) {
+        foreach ($shortcodes as $shortcodeName => $fromShortcodePath) {
+            if (!is_file($fromShortcodePath)) {
+                continue; // Skip non-files.
+            }
             $command = sprintf(
                 '%s %s %s',
                 $this->get('Omeka\Cli')->getCommandPath('cp'),
                 escapeshellarg($fromShortcodePath),
-                escapeshellarg(sprintf('%s/layouts/shortcodes/%s.html', $this->getSiteDirectoryPath(), $toShortcodeName))
+                escapeshellarg(sprintf('%s/layouts/shortcodes/%s.html', $this->getSiteDirectoryPath(), $shortcodeName))
             );
             $this->execute($command);
         }
 
-        // Copy JS dependencies provided by modules.
-        $jsDependencies = $this->get('Config')['static_site_export']['js_dependencies'];
-        foreach ($jsDependencies as $toDirectoryName => $fromDirectoryPath) {
-            // Make the dependency directory under vendor.
-            $toDirectory = sprintf('static/js/%s', $toDirectoryName);
-            $this->makeDirectory($toDirectory);
-            // Copy dependencies into the dependency directory.
+        // Copy vendor packages provided by modules.
+        $vendorPackages = $this->get('Config')['static_site_export']['vendor_packages'];
+        foreach ($vendorPackages as $packageName => $fromDirectoryPath) {
+            if (!is_dir($fromDirectoryPath)) {
+                continue; // Skip non-directories.
+            }
+            if (in_array($packageName, ['mirador', 'openseadragon'])) {
+                continue; // Skip existing packages.
+            }
+            // Make the package directory under vendor.
+            $toDirectoryPath = sprintf('static/vendor/%s', $packageName);
+            $this->makeDirectory($toDirectoryPath);
+            // Copy packages into the vendor directory.
             $command = sprintf(
                 '%s --recursive %s %s',
                 $this->get('Omeka\Cli')->getCommandPath('cp'),
                 sprintf('%s/*', escapeshellarg($fromDirectoryPath)),
-                escapeshellarg(sprintf('%s/%s', $this->getSiteDirectoryPath(), $toDirectory))
+                escapeshellarg(sprintf('%s/%s', $this->getSiteDirectoryPath(), $toDirectoryPath))
             );
             $this->execute($command);
         }
