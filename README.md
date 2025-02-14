@@ -42,28 +42,36 @@ $ zip --recurse-paths gohugo-theme-omeka-s.zip gohugo-theme-omeka-s/ --exclude '
 
 Note that we're excluding the .git/ directory from the ZIP file.
 
-### Adding JavaScript dependencies
+### Adding vendor packages
 
-Modules can add JS dependencies by registering them in module configuration:
+Modules can add vendor packages (e.g. scripts, styles, images) by registering them
+in module configuration:
 
 ```
 'static_site_export' => [
-    'js_dependencies' => [
-        'directory-name' => '/path/to/js/directory',
+    'vendor_packages' => [
+        'package-name' => '/path/to/vendor/directory',
     ],
 ]
 ```
 
-Where "directory-name" is the name of the directory that will be created in the
-static-site JS directory; and "/path/to/js/directory" is the absolute path of the
-directory that contains all assets needed for the JS dependency. These assets will
-be copied to the newly created static site directory.
+Where "package-name" is the name of the directory that will be created in the
+static site vendor directory; and "/path/to/vendor/directory" is the absolute path
+of the directory that contains all assets needed for the package. These assets will
+be copied to the newly created static site vendor directory.
 
-To include a script on a page, add the script's path the "js" array on the page's
-front matter:
+### Adding JS and CSS
+
+To include JS on a page, add the JS path the "js" array on a page's front matter:
 
 ```
-$frontMatter['js'][] = 'js/path/to/script.js';
+$frontMatter['js'][] = 'vendor/path/to/script.js';
+```
+
+To include CSS on a page, add the CSS path the "css" array on a page's front matter:
+
+```
+$frontMatter['css'][] = 'vendor/path/to/style.css';
 ```
 
 ### Adding Hugo shortcodes
