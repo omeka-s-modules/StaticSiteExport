@@ -339,6 +339,22 @@ class ExportStaticSite extends AbstractJob
             ]
         );
 
+        $items = $this->get('Omeka\ApiManager')->search('items', [
+            'item_set_id' => $itemSet->id(),
+            'site_id' => $this->getStaticSite()->site()->id(),
+        ])->getContent();
+        $itemList = ["## Items\n"];
+        foreach ($items as $item) {
+            $itemList[] = sprintf(
+                '- %s[%s]({{< ref "/items/%s" >}} "%s")',
+                $this->getThumbnailShortcode($item, 'square', 40),
+                $this->escape(['[', ']'], $item->displayTitle()),
+                $item->id(),
+                $this->escape(['"'], $item->displayTitle()),
+            );
+        }
+        $markdown[] = implode("\n", $itemList);
+
         // Add Hugo front matter to top of page.
         $markdown = $markdown->getArrayCopy();
         array_unshift($markdown, json_encode($frontMatter, JSON_PRETTY_PRINT));
