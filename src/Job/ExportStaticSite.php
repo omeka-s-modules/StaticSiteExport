@@ -232,6 +232,9 @@ class ExportStaticSite extends AbstractJob
             'date' => $item->created()->format('c'),
             'title' => $item->displayTitle(),
             'draft' => $item->isPublic() ? false : true,
+            'params' => [
+                'thumbnailSpec' => $this->getThumbnailSpec($item, 'square'),
+            ],
         ]);
         $markdown = new ArrayObject;
 
@@ -270,6 +273,7 @@ class ExportStaticSite extends AbstractJob
             'draft' => $media->isPublic() ? false : true,
             'params' => [
                 'itemID' => $media->item()->id(),
+                'thumbnailSpec' => $this->getThumbnailSpec($media, 'square'),
             ],
         ]);
         $markdown = new ArrayObject;
@@ -318,6 +322,9 @@ class ExportStaticSite extends AbstractJob
             'date' => $itemSet->created()->format('c'),
             'title' => $itemSet->displayTitle(),
             'draft' => $itemSet->isPublic() ? false : true,
+            'params' => [
+                'thumbnailSpec' => $this->getThumbnailSpec($itemSet, 'square'),
+            ],
         ]);
         $markdown = new ArrayObject;
 
@@ -339,6 +346,7 @@ class ExportStaticSite extends AbstractJob
             ]
         );
 
+        // Add a list of items.
         $items = $this->get('Omeka\ApiManager')->search('items', [
             'item_set_id' => $itemSet->id(),
             'site_id' => $this->getStaticSite()->site()->id(),
@@ -837,11 +845,27 @@ class ExportStaticSite extends AbstractJob
      */
     public function getThumbnailShortcode(AbstractResourceEntityRepresentation $resource, string $thumbnailType, ?int $thumbnailHeight = null)
     {
+        $thumbnailSpec = $this->getThumbnailSpec($resource, $thumbnailType);
+        if (!$thumbnailSpec['resource']) {
+            return '';
+        }
+        return sprintf(
+            '{{< omeka-thumbnail page="%s" resource="%s" height="%s" >}}',
+            $thumbnailSpec['page'],
+            $thumbnailSpec['resource'],
+            $thumbnailHeight
+        );
+    }
+
+    /**
+     * Get the thumbnail specification (page and resource).
+     */
+    public function getThumbnailSpec(AbstractResourceEntityRepresentation $resource, string $thumbnailType) : array
+    {
         $thumbnailPage = null;
         $thumbnailResource = null;
         $thumbnailType = in_array($thumbnailType, ['square', 'medium', 'large']) ? $thumbnailType : 'large';
         $primaryMedia = $resource->primaryMedia();
-
         if ($resource->thumbnail()) {
             $thumbnailPage = sprintf('/assets/%s', $resource->thumbnail()->id());
             $thumbnailResource = 'file';
@@ -863,16 +887,9 @@ class ExportStaticSite extends AbstractJob
                 $thumbnailResource = '/thumbnails/default.png';
             }
         }
-
-        if (!$thumbnailResource) {
-            return '';
-        }
-
-        return sprintf(
-            '{{< omeka-thumbnail page="%s" resource="%s" height="%s" >}}',
-            $thumbnailPage,
-            $thumbnailResource,
-            $thumbnailHeight
-        );
+        return [
+            'page' => $thumbnailPage,
+            'resource' => $thumbnailResource,
+        ];
     }
 }
