@@ -649,6 +649,9 @@ class ExportStaticSite extends AbstractJob
             'params' => [
                 'homepage' => $homepage,
             ],
+            'pagination' => [
+                'pagerSize' => 25,
+            ],
         ];
         $this->makeFile('hugo.json', json_encode($configContent, JSON_PRETTY_PRINT));
     }
