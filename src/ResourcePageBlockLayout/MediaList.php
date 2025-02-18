@@ -19,11 +19,11 @@ class MediaList implements ResourcePageBlockLayoutInterface
         $block = [sprintf("## Media\n")];
         foreach ($media as $media) {
             $block[] = sprintf(
-                '- %s[%s]({{< ref "/media/%s" >}} "%s")',
-                $job->getThumbnailShortcode($media, 'square', 40),
-                $job->escape(['[', ']'], $media->displayTitle()),
-                $media->id(),
-                $job->escape(['"'], $media->displayTitle()),
+                '- %s',
+                $job->getLinkMarkdown($media, [
+                    'thumbnailType' => 'square',
+                    'thumbnailHeight' => 40,
+                ])
             );
         }
         return implode("\n", $block);

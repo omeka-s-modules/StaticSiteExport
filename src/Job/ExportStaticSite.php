@@ -298,13 +298,10 @@ class ExportStaticSite extends AbstractJob
         // Add a link to the parent item.
         $item = $media->item();
         $markdown[] = '## Item';
-        $markdown[] = sprintf(
-            '%s[%s]({{< ref "/items/%s" >}} "%s")',
-            $this->getThumbnailShortcode($item, 'square', 40),
-            $this->escape(['[', ']'], $item->displayTitle()),
-            $item->id(),
-            $this->escape(['"'], $item->displayTitle()),
-        );
+        $markdown[] = $this->getLinkMarkdown($item, [
+            'thumbnailType' => 'square',
+            'thumbnailHeight' => 40,
+        ]);
 
         // Add Hugo front matter to top of page.
         $markdown = $markdown->getArrayCopy();
@@ -355,11 +352,11 @@ class ExportStaticSite extends AbstractJob
         $itemList = [];
         foreach ($items as $item) {
             $itemList[] = sprintf(
-                '- %s[%s]({{< ref "/items/%s" >}} "%s")',
-                $this->getThumbnailShortcode($item, 'square', 40),
-                $this->escape(['[', ']'], $item->displayTitle()),
-                $item->id(),
-                $this->escape(['"'], $item->displayTitle()),
+                '- %s',
+                $this->getLinkMarkdown($item, [
+                    'thumbnailType' => 'square',
+                    'thumbnailHeight' => 40,
+                ])
             );
         }
         $markdown[] = implode("\n", $itemList);
@@ -834,22 +831,48 @@ class ExportStaticSite extends AbstractJob
     }
 
     /**
-     * Get the thumbnail shortcode for the passed resource.
+     * Get the markdown for a link to a resource, including thumbnail.
      *
-     * This renders a thumbnail in priority order:
+     * Options are the following:
      *
-     *   1. The resource's asset thumbnail.
-     *   2. The primary media's asset thumbnail.
-     *   3. The primary media's auto-generated thumbnail.
-     *   4. The global thumbnail according to the primary media's file media type.
-     *
-     * The valid thumbnail types are square, medium, and large. Default is large.
-     *
-     * The thumbnail height, if provided, will preserve aspect ratio. Default is no height.
+     *  - thumbnailType: The type of thumbnail, large, medium, or square (default: large)
+     *  - thumbnailHeight: The height of the thumbnailm preserving aspect ratio (default: null)
      */
-    public function getThumbnailShortcode(AbstractResourceEntityRepresentation $resource, string $thumbnailType, ?int $thumbnailHeight = null)
+    public function getLinkMarkdown(AbstractResourceEntityRepresentation $resource, array $options = []) : string
     {
-        $thumbnailSpec = $this->getThumbnailSpec($resource, $thumbnailType);
+        $defaultOptions = [
+            'thumbnailType' => 'large',
+            'thumbnailHeight' => null,
+        ];
+        $options = array_merge($defaultOptions, $options);
+        if ($resource instanceof ItemRepresentation) {
+            $resourceTypePath = 'items';
+        } elseif ($resource instanceof MediaRepresentation) {
+            $resourceTypePath = 'media';
+        } elseif ($resource instanceof ItemSetRepresentation) {
+            $resourceTypePath = 'item-sets';
+        }
+        return sprintf(
+            '%s[%s]({{< ref "/%s/%s" >}} "%s")',
+            $this->getThumbnailShortcode($resource, $options),
+            $this->escape(['[', ']'], $resource->displayTitle()),
+            $resourceTypePath,
+            $resource->id(),
+            $this->escape(['"'], $resource->displayTitle()),
+        );
+    }
+
+    /**
+     * Get the thumbnail shortcode for the passed resource.
+     */
+    public function getThumbnailShortcode(AbstractResourceEntityRepresentation $resource, array $options = [])
+    {
+        $defaultOptions = [
+            'thumbnailType' => 'large',
+            'thumbnailHeight' => null,
+        ];
+        $options = array_merge($defaultOptions, $options);
+        $thumbnailSpec = $this->getThumbnailSpec($resource, $options['thumbnailType']);
         if (!$thumbnailSpec['resource']) {
             return '';
         }
@@ -857,18 +880,24 @@ class ExportStaticSite extends AbstractJob
             '{{< omeka-thumbnail page="%s" resource="%s" height="%s" >}}',
             $thumbnailSpec['page'],
             $thumbnailSpec['resource'],
-            $thumbnailHeight
+            $options['thumbnailHeight']
         );
     }
 
     /**
      * Get the thumbnail specification (page and resource).
+     *
+     * This returns a spec in priority order:
+     *
+     *  1. The resource's asset thumbnail.
+     *  2. The primary media's asset thumbnail.
+     *  3. The primary media's auto-generated thumbnail.
+     *  4. The global thumbnail according to the primary media's file media type.
      */
     public function getThumbnailSpec(AbstractResourceEntityRepresentation $resource, string $thumbnailType) : array
     {
         $thumbnailPage = null;
         $thumbnailResource = null;
-        $thumbnailType = in_array($thumbnailType, ['square', 'medium', 'large']) ? $thumbnailType : 'large';
         $primaryMedia = $resource->primaryMedia();
         if ($resource->thumbnail()) {
             $thumbnailPage = sprintf('/assets/%s', $resource->thumbnail()->id());
@@ -877,6 +906,7 @@ class ExportStaticSite extends AbstractJob
             $thumbnailPage = sprintf('/assets/%s', $primaryMedia->thumbnail()->id());
             $thumbnailResource = 'file';
         } elseif ($primaryMedia && $primaryMedia->hasThumbnails()) {
+            $thumbnailType = in_array($thumbnailType, ['square', 'medium', 'large']) ? $thumbnailType : 'large';
             $thumbnailPage = sprintf('/media/%s', $primaryMedia->id());
             $thumbnailResource = sprintf('thumbnail_%s', $thumbnailType);
         } elseif ($primaryMedia && $primaryMedia->hasOriginal()) {

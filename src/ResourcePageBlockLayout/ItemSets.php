@@ -22,10 +22,11 @@ class ItemSets implements ResourcePageBlockLayoutInterface
                 continue; // Item set not in site.
             }
             $block[] = sprintf(
-                '- [%s]({{< ref "/item-sets/%s" >}} "%s")',
-                $job->escape(['[', ']'], $itemSet->displayTitle()),
-                $itemSet->id(),
-                $job->escape(['"'], $itemSet->displayTitle()),
+                '- %s',
+                $job->getLinkMarkdown($itemSet, [
+                    'thumbnailType' => 'square',
+                    'thumbnailHeight' => 40,
+                ])
             );
         }
         return implode("\n", $block);
