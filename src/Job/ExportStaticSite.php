@@ -315,7 +315,7 @@ class ExportStaticSite extends AbstractJob
      */
     public function getItemSetPage(ItemSetRepresentation $itemSet) : string
     {
-        $frontMatter = new \ArrayObject([
+        $frontMatter = new ArrayObject([
             'date' => $itemSet->created()->format('c'),
             'title' => $itemSet->displayTitle(),
             'draft' => $itemSet->isPublic() ? false : true,
@@ -373,17 +373,15 @@ class ExportStaticSite extends AbstractJob
      */
     public function getAssetPage(AssetRepresentation $asset) : string
     {
-        $page = [];
-
         // Add Hugo front matter.
-        $frontMatter = [
+        $frontMatter = new ArrayObject([
             'date' => date('c'),
             'title' => $asset->name(),
             'draft' => false,
-        ];
-        $page[] = json_encode($frontMatter, JSON_PRETTY_PRINT);
+        ]);
+        $markdown = new ArrayObject;
 
-        $page[] = sprintf(
+        $markdown[] = sprintf(
             '{{< omeka-figure
                 type="image"
                 linkPage="/assets/%s"
@@ -395,7 +393,22 @@ class ExportStaticSite extends AbstractJob
             $asset->id()
         );
 
-        return implode("\n\n", $page);
+        // Trigger the "static_site_export.asset_page" event.
+        $this->triggerEvent(
+            'static_site_export.asset_page',
+            [
+                'asset' => $asset,
+                'frontMatter' => $frontMatter,
+                'markdown' => $markdown,
+            ]
+        );
+
+        // Add Hugo front matter to top of page.
+        $markdown = $markdown->getArrayCopy();
+        array_unshift($markdown, json_encode($frontMatter, JSON_PRETTY_PRINT));
+
+        return implode("\n\n", $markdown);
+
     }
 
     /**
