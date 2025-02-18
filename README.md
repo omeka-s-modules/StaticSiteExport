@@ -121,17 +121,23 @@ Modules can add content to static sites via the provided events `Module::attachL
     - `itemSet`: The item set representation
     - `frontMatter`: An `ArrayObject` containing page front matter
     - `markdown`: An `ArrayObject` containing page Markdown
+- **static_site_export.site_page_page**
+    - `sitePage`: The site page representation
+    - `frontMatter`: An `ArrayObject` containing page front matter
+    - `markdown`: An `ArrayObject` containing page Markdown
 
-In your handler, append Hugo front matter to pages using the `frontMatter` parameter,
-like so:
+In your handler, use `$event->getTarget()` to get the export job object, which
+has methods that could be useful.
+
+You may append Hugo front matter to pages using the `frontMatter` parameter, like
+so:
 
 ```
 $frontMatter = $event->getParam('frontMatter');
 $frontMatter['params']['myParam'] = 'foobar';
 ```
 
-Also in your handler, append markdown to pages using the `markdown` parameter, like
-so:
+You may append markdown to pages using the `markdown` parameter, like so:
 
 ```
 $markdown = $event->getParam('markdown');

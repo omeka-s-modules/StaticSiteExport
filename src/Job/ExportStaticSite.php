@@ -278,17 +278,6 @@ class ExportStaticSite extends AbstractJob
         ]);
         $markdown = new ArrayObject;
 
-        // Add a link to the parent item.
-        $item = $media->item();
-        $markdown[] = sprintf(
-            'Item%s: %s[%s]({{< ref "/items/%s" >}} "%s")',
-            "\n",
-            $this->getThumbnailShortcode($item, 'square', 40),
-            $this->escape(['[', ']'], $item->displayTitle()),
-            $item->id(),
-            $this->escape(['"'], $item->displayTitle()),
-        );
-
         // Iterate resource page blocks.
         $blockNames = $this->getResourcePageBlocks()['media'];
         foreach ($blockNames as $blockName) {
@@ -304,6 +293,17 @@ class ExportStaticSite extends AbstractJob
                 'frontMatter' => $frontMatter,
                 'markdown' => $markdown,
             ]
+        );
+
+        // Add a link to the parent item.
+        $item = $media->item();
+        $markdown[] = '## Item';
+        $markdown[] = sprintf(
+            '%s[%s]({{< ref "/items/%s" >}} "%s")',
+            $this->getThumbnailShortcode($item, 'square', 40),
+            $this->escape(['[', ']'], $item->displayTitle()),
+            $item->id(),
+            $this->escape(['"'], $item->displayTitle()),
         );
 
         // Add Hugo front matter to top of page.
@@ -351,7 +351,8 @@ class ExportStaticSite extends AbstractJob
             'item_set_id' => $itemSet->id(),
             'site_id' => $this->getStaticSite()->site()->id(),
         ])->getContent();
-        $itemList = ["## Items\n"];
+        $markdown[] = "## Items";
+        $itemList = [];
         foreach ($items as $item) {
             $itemList[] = sprintf(
                 '- %s[%s]({{< ref "/items/%s" >}} "%s")',
@@ -423,7 +424,7 @@ class ExportStaticSite extends AbstractJob
         $this->triggerEvent(
             'static_site_export.site_page_page',
             [
-                'site_page' => $sitePage,
+                'sitePage' => $sitePage,
                 'frontMatter' => $frontMatter,
                 'markdown' => $markdown,
             ]
