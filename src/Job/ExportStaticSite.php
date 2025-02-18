@@ -5,6 +5,7 @@ use ArrayObject;
 use DateTime;
 use Doctrine\DBAL\Connection;
 use Laminas\EventManager\Event;
+use Omeka\Api\Representation\AbstractEntityRepresentation;
 use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
 use Omeka\Api\Representation\AssetRepresentation;
 use Omeka\Api\Representation\ItemRepresentation;
@@ -378,6 +379,9 @@ class ExportStaticSite extends AbstractJob
             'date' => date('c'),
             'title' => $asset->name(),
             'draft' => false,
+            'params' => [
+                'thumbnailSpec' => $this->getThumbnailSpec($asset, 'square'),
+            ],
         ]);
         $markdown = new ArrayObject;
 
@@ -907,31 +911,36 @@ class ExportStaticSite extends AbstractJob
      *  3. The primary media's auto-generated thumbnail.
      *  4. The global thumbnail according to the primary media's file media type.
      */
-    public function getThumbnailSpec(AbstractResourceEntityRepresentation $resource, string $thumbnailType) : array
+    public function getThumbnailSpec(AbstractEntityRepresentation $resource, string $thumbnailType) : array
     {
         $thumbnailPage = null;
         $thumbnailResource = null;
-        $primaryMedia = $resource->primaryMedia();
-        if ($resource->thumbnail()) {
-            $thumbnailPage = sprintf('/assets/%s', $resource->thumbnail()->id());
+        if ($resource instanceof AssetRepresentation) {
+            $thumbnailPage = sprintf('/assets/%s', $resource->id());
             $thumbnailResource = 'file';
-        } elseif ($primaryMedia && $primaryMedia->thumbnail()) {
-            $thumbnailPage = sprintf('/assets/%s', $primaryMedia->thumbnail()->id());
-            $thumbnailResource = 'file';
-        } elseif ($primaryMedia && $primaryMedia->hasThumbnails()) {
-            $thumbnailType = in_array($thumbnailType, ['square', 'medium', 'large']) ? $thumbnailType : 'large';
-            $thumbnailPage = sprintf('/media/%s', $primaryMedia->id());
-            $thumbnailResource = sprintf('thumbnail_%s', $thumbnailType);
-        } elseif ($primaryMedia && $primaryMedia->hasOriginal()) {
-            $topLevelType = strstr((string) $primaryMedia->mediaType(), '/', true);
-            if ('audio' === $topLevelType) {
-                $thumbnailResource = '/thumbnails/audio.png';
-            } elseif ('video' === $topLevelType) {
-                $thumbnailResource = '/thumbnails/video.png';
-            } elseif ('image' === $topLevelType) {
-                $thumbnailResource = '/thumbnails/image.png';
-            } else {
-                $thumbnailResource = '/thumbnails/default.png';
+        } elseif ($resource instanceof AbstractResourceEntityRepresentation) {
+            $primaryMedia = $resource->primaryMedia();
+            if ($resource->thumbnail()) {
+                $thumbnailPage = sprintf('/assets/%s', $resource->thumbnail()->id());
+                $thumbnailResource = 'file';
+            } elseif ($primaryMedia && $primaryMedia->thumbnail()) {
+                $thumbnailPage = sprintf('/assets/%s', $primaryMedia->thumbnail()->id());
+                $thumbnailResource = 'file';
+            } elseif ($primaryMedia && $primaryMedia->hasThumbnails()) {
+                $thumbnailType = in_array($thumbnailType, ['square', 'medium', 'large']) ? $thumbnailType : 'large';
+                $thumbnailPage = sprintf('/media/%s', $primaryMedia->id());
+                $thumbnailResource = sprintf('thumbnail_%s', $thumbnailType);
+            } elseif ($primaryMedia && $primaryMedia->hasOriginal()) {
+                $topLevelType = strstr((string) $primaryMedia->mediaType(), '/', true);
+                if ('audio' === $topLevelType) {
+                    $thumbnailResource = '/thumbnails/audio.png';
+                } elseif ('video' === $topLevelType) {
+                    $thumbnailResource = '/thumbnails/video.png';
+                } elseif ('image' === $topLevelType) {
+                    $thumbnailResource = '/thumbnails/image.png';
+                } else {
+                    $thumbnailResource = '/thumbnails/default.png';
+                }
             }
         }
         return [
