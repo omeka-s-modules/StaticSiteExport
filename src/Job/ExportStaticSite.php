@@ -76,35 +76,40 @@ class ExportStaticSite extends AbstractJob
     {
         $this->createSiteDirectory();
 
-        // Create item bundles.
+        // Create the items section.
+        $this->makeFile('content/items/_index.md', json_encode(['title' => 'Items']));
         foreach (array_chunk($this->getItemIds(), 100) as $itemIdsChunk) {
             if ($this->shouldStop()) return;
             foreach ($itemIdsChunk as $itemId) {
                 $this->createItemBundle($itemId);
             }
         }
-        // Create media bundles.
+        // Create the media section.
+        $this->makeFile('content/media/_index.md', json_encode(['title' => 'Media']));
         foreach (array_chunk($this->getMediaIds(), 100) as $mediaIdsChunk) {
             if ($this->shouldStop()) return;
             foreach ($mediaIdsChunk as $mediaId) {
                 $this->createMediaBundle($mediaId);
             }
         }
-        // Create item set bundles.
+        // Create the item sets section.
+        $this->makeFile('content/item-sets/_index.md', json_encode(['title' => 'Item sets']));
         foreach (array_chunk($this->getItemSetIds(), 100) as $itemSetIdsChunk) {
             if ($this->shouldStop()) return;
             foreach ($itemSetIdsChunk as $itemSetId) {
                 $this->createItemSetBundle($itemSetId);
             }
         }
-        // Create asset bundles.
+        // Create the assets section.
+        $this->makeFile('content/assets/_index.md', json_encode(['title' => 'Assets']));
         foreach (array_chunk($this->getAssetIds(), 100) as $assetIdsChunk) {
             if ($this->shouldStop()) return;
             foreach ($assetIdsChunk as $assetId) {
                 $this->createAssetBundle($assetId);
             }
         }
-        // Create page bundles.
+        // Create the pages section.
+        $this->makeFile('content/pages/_index.md', json_encode(['title' => 'Site pages']));
         $sitePages = $this->getStaticSite()->site()->pages();
         foreach ($sitePages as $sitePage) {
             $this->createSitePageBundle($sitePage);
@@ -561,6 +566,11 @@ class ExportStaticSite extends AbstractJob
         $this->makeDirectory('assets');
         $this->makeDirectory('assets/thumbnails');
         $this->makeDirectory('content');
+        $this->makeDirectory('content/assets');
+        $this->makeDirectory('content/items');
+        $this->makeDirectory('content/item-sets');
+        $this->makeDirectory('content/media');
+        $this->makeDirectory('content/pages');
         $this->makeDirectory('data');
         $this->makeDirectory('i18n');
         $this->makeDirectory('layouts');
