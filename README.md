@@ -107,27 +107,45 @@ file and the respective interfaces to see how to implement them.
 
 ### Using events to add content
 
-Modules can add content to static sites via the provided events `Module::attachListeners()`:
+Modules can add content to (or otherwise modify) static sites via the provided events
+in their `Module::attachListeners()`:
 
-- **static_site_export.item_page**
-    - `item`: The item representation
-    - `frontMatter`: An `ArrayObject` containing page front matter
-    - `markdown`: An `ArrayObject` containing page Markdown
-- **static_site_export.media_page**
-    - `media`: The media representation
-    - `frontMatter`: An `ArrayObject` containing page front matter
-    - `markdown`: An `ArrayObject` containing page Markdown
-- **static_site_export.item_set_page**
-    - `itemSet`: The item set representation
-    - `frontMatter`: An `ArrayObject` containing page front matter
-    - `markdown`: An `ArrayObject` containing page Markdown
-- **static_site_export.site_page_page**
-    - `sitePage`: The site page representation
-    - `frontMatter`: An `ArrayObject` containing page front matter
-    - `markdown`: An `ArrayObject` containing page Markdown
+- Add content to page bundles:
+    - **static_site_export.bundle.item**
+        - `resource`: The item representation
+    - **static_site_export.bundle.media**
+        - `resource`: The media representation
+    - **static_site_export.bundle.item_set**
+        - `resource`: The item set representation
+    - **static_site_export.bundle.asset**
+        - `resource`: The asset representation
+    - **static_site_export.bundle.site_page**
+        - `resource`: The site page representation
+- Add content to pages:
+    - **static_site_export.page.item**
+        - `resource`: The item representation
+        - `frontMatter`: An `ArrayObject` containing page front matter
+        - `markdown`: An `ArrayObject` containing page Markdown
+    - **static_site_export.page.media**
+        - `resource`: The media representation
+        - `frontMatter`: An `ArrayObject` containing page front matter
+        - `markdown`: An `ArrayObject` containing page Markdown
+    - **static_site_export.page.item_set**
+        - `resource`: The item set representation
+        - `frontMatter`: An `ArrayObject` containing page front matter
+        - `markdown`: An `ArrayObject` containing page Markdown
+    - **static_site_export.page.asset**
+        - `resource`: The asset representation
+        - `frontMatter`: An `ArrayObject` containing page front matter
+        - `markdown`: An `ArrayObject` containing page Markdown
+    - **static_site_export.page.site_page**
+        - `resource`: The site page representation
+        - `frontMatter`: An `ArrayObject` containing page front matter
+        - `markdown`: An `ArrayObject` containing page Markdown
 
 In your handler, use `$event->getTarget()` to get the export job object, which
-has methods that could be useful.
+has methods that could be useful. Use `$event->getParam('resource')` to get the
+resource representation.
 
 You may append Hugo front matter to pages using the `frontMatter` parameter, like
 so:

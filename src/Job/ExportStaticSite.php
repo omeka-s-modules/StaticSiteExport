@@ -130,6 +130,12 @@ class ExportStaticSite extends AbstractJob
             sprintf('content/items/%s/index.md', $item->id()),
             $this->getItemPage($item)
         );
+
+        // Trigger the "static_site_export.bundle.item" event.
+        $this->triggerEvent(
+            'static_site_export.bundle.item',
+            ['resource' => $item]
+        );
     }
 
     /**
@@ -177,6 +183,12 @@ class ExportStaticSite extends AbstractJob
                     ->setStream(sprintf('%s/%s', $this->getSiteDirectoryPath(), $filePath))->send();
             }
         }
+
+        // Trigger the "static_site_export.bundle.media" event.
+        $this->triggerEvent(
+            'static_site_export.bundle.media',
+            ['resource' => $media]
+        );
     }
 
     /**
@@ -189,6 +201,12 @@ class ExportStaticSite extends AbstractJob
         $this->makeFile(
             sprintf('content/item-sets/%s/index.md', $itemSet->id()),
             $this->getItemSetPage($itemSet)
+        );
+
+        // Trigger the "static_site_export.bundle.item_set" event.
+        $this->triggerEvent(
+            'static_site_export.bundle.item_set',
+            ['resource' => $itemSet]
         );
     }
 
@@ -215,6 +233,12 @@ class ExportStaticSite extends AbstractJob
         $client = $this->get('Omeka\HttpClient')
             ->setUri($asset->assetUrl())
             ->setStream(sprintf('%s/%s', $this->getSiteDirectoryPath(), $filePath))->send();
+
+        // Trigger the "static_site_export.bundle.asset" event.
+        $this->triggerEvent(
+            'static_site_export.bundle.asset',
+            ['resource' => $asset]
+        );
     }
 
     /**
@@ -226,6 +250,12 @@ class ExportStaticSite extends AbstractJob
         $this->makeFile(
             sprintf('content/pages/%s/index.md', $sitePage->slug()),
             $this->getSitePagePage($sitePage)
+        );
+
+        // Trigger the "static_site_export.bundle.site_page" event.
+        $this->triggerEvent(
+            'static_site_export.bundle.site_page',
+            ['resource' => $sitePage]
         );
     }
 
@@ -251,11 +281,11 @@ class ExportStaticSite extends AbstractJob
             $markdown[] = $block->getMarkdown($this, $frontMatter, $item);
         }
 
-        // Trigger the "static_site_export.item_page" event.
+        // Trigger the "static_site_export.page.item" event.
         $this->triggerEvent(
-            'static_site_export.item_page',
+            'static_site_export.page.item',
             [
-                'item' => $item,
+                'resource' => $item,
                 'frontMatter' => $frontMatter,
                 'markdown' => $markdown,
             ]
@@ -291,11 +321,11 @@ class ExportStaticSite extends AbstractJob
             $markdown[] = $block->getMarkdown($this, $frontMatter, $media);
         }
 
-        // Trigger the "static_site_export.media_page" event.
+        // Trigger the "static_site_export.page.media" event.
         $this->triggerEvent(
-            'static_site_export.media_page',
+            'static_site_export.page.media',
             [
-                'media' => $media,
+                'resource' => $media,
                 'frontMatter' => $frontMatter,
                 'markdown' => $markdown,
             ]
@@ -339,11 +369,11 @@ class ExportStaticSite extends AbstractJob
             $markdown[] = $block->getMarkdown($this, $frontMatter, $itemSet);
         }
 
-        // Trigger the "static_site_export.item_set_page" event.
+        // Trigger the "static_site_export.page.item_set" event.
         $this->triggerEvent(
-            'static_site_export.item_set_page',
+            'static_site_export.page.item_set',
             [
-                'itemSet' => $itemSet,
+                'resource' => $itemSet,
                 'frontMatter' => $frontMatter,
                 'markdown' => $markdown,
             ]
@@ -402,11 +432,11 @@ class ExportStaticSite extends AbstractJob
             $asset->id()
         );
 
-        // Trigger the "static_site_export.asset_page" event.
+        // Trigger the "static_site_export.page.asset" event.
         $this->triggerEvent(
-            'static_site_export.asset_page',
+            'static_site_export.page.asset',
             [
-                'asset' => $asset,
+                'resource' => $asset,
                 'frontMatter' => $frontMatter,
                 'markdown' => $markdown,
             ]
@@ -439,9 +469,9 @@ class ExportStaticSite extends AbstractJob
         //     $markdown[] = $block->getMarkdown($sitePageBlock, $this, $frontMatter);
         // }
 
-        // Trigger the "static_site_export.site_page_page" event.
+        // Trigger the "static_site_export.page.site_page" event.
         $this->triggerEvent(
-            'static_site_export.site_page_page',
+            'static_site_export.page.site_page',
             [
                 'sitePage' => $sitePage,
                 'frontMatter' => $frontMatter,
