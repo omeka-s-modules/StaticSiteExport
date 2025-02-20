@@ -492,7 +492,7 @@ class ExportStaticSite extends AbstractJob
     public function makeDirectory(string $directoryPath) : void
     {
         $command = sprintf(
-            '%s --parents %s',
+            '%s -p %s',
             $this->get('Omeka\Cli')->getCommandPath('mkdir'),
             escapeshellarg(sprintf('%s/%s', $this->getSiteDirectoryPath(), $directoryPath))
         );
@@ -733,7 +733,7 @@ class ExportStaticSite extends AbstractJob
     public function deleteSiteDirectory() : void
     {
         $command = sprintf(
-            '%s --recursive --force %s',
+            '%s -r %s',
             $this->get('Omeka\Cli')->getCommandPath('rm'),
             escapeshellarg($this->getSiteDirectoryPath())
         );
