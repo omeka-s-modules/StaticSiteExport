@@ -2,10 +2,24 @@
 
 An [Omeka S](https://omeka.org/s/) module for exporting static sites.
 
-## Building a static site
+## End user notes
+
+This section is meant for end users.
+
+### Exporting a static site
+
+After installing and configuring this module, go to an Omeka site in the administrative
+interface, click on "Static Site Export" in the navigation, and click the "Export
+new static site" button. After configuring the export, click the "Begin export"
+button. The new export will be the first in the list. Click on the "Details" icon
+for information about the export, including progress of the export job.
+
+Note that an export may take a long time, depending on the size of the site.
+
+### Building a static site
 
 After exporting a static site, you can unzip the resulting ZIP file and immediately
-use Hugo to build and view the static site:
+use [Hugo](https://gohugo.io/) to build and view the static site:
 
 ```
 $ cd /path/to/static-sites/
@@ -14,10 +28,13 @@ $ cd <export-name>/
 $ hugo server
 ```
 
-After the build is complete, follow the instructions and go to http://localhost:1313/
-in your browser.
+After the build is complete, follow the instructions and go to the specified web
+server in your browser.
 
 ## Developer notes
+
+This section is meant for developers. If you are using this module only to export
+and build a static site, none of the following should apply to you.
 
 ### Modifying the Hugo theme
 
@@ -179,9 +196,12 @@ debugging, modules can turn on command logging in module configuration:
 
 # Copyright
 
-StaticSiteExport is Copyright © 2020-present Corporation for Digital Scholarship, Vienna, Virginia, USA http://digitalscholar.org
+StaticSiteExport is Copyright © 2020-present Corporation for Digital Scholarship,
+Vienna, Virginia, USA http://digitalscholar.org
 
-The Corporation for Digital Scholarship distributes the Omeka source code under the GNU General Public License, version 3 (GPLv3). The full text of this license is given in the license file.
+The Corporation for Digital Scholarship distributes the Omeka source code under
+the GNU General Public License, version 3 (GPLv3). The full text of this license
+is given in the license file.
 
 The Omeka name is a registered trademark of the Corporation for Digital Scholarship.
 
