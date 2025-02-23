@@ -9,8 +9,9 @@ class Values implements ResourcePageBlockLayoutInterface
 {
     public function getMarkdown(
         JobInterface $job,
-        ArrayObject $frontMatter,
-        AbstractResourceEntityRepresentation $resource
+        AbstractResourceEntityRepresentation $resource,
+        ArrayObject $frontMatterPage,
+        ArrayObject $frontMatterBlock
     ): string {
         $allValues = $resource->values();
         if (!$allValues) {
@@ -24,7 +25,7 @@ class Values implements ResourcePageBlockLayoutInterface
             $markdown[] = sprintf("%s", $altLabel ?? $property->label());
             foreach ($valueData['values'] as $value) {
                 $dataType = $job->get('StaticSiteExport\DataTypeManager')->get($value->type());
-                $markdown[] = sprintf(': %s', $dataType->getMarkdown($job, $frontMatter, $value));
+                $markdown[] = sprintf(': %s', $dataType->getMarkdown($job, $value, $frontMatterPage, $frontMatterBlock));
             }
             $markdown[] = '';
         }

@@ -9,11 +9,12 @@ class Iiif implements MediaRendererInterface
 {
     public function getMarkdown(
         JobInterface $job,
-        ArrayObject $frontMatter,
-        MediaRepresentation $media
+        MediaRepresentation $media,
+        ArrayObject $frontMatterPage,
+        ArrayObject $frontMatterBlock
     ): string {
-        $frontMatter['js'][] = 'vendor/openseadragon/openseadragon.min.js';
-        $frontMatter['js'][] = 'js/iiif-image.js';
+        $frontMatterPage['js'][] = 'vendor/openseadragon/openseadragon.min.js';
+        $frontMatterPage['js'][] = 'js/iiif-image.js';
         return sprintf('{{< omeka-iiif-image page="/media/%s" >}}', $media->id());
     }
 }

@@ -125,16 +125,50 @@ class ExportStaticSite extends AbstractJob
     public function createItemBundle(int $itemId) : void
     {
         $item = $this->get('Omeka\ApiManager')->read('items', $itemId)->getContent();
+
         $this->makeDirectory(sprintf('content/items/%s', $item->id()));
-        $this->makeFile(
-            sprintf('content/items/%s/index.md', $item->id()),
-            $this->getItemPage($item)
-        );
+        $this->makeDirectory(sprintf('content/items/%s/blocks', $item->id()));
+
+        $frontMatterPage = new ArrayObject([
+            'date' => $item->created()->format('c'),
+            'title' => $item->displayTitle(),
+            'draft' => $item->isPublic() ? false : true,
+            'params' => [
+                'thumbnailSpec' => $this->getThumbnailSpec($item, 'square'),
+            ],
+        ]);
+
+        // Make the block files.
+        $i = 0;
+        $blockNames = $this->getResourcePageBlocks()['items'];
+        foreach ($blockNames as $blockName) {
+            $block = $this->get('StaticSiteExport\ResourcePageBlockLayoutManager')->get($blockName);
+            $blockPosition = $i++;
+            $frontMatterBlock = new ArrayObject([
+                'params' => [
+                    'class' => sprintf('resource-page-block-%s', $blockName),
+                ],
+            ]);
+            $blockMarkdown = $block->getMarkdown($this, $item, $frontMatterPage, $frontMatterBlock);
+            $this->makeFile(
+                sprintf('content/items/%s/blocks/%s-%s.md', $item->id(), $blockPosition, $blockName),
+                sprintf("%s\n%s", json_encode($frontMatterBlock, JSON_PRETTY_PRINT), $blockMarkdown)
+            );
+        }
 
         // Trigger the "static_site_export.bundle.item" event.
         $this->triggerEvent(
             'static_site_export.bundle.item',
-            ['resource' => $item]
+            [
+                'resource' => $item,
+                'frontMatter' => $frontMatterPage,
+            ]
+        );
+
+        // Make the page file.
+        $this->makeFile(
+            sprintf('content/items/%s/index.md', $item->id()),
+            json_encode($frontMatterPage, JSON_PRETTY_PRINT)
         );
     }
 
@@ -144,13 +178,54 @@ class ExportStaticSite extends AbstractJob
     public function createMediaBundle(int $mediaId) : void
     {
         $media = $this->get('Omeka\ApiManager')->read('media', $mediaId)->getContent();
+
         $this->makeDirectory(sprintf('content/media/%s', $media->id()));
-        $this->makeFile(
-            sprintf('content/media/%s/index.md', $media->id()),
-            $this->getMediaPage($media)
+        $this->makeDirectory(sprintf('content/media/%s/blocks', $media->id()));
+
+        $frontMatterPage = new ArrayObject([
+            'date' => $media->created()->format('c'),
+            'title' => $media->displayTitle(),
+            'draft' => $media->isPublic() ? false : true,
+            'params' => [
+                'itemID' => $media->item()->id(),
+                'thumbnailSpec' => $this->getThumbnailSpec($media, 'square'),
+            ],
+        ]);
+
+        // Make the block files.
+        $i = 0;
+        $blockNames = $this->getResourcePageBlocks()['media'];
+        foreach ($blockNames as $blockName) {
+            $block = $this->get('StaticSiteExport\ResourcePageBlockLayoutManager')->get($blockName);
+            $blockPosition = $i++;
+            $frontMatterBlock = new ArrayObject([
+                'params' => [
+                    'class' => sprintf('resource-page-block-%s', $blockName),
+                ],
+            ]);
+            $blockMarkdown = $block->getMarkdown($this, $media, $frontMatterPage, $frontMatterBlock);
+            $this->makeFile(
+                sprintf('content/media/%s/blocks/%s-%s.md', $media->id(), $blockPosition, $blockName),
+                sprintf("%s\n%s", json_encode($frontMatterBlock, JSON_PRETTY_PRINT), $blockMarkdown)
+            );
+        }
+
+        // Trigger the "static_site_export.bundle.media" event.
+        $this->triggerEvent(
+            'static_site_export.bundle.media',
+            [
+                'resource' => $media,
+                'frontMatter' => $frontMatterPage,
+            ]
         );
 
-        // Copy media data.
+        // Make the page file.
+        $this->makeFile(
+            sprintf('content/media/%s/index.md', $media->id()),
+            json_encode($frontMatterPage, JSON_PRETTY_PRINT)
+        );
+
+        // Map the media data file.
         $this->makeFile(
             sprintf('content/media/%s/data.json', $media->id()),
             json_encode($media->mediaData(), JSON_PRETTY_PRINT)
@@ -183,12 +258,6 @@ class ExportStaticSite extends AbstractJob
                     ->setStream(sprintf('%s/%s', $this->getSiteDirectoryPath(), $filePath))->send();
             }
         }
-
-        // Trigger the "static_site_export.bundle.media" event.
-        $this->triggerEvent(
-            'static_site_export.bundle.media',
-            ['resource' => $media]
-        );
     }
 
     /**
@@ -197,16 +266,50 @@ class ExportStaticSite extends AbstractJob
     public function createItemSetBundle(int $itemSetId) : void
     {
         $itemSet = $this->get('Omeka\ApiManager')->read('item_sets', $itemSetId)->getContent();
+
         $this->makeDirectory(sprintf('content/item-sets/%s', $itemSet->id()));
-        $this->makeFile(
-            sprintf('content/item-sets/%s/index.md', $itemSet->id()),
-            $this->getItemSetPage($itemSet)
-        );
+        $this->makeDirectory(sprintf('content/item-sets/%s/blocks', $itemSet->id()));
+
+        $frontMatterPage = new ArrayObject([
+            'date' => $itemSet->created()->format('c'),
+            'title' => $itemSet->displayTitle(),
+            'draft' => $itemSet->isPublic() ? false : true,
+            'params' => [
+                'thumbnailSpec' => $this->getThumbnailSpec($itemSet, 'square'),
+            ],
+        ]);
+
+        // Make the block files.
+        $i = 0;
+        $blockNames = $this->getResourcePageBlocks()['item_sets'];
+        foreach ($blockNames as $blockName) {
+            $block = $this->get('StaticSiteExport\ResourcePageBlockLayoutManager')->get($blockName);
+            $blockPosition = $i++;
+            $frontMatterBlock = new ArrayObject([
+                'params' => [
+                    'class' => sprintf('resource-page-block-%s', $blockName),
+                ],
+            ]);
+            $blockMarkdown = $block->getMarkdown($this, $itemSet, $frontMatterPage, $frontMatterBlock);
+            $this->makeFile(
+                sprintf('content/item-sets/%s/blocks/%s-%s.md', $itemSet->id(), $blockPosition, $blockName),
+                sprintf("%s\n%s", json_encode($frontMatterBlock, JSON_PRETTY_PRINT), $blockMarkdown)
+            );
+        }
 
         // Trigger the "static_site_export.bundle.item_set" event.
         $this->triggerEvent(
             'static_site_export.bundle.item_set',
-            ['resource' => $itemSet]
+            [
+                'resource' => $itemSet,
+                'frontMatter' => $frontMatterPage,
+            ]
+        );
+
+        // Make the page file.
+        $this->makeFile(
+            sprintf('content/item-sets/%s/index.md', $itemSet->id()),
+            json_encode($frontMatterPage, JSON_PRETTY_PRINT)
         );
     }
 
@@ -216,199 +319,9 @@ class ExportStaticSite extends AbstractJob
     public function createAssetBundle(int $assetId) : void
     {
         $asset = $this->get('Omeka\ApiManager')->read('assets', $assetId)->getContent();
+
         $this->makeDirectory(sprintf('content/assets/%s', $asset->id()));
-        $this->makeFile(
-            sprintf('content/assets/%s/index.md', $asset->id()),
-            $this->getAssetPage($asset)
-        );
 
-        // Note that $asset does not provide direct access to the asset's extension.
-        $extension = substr($asset->filename(), strrpos($asset->filename(), '.') + 1);
-        $filePath = sprintf(
-            'content/assets/%s/%s',
-            $asset->id(),
-            sprintf('file.%s',$extension)
-        );
-        $this->makeFile($filePath);
-        $client = $this->get('Omeka\HttpClient')
-            ->setUri($asset->assetUrl())
-            ->setStream(sprintf('%s/%s', $this->getSiteDirectoryPath(), $filePath))->send();
-
-        // Trigger the "static_site_export.bundle.asset" event.
-        $this->triggerEvent(
-            'static_site_export.bundle.asset',
-            ['resource' => $asset]
-        );
-    }
-
-    /**
-     * Create a site page bundle.
-     */
-    public function createSitePageBundle(SitePageRepresentation $sitePage) : void
-    {
-        $this->makeDirectory(sprintf('content/pages/%s', $sitePage->slug()));
-        $this->makeFile(
-            sprintf('content/pages/%s/index.md', $sitePage->slug()),
-            $this->getSitePagePage($sitePage)
-        );
-
-        // Trigger the "static_site_export.bundle.site_page" event.
-        $this->triggerEvent(
-            'static_site_export.bundle.site_page',
-            ['resource' => $sitePage]
-        );
-    }
-
-    /**
-     * Get item content (in markdown).
-     */
-    public function getItemPage(ItemRepresentation $item) : string
-    {
-        $frontMatter = new ArrayObject([
-            'date' => $item->created()->format('c'),
-            'title' => $item->displayTitle(),
-            'draft' => $item->isPublic() ? false : true,
-            'params' => [
-                'thumbnailSpec' => $this->getThumbnailSpec($item, 'square'),
-            ],
-        ]);
-        $markdown = new ArrayObject;
-
-        // Iterate resource page blocks.
-        $blockNames = $this->getResourcePageBlocks()['items'];
-        foreach ($blockNames as $blockName) {
-            $block = $this->get('StaticSiteExport\ResourcePageBlockLayoutManager')->get($blockName);
-            $markdown[] = $block->getMarkdown($this, $frontMatter, $item);
-        }
-
-        // Trigger the "static_site_export.page.item" event.
-        $this->triggerEvent(
-            'static_site_export.page.item',
-            [
-                'resource' => $item,
-                'frontMatter' => $frontMatter,
-                'markdown' => $markdown,
-            ]
-        );
-
-        // Add Hugo front matter to top of page.
-        $markdown = $markdown->getArrayCopy();
-        array_unshift($markdown, json_encode($frontMatter, JSON_PRETTY_PRINT));
-
-        return implode("\n\n", $markdown);
-    }
-
-    /**
-     * Get media content (in markdown).
-     */
-    public function getMediaPage(MediaRepresentation $media) : string
-    {
-        $frontMatter = new ArrayObject([
-            'date' => $media->created()->format('c'),
-            'title' => $media->displayTitle(),
-            'draft' => $media->isPublic() ? false : true,
-            'params' => [
-                'itemID' => $media->item()->id(),
-                'thumbnailSpec' => $this->getThumbnailSpec($media, 'square'),
-            ],
-        ]);
-        $markdown = new ArrayObject;
-
-        // Iterate resource page blocks.
-        $blockNames = $this->getResourcePageBlocks()['media'];
-        foreach ($blockNames as $blockName) {
-            $block = $this->get('StaticSiteExport\ResourcePageBlockLayoutManager')->get($blockName);
-            $markdown[] = $block->getMarkdown($this, $frontMatter, $media);
-        }
-
-        // Trigger the "static_site_export.page.media" event.
-        $this->triggerEvent(
-            'static_site_export.page.media',
-            [
-                'resource' => $media,
-                'frontMatter' => $frontMatter,
-                'markdown' => $markdown,
-            ]
-        );
-
-        // Add a link to the parent item.
-        $item = $media->item();
-        $markdown[] = '## Item';
-        $markdown[] = $this->getLinkMarkdown($item, [
-            'thumbnailType' => 'square',
-            'thumbnailHeight' => 40,
-        ]);
-
-        // Add Hugo front matter to top of page.
-        $markdown = $markdown->getArrayCopy();
-        array_unshift($markdown, json_encode($frontMatter, JSON_PRETTY_PRINT));
-
-        return implode("\n\n", $markdown);
-    }
-
-    /**
-     * Get item set content (in markdown).
-     */
-    public function getItemSetPage(ItemSetRepresentation $itemSet) : string
-    {
-        $frontMatter = new ArrayObject([
-            'date' => $itemSet->created()->format('c'),
-            'title' => $itemSet->displayTitle(),
-            'draft' => $itemSet->isPublic() ? false : true,
-            'params' => [
-                'thumbnailSpec' => $this->getThumbnailSpec($itemSet, 'square'),
-            ],
-        ]);
-        $markdown = new ArrayObject;
-
-
-        // Iterate resource page blocks.
-        $blockNames = $this->getResourcePageBlocks()['item_sets'];
-        foreach ($blockNames as $blockName) {
-            $block = $this->get('StaticSiteExport\ResourcePageBlockLayoutManager')->get($blockName);
-            $markdown[] = $block->getMarkdown($this, $frontMatter, $itemSet);
-        }
-
-        // Trigger the "static_site_export.page.item_set" event.
-        $this->triggerEvent(
-            'static_site_export.page.item_set',
-            [
-                'resource' => $itemSet,
-                'frontMatter' => $frontMatter,
-                'markdown' => $markdown,
-            ]
-        );
-
-        // Add a list of items.
-        $items = $this->get('Omeka\ApiManager')->search('items', [
-            'item_set_id' => $itemSet->id(),
-            'site_id' => $this->getStaticSite()->site()->id(),
-        ])->getContent();
-        $markdown[] = "## Items";
-        $itemList = [];
-        foreach ($items as $item) {
-            $itemList[] = sprintf(
-                '- %s',
-                $this->getLinkMarkdown($item, [
-                    'thumbnailType' => 'square',
-                    'thumbnailHeight' => 40,
-                ])
-            );
-        }
-        $markdown[] = implode("\n", $itemList);
-
-        // Add Hugo front matter to top of page.
-        $markdown = $markdown->getArrayCopy();
-        array_unshift($markdown, json_encode($frontMatter, JSON_PRETTY_PRINT));
-
-        return implode("\n\n", $markdown);
-    }
-
-    /**
-     * Get item content (in markdown).
-     */
-    public function getAssetPage(AssetRepresentation $asset) : string
-    {
         // Add Hugo front matter.
         $frontMatter = new ArrayObject([
             'date' => date('c'),
@@ -418,9 +331,8 @@ class ExportStaticSite extends AbstractJob
                 'thumbnailSpec' => $this->getThumbnailSpec($asset, 'square'),
             ],
         ]);
-        $markdown = new ArrayObject;
 
-        $markdown[] = sprintf(
+        $markdown = sprintf(
             '{{< omeka-figure
                 type="image"
                 linkPage="/assets/%s"
@@ -432,35 +344,45 @@ class ExportStaticSite extends AbstractJob
             $asset->id()
         );
 
-        // Trigger the "static_site_export.page.asset" event.
+        // Trigger the "static_site_export.bundle.asset" event.
         $this->triggerEvent(
-            'static_site_export.page.asset',
+            'static_site_export.bundle.asset',
             [
                 'resource' => $asset,
                 'frontMatter' => $frontMatter,
-                'markdown' => $markdown,
             ]
         );
 
-        // Add Hugo front matter to top of page.
-        $markdown = $markdown->getArrayCopy();
-        array_unshift($markdown, json_encode($frontMatter, JSON_PRETTY_PRINT));
+        $this->makeFile(
+            sprintf('content/assets/%s/index.md', $asset->id()),
+            json_encode($frontMatter, JSON_PRETTY_PRINT) . "\n" . $markdown
+        );
 
-        return implode("\n\n", $markdown);
-
+        // Note that $asset does not provide direct access to the asset's extension.
+        $extension = substr($asset->filename(), strrpos($asset->filename(), '.') + 1);
+        $filePath = sprintf(
+            'content/assets/%s/%s',
+            $asset->id(),
+            sprintf('file.%s', $extension)
+        );
+        $this->makeFile($filePath);
+        $client = $this->get('Omeka\HttpClient')
+            ->setUri($asset->assetUrl())
+            ->setStream(sprintf('%s/%s', $this->getSiteDirectoryPath(), $filePath))->send();
     }
 
     /**
-     * Get site page content (in markdown).
+     * Create a site page bundle.
      */
-    public function getSitePagePage(SitePageRepresentation $sitePage) : string
+    public function createSitePageBundle(SitePageRepresentation $sitePage) : void
     {
+        $this->makeDirectory(sprintf('content/pages/%s', $sitePage->slug()));
+
         $frontMatter = new ArrayObject([
             'date' => $sitePage->created()->format('c'),
             'title' => $sitePage->title(),
             'draft' => $sitePage->isPublic() ? false : true,
         ]);
-        $markdown = new ArrayObject;
 
         // @todo: Use named services to return block Markdown.
         // Iterate site page blocks.
@@ -469,21 +391,20 @@ class ExportStaticSite extends AbstractJob
         //     $markdown[] = $block->getMarkdown($sitePageBlock, $this, $frontMatter);
         // }
 
-        // Trigger the "static_site_export.page.site_page" event.
+        // Trigger the "static_site_export.bundle.site_page" event.
         $this->triggerEvent(
-            'static_site_export.page.site_page',
+            'static_site_export.bundle.site_page',
             [
-                'sitePage' => $sitePage,
+                'resource' => $sitePage,
                 'frontMatter' => $frontMatter,
-                'markdown' => $markdown,
             ]
         );
 
-        // Add Hugo front matter to top of page.
-        $markdown = $markdown->getArrayCopy();
-        array_unshift($markdown, json_encode($frontMatter, JSON_PRETTY_PRINT));
-
-        return implode("\n\n", $markdown);
+        // Make the page file.
+        $this->makeFile(
+            sprintf('content/pages/%s/index.md', $sitePage->slug()),
+            json_encode($frontMatter, JSON_PRETTY_PRINT)
+        );
     }
 
     /**

@@ -9,8 +9,9 @@ class Youtube implements MediaRendererInterface
 {
     public function getMarkdown(
         JobInterface $job,
-        ArrayObject $frontMatter,
-        MediaRepresentation $media
+        MediaRepresentation $media,
+        ArrayObject $frontMatterPage,
+        ArrayObject $frontMatterBlock
     ): string {
         $data = $media->mediaData();
         return sprintf('{{< youtube id="%s" >}}', $data['id']);

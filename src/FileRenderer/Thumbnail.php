@@ -9,8 +9,9 @@ class Thumbnail implements FileRendererInterface
 {
     public function getMarkdown(
         JobInterface $job,
-        ArrayObject $frontMatter,
-        MediaRepresentation $media
+        MediaRepresentation $media,
+        ArrayObject $frontMatterPage,
+        ArrayObject $frontMatterBlock
     ): string {
         if ($media->thumbnail()) {
             return sprintf(

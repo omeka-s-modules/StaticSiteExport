@@ -9,8 +9,9 @@ class Html implements MediaRendererInterface
 {
     public function getMarkdown(
         JobInterface $job,
-        ArrayObject $frontMatter,
-        MediaRepresentation $media
+        MediaRepresentation $media,
+        ArrayObject $frontMatterPage,
+        ArrayObject $frontMatterBlock
     ): string {
         $data = $media->mediaData();
         return sprintf('{{< omeka-html >}}%s{{< /omeka-html >}}', $data['html']);

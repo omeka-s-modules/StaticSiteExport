@@ -16,7 +16,8 @@ use Omeka\Job\JobInterface;
 {
     public function getMarkdown(
         JobInterface $job,
-        ArrayObject $frontMatter,
-        ValueRepresentation $value
+        ValueRepresentation $value,
+        ArrayObject $frontMatterPage,
+        ArrayObject $frontMatterBlock
     ): string;
 }

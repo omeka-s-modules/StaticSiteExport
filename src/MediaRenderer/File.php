@@ -10,8 +10,9 @@ class File implements MediaRendererInterface
 {
     public function getMarkdown(
         JobInterface $job,
-        ArrayObject $frontMatter,
-        MediaRepresentation $media
+        MediaRepresentation $media,
+        ArrayObject $frontMatterPage,
+        ArrayObject $frontMatterBlock
     ): string {
         $fileRendererManager = $fileRenderer = $job->get('StaticSiteExport\FileRendererManager');
         try {
@@ -23,6 +24,6 @@ class File implements MediaRendererInterface
                 $fileRenderer = $fileRendererManager->get('thumbnail');
             }
         }
-        return $fileRenderer->getMarkdown($job, $frontMatter, $media);
+        return $fileRenderer->getMarkdown($job, $media, $frontMatterPage, $frontMatterBlock);
     }
 }

@@ -9,8 +9,9 @@ class Resource implements DataTypeInterface
 {
     public function getMarkdown(
         JobInterface $job,
-        ArrayObject $frontMatter,
-        ValueRepresentation $value
+        ValueRepresentation $value,
+        ArrayObject $frontMatterPage,
+        ArrayObject $frontMatterBlock
     ): string {
         $valueResource = $value->valueResource();
         if (in_array($valueResource->id(), $job->getItemIds())) {

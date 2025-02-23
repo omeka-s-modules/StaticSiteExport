@@ -9,8 +9,9 @@ class Literal implements DataTypeInterface
 {
     public function getMarkdown(
         JobInterface $job,
-        ArrayObject $frontMatter,
-        ValueRepresentation $value
+        ValueRepresentation $value,
+        ArrayObject $frontMatterPage,
+        ArrayObject $frontMatterBlock
     ): string {
         return sprintf('{{< omeka-literal >}}%s{{< /omeka-literal >}}', $value->value());
     }

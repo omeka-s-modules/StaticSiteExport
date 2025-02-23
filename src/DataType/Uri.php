@@ -9,8 +9,9 @@ class Uri implements DataTypeInterface
 {
     public function getMarkdown(
         JobInterface $job,
-        ArrayObject $frontMatter,
-        ValueRepresentation $value
+        ValueRepresentation $value,
+        ArrayObject $frontMatterPage,
+        ArrayObject $frontMatterBlock
     ): string {
         $uri = $value->uri();
         $label = $value->value();

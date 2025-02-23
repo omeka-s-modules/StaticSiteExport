@@ -9,8 +9,9 @@ class MediaRender implements ResourcePageBlockLayoutInterface
 {
     public function getMarkdown(
         JobInterface $job,
-        ArrayObject $frontMatter,
-        AbstractResourceEntityRepresentation $resource
+        AbstractResourceEntityRepresentation $resource,
+        ArrayObject $frontMatterPage,
+        ArrayObject $frontMatterBlock
     ): string {
         $media = $resource->primaryMedia();
         if (!$media) {
@@ -18,6 +19,6 @@ class MediaRender implements ResourcePageBlockLayoutInterface
             return $job->getThumbnailShortcode($resource, 'large');
         }
         $mediaRenderer = $job->get('StaticSiteExport\MediaRendererManager')->get($media->renderer());
-        return $mediaRenderer->getMarkdown($job, $frontMatter, $media);
+        return $mediaRenderer->getMarkdown($job, $media, $frontMatterPage, $frontMatterBlock);
     }
 }

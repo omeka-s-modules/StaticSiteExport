@@ -9,8 +9,9 @@ class Unknown implements ResourcePageBlockLayoutInterface
 {
     public function getMarkdown(
         JobInterface $job,
-        ArrayObject $frontMatter,
-        AbstractResourceEntityRepresentation $resource
+        AbstractResourceEntityRepresentation $resource,
+        ArrayObject $frontMatterPage,
+        ArrayObject $frontMatterBlock
     ): string {
         return '';
     }
