@@ -286,6 +286,7 @@ class ExportStaticSite extends AbstractJob
         // Make the block files.
         $i = 0;
         $blockNames = $this->getResourcePageBlocks()['item_sets'];
+        $blockNames[] = 'staticSiteExportItemList';
         foreach ($blockNames as $blockName) {
             $block = $this->get('StaticSiteExport\ResourcePageBlockLayoutManager')->get($blockName);
             $blockPosition = $i++;
@@ -301,27 +302,6 @@ class ExportStaticSite extends AbstractJob
             );
         }
 
-        // Get page markdown.
-        $pageMarkdown = '';
-
-        // Add a list of items.
-        $items = $this->get('Omeka\ApiManager')->search('items', [
-            'item_set_id' => $itemSet->id(),
-            'site_id' => $this->getStaticSite()->site()->id(),
-        ])->getContent();
-        if ($items) {
-            $pageMarkdown .= "## Items\n";
-            foreach ($items as $item) {
-                $pageMarkdown .= sprintf(
-                    "- %s\n",
-                    $this->getLinkMarkdown($item, [
-                        'thumbnailType' => 'square',
-                        'thumbnailHeight' => 40,
-                    ])
-                );
-            }
-        }
-
         // Trigger the "static_site_export.bundle.item_set" event.
         $this->triggerEvent(
             'static_site_export.bundle.item_set',
@@ -334,7 +314,7 @@ class ExportStaticSite extends AbstractJob
         // Make the page file.
         $this->makeFile(
             sprintf('content/item-sets/%s/index.md', $itemSet->id()),
-            json_encode($frontMatterPage, JSON_PRETTY_PRINT) . "\n" . $pageMarkdown
+            json_encode($frontMatterPage, JSON_PRETTY_PRINT)
         );
     }
 
