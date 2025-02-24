@@ -195,6 +195,7 @@ class ExportStaticSite extends AbstractJob
         // Make the block files.
         $i = 0;
         $blockNames = $this->getResourcePageBlocks()['media'];
+        $blockNames[] = 'staticSiteExportItemLink';
         foreach ($blockNames as $blockName) {
             $block = $this->get('StaticSiteExport\ResourcePageBlockLayoutManager')->get($blockName);
             $blockPosition = $i++;
