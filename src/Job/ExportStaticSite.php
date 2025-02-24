@@ -382,33 +382,47 @@ class ExportStaticSite extends AbstractJob
     public function createSitePageBundle(SitePageRepresentation $sitePage) : void
     {
         $this->makeDirectory(sprintf('content/pages/%s', $sitePage->slug()));
+        $this->makeDirectory(sprintf('content/pages/%s/blocks', $sitePage->id()));
 
-        $frontMatter = new ArrayObject([
+        $frontMatterPage = new ArrayObject([
             'date' => $sitePage->created()->format('c'),
             'title' => $sitePage->title(),
             'draft' => $sitePage->isPublic() ? false : true,
+            'params' => [
+                'pageSlug' => $sitePage->slug(),
+            ],
         ]);
 
-        // @todo: Use named services to return block Markdown.
-        // Iterate site page blocks.
-        // foreach ($sitePage->blocks() as $sitePageBlock) {
-        //     $block = $this->get('StaticSiteExport\BlockLayoutManager')->get($sitePageBlock->layout());
-        //     $markdown[] = $block->getMarkdown($sitePageBlock, $this, $frontMatter);
+        // Make the block files.
+        // $i = 0;
+        // foreach ($sitePage->blocks() as $block) {
+        //     $blockPosition = $i++;
+        //     $frontMatterBlock = new ArrayObject([
+        //         'params' => [
+        //             'class' => sprintf('block-%s', $block->layout()),
+        //         ],
+        //     ]);
+        //     $blockLayout = $this->get('StaticSiteExport\BlockLayoutManager')->get($block->layout());
+        //     $blockMarkdown = $blockLayout->getMarkdown($this, $block, $frontMatterPage, $frontMatterBlock);
+        //     $this->makeFile(
+        //         sprintf('content/pages/%s/blocks/%s-%s.md', $sitePage->slug(), $blockPosition, $block->layout()),
+        //         sprintf("%s\n%s", json_encode($frontMatterBlock, JSON_PRETTY_PRINT), $blockMarkdown)
+        //     );
         // }
 
-        // Trigger the "static_site_export.bundle.site_page" event.
+        // Trigger the "static_site_export.bundle.item" event.
         $this->triggerEvent(
             'static_site_export.bundle.site_page',
             [
                 'resource' => $sitePage,
-                'frontMatter' => $frontMatter,
+                'frontMatter' => $frontMatterPage,
             ]
         );
 
         // Make the page file.
         $this->makeFile(
             sprintf('content/pages/%s/index.md', $sitePage->slug()),
-            json_encode($frontMatter, JSON_PRETTY_PRINT)
+            json_encode($frontMatterPage, JSON_PRETTY_PRINT)
         );
     }
 
