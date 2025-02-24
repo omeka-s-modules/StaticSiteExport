@@ -134,6 +134,7 @@ class ExportStaticSite extends AbstractJob
             'title' => $item->displayTitle(),
             'draft' => $item->isPublic() ? false : true,
             'params' => [
+                'itemID' => $item->id(),
                 'thumbnailSpec' => $this->getThumbnailSpec($item, 'square'),
             ],
         ]);
@@ -187,6 +188,7 @@ class ExportStaticSite extends AbstractJob
             'title' => $media->displayTitle(),
             'draft' => $media->isPublic() ? false : true,
             'params' => [
+                'mediaID' => $media->id(),
                 'itemID' => $media->item()->id(),
                 'thumbnailSpec' => $this->getThumbnailSpec($media, 'square'),
             ],
@@ -276,6 +278,7 @@ class ExportStaticSite extends AbstractJob
             'title' => $itemSet->displayTitle(),
             'draft' => $itemSet->isPublic() ? false : true,
             'params' => [
+                'itemSetID' => $itemSet->id(),
                 'thumbnailSpec' => $this->getThumbnailSpec($itemSet, 'square'),
             ],
         ]);
