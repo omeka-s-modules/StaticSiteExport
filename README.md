@@ -130,41 +130,25 @@ in their `Module::attachListeners()`:
 - Add content to page bundles:
     - **static_site_export.bundle.item**
         - `resource`: The item representation
+        - `frontMatter`: An `ArrayObject` containing page front matter
     - **static_site_export.bundle.media**
         - `resource`: The media representation
+        - `frontMatter`: An `ArrayObject` containing page front matter
     - **static_site_export.bundle.item_set**
         - `resource`: The item set representation
+        - `frontMatter`: An `ArrayObject` containing page front matter
     - **static_site_export.bundle.asset**
         - `resource`: The asset representation
+        - `frontMatter`: An `ArrayObject` containing page front matter
     - **static_site_export.bundle.site_page**
         - `resource`: The site page representation
-- Add content to pages:
-    - **static_site_export.page.item**
-        - `resource`: The item representation
         - `frontMatter`: An `ArrayObject` containing page front matter
-        - `markdown`: An `ArrayObject` containing page Markdown
-    - **static_site_export.page.media**
-        - `resource`: The media representation
-        - `frontMatter`: An `ArrayObject` containing page front matter
-        - `markdown`: An `ArrayObject` containing page Markdown
-    - **static_site_export.page.item_set**
-        - `resource`: The item set representation
-        - `frontMatter`: An `ArrayObject` containing page front matter
-        - `markdown`: An `ArrayObject` containing page Markdown
-    - **static_site_export.page.asset**
-        - `resource`: The asset representation
-        - `frontMatter`: An `ArrayObject` containing page front matter
-        - `markdown`: An `ArrayObject` containing page Markdown
-    - **static_site_export.page.site_page**
-        - `resource`: The site page representation
-        - `frontMatter`: An `ArrayObject` containing page front matter
-        - `markdown`: An `ArrayObject` containing page Markdown
 
 In your handler, use `$event->getTarget()` to get the export job object, which
 has methods that could be useful. Use `$event->getParam('resource')` to get the
 resource representation.
 
-You may append Hugo front matter to pages using the `frontMatter` parameter, like
+You may modify Hugo page front matter using the `frontMatter` parameter, like
 so:
 
 ```
@@ -172,15 +156,8 @@ $frontMatter = $event->getParam('frontMatter');
 $frontMatter['params']['myParam'] = 'foobar';
 ```
 
-You may append markdown to pages using the `markdown` parameter, like so:
-
-```
-$markdown = $event->getParam('markdown');
-$markdown[] = 'foobar';
-```
-
-Note that `frontMatter` and `markdown` are array objects, so you can modify them
-and they will take effect without having to set them back on the event.
+Note that `frontMatter` is an array object, so you can modify it and it will take
+effect without having to set it back on the event.
 
 ### Logging commands
 
