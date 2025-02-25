@@ -11,8 +11,9 @@ interface FileRendererInterface
      * Get the Markdown for a file renderer.
      *
      * @param JobInterface $job The export job, use for convenience methods
-     * @param ArrayObject $frontMatter The page's front matter
-     * @param MediaRepresentation $resource The Omeka media
+     * @param ValueRepresentation $value The Omeka value
+     * @param ArrayObject $frontMatterPage The page's front matter
+     * @param ArrayObject $frontMatterBlock The block's front matter
      */
     public function getMarkdown(
         JobInterface $job,

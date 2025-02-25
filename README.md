@@ -45,9 +45,9 @@ $ cd /path/to/omeka/modules/StaticSiteExport/data/
 $ git clone git@github.com:omeka/gohugo-theme-omeka-s.git
 ```
 
-Make sure that you clone the repository in the module's data/ direcotry. Here, Git
-will ignore the theme directory so you don't accidentally commit it to the module
-repository.
+It's not required, but we recommend that you clone the repository in the module's
+data/ direcotry, alongside the theme's ZIP file. Here, Git will ignore the theme
+directory so you don't accidentally commit it to the module repository.
 
 After modifying the theme, make sure you update the theme's ZIP file before pushing
 changes:
@@ -91,6 +91,8 @@ To include CSS on a page, add the CSS path the "css" array on a page's front mat
 $frontMatter['css'][] = 'vendor/path/to/style.css';
 ```
 
+These can be set in the bundle events (see below), or in various services (see below).
+
 ### Adding Hugo shortcodes
 
 Modules can add Hugo shortcodes by registering them in module configuration:
@@ -124,8 +126,7 @@ file and the respective interfaces to see how to implement them.
 
 ### Using events to add content
 
-Modules can add content to (or otherwise modify) static sites via the provided events
-in their `Module::attachListeners()`:
+Modules can add content to (or otherwise modify) static sites via the provided events:
 
 - Add content to page bundles:
     - **static_site_export.bundle.item**
@@ -143,6 +144,22 @@ in their `Module::attachListeners()`:
     - **static_site_export.bundle.site_page**
         - `resource`: The site page representation
         - `frontMatter`: An `ArrayObject` containing page front matter
+
+Attach these events to the shared event manager in `Module::attachListeners()`.
+For example:
+
+```
+$sharedEventManager->attach(
+    'StaticSiteExport\Job\ExportStaticSite',
+    'static_site_export.bundle.item',
+    function (Event $event) {
+        $job = $event->getTarget();
+        $resource = $event->getParam('resource');
+        $frontMatter = $event->getParam('frontMatter');
+        /* Do something */
+    }
+);
+```
 
 In your handler, use `$event->getTarget()` to get the export job object, which
 has methods that could be useful. Use `$event->getParam('resource')` to get the
