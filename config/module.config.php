@@ -11,18 +11,20 @@ return [
         'block_layouts' => [
             'invokables' => [
                 'pageTitle' => BlockLayout\PageTitle::class,
-                'media' => BlockLayout\Media::class,
-                // 'browsePreview' => Site\BlockLayout\BrowsePreview::class,
-                // 'listOfSites' => Site\BlockLayout\ListOfSites::class,
-                // 'tableOfContents' => Site\BlockLayout\TableOfContents::class,
-                // 'lineBreak' => Site\BlockLayout\LineBreak::class,
-                'itemWithMetadata' => BlockLayout\ItemWithMetadata::class,
-                'pageDateTime' => Site\BlockLayout\PageDateTime::class,
-                // 'blockGroup' => Site\BlockLayout\BlockGroup::class,
+                /*
                 'asset' => BlockLayout\Asset::class,
+                'blockGroup' => Site\BlockLayout\BlockGroup::class,
+                'browsePreview' => Site\BlockLayout\BrowsePreview::class,
                 'html' => BlockLayout\Html::class,
-                // 'listOfPages' => BlockLayout\PageList::class,
+                'itemWithMetadata' => BlockLayout\ItemWithMetadata::class,
+                'lineBreak' => Site\BlockLayout\LineBreak::class,
+                'listOfPages' => BlockLayout\PageList::class,
+                'listOfSites' => Site\BlockLayout\ListOfSites::class,
+                'media' => BlockLayout\Media::class,
                 'oembed' => BlockLayout\Oembed::class,
+                'pageDateTime' => Site\BlockLayout\PageDateTime::class,
+                'tableOfContents' => Site\BlockLayout\TableOfContents::class,
+                */
             ],
         ],
         'data_types' => [

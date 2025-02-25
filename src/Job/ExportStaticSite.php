@@ -382,7 +382,7 @@ class ExportStaticSite extends AbstractJob
     public function createSitePageBundle(SitePageRepresentation $sitePage) : void
     {
         $this->makeDirectory(sprintf('content/pages/%s', $sitePage->slug()));
-        $this->makeDirectory(sprintf('content/pages/%s/blocks', $sitePage->id()));
+        $this->makeDirectory(sprintf('content/pages/%s/blocks', $sitePage->slug()));
 
         $frontMatterPage = new ArrayObject([
             'date' => $sitePage->created()->format('c'),
@@ -394,21 +394,21 @@ class ExportStaticSite extends AbstractJob
         ]);
 
         // Make the block files.
-        // $i = 0;
-        // foreach ($sitePage->blocks() as $block) {
-        //     $blockPosition = $i++;
-        //     $frontMatterBlock = new ArrayObject([
-        //         'params' => [
-        //             'class' => sprintf('block-%s', $block->layout()),
-        //         ],
-        //     ]);
-        //     $blockLayout = $this->get('StaticSiteExport\BlockLayoutManager')->get($block->layout());
-        //     $blockMarkdown = $blockLayout->getMarkdown($this, $block, $frontMatterPage, $frontMatterBlock);
-        //     $this->makeFile(
-        //         sprintf('content/pages/%s/blocks/%s-%s.md', $sitePage->slug(), $blockPosition, $block->layout()),
-        //         sprintf("%s\n%s", json_encode($frontMatterBlock, JSON_PRETTY_PRINT), $blockMarkdown)
-        //     );
-        // }
+        $i = 0;
+        foreach ($sitePage->blocks() as $block) {
+            $blockPosition = $i++;
+            $frontMatterBlock = new ArrayObject([
+                'params' => [
+                    'class' => sprintf('block-%s', $block->layout()),
+                ],
+            ]);
+            $blockLayout = $this->get('StaticSiteExport\BlockLayoutManager')->get($block->layout());
+            $blockMarkdown = $blockLayout->getMarkdown($this, $block, $frontMatterPage, $frontMatterBlock);
+            $this->makeFile(
+                sprintf('content/pages/%s/blocks/%s-%s.md', $sitePage->slug(), $blockPosition, $block->layout()),
+                sprintf("%s\n%s", json_encode($frontMatterBlock, JSON_PRETTY_PRINT), $blockMarkdown)
+            );
+        }
 
         // Trigger the "static_site_export.bundle.item" event.
         $this->triggerEvent(
