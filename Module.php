@@ -68,6 +68,33 @@ SQL;
 
     public function attachListeners(SharedEventManagerInterface $sharedEventManager)
     {
+        $sharedEventManager->attach(
+            'StaticSiteExport\Job\ExportStaticSite',
+            'static_site_export.ids.assets',
+            function (Event $event) {
+                $job = $event->getTarget();
+                $entityManager = $job->get('Omeka\EntityManager');
+                $addIds = $event->getParam('addIds');
+
+                // Add assets from the "asset" block layout
+                $dql = "SELECT b
+                    FROM Omeka\Entity\SitePageBlock b
+                    JOIN b.page p
+                    JOIN p.site s
+                    WHERE s.id = :siteId
+                    AND b.layout = 'asset'";
+                $query = $entityManager->createQuery($dql);
+                $query->setParameters([
+                    'siteId' => $job->getStaticSite()->site()->id(),
+                ]);
+                $blocks = $query->getResult();
+                foreach ($blocks as $block) {
+                    foreach ($block->getData() as $assetData) {
+                        $addIds[] = $assetData['id'];
+                    }
+                }
+            }
+        );
     }
 
     public static function sitesDirectoryPathIsValid(string $sitesDirectoryPath)

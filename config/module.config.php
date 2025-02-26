@@ -11,8 +11,8 @@ return [
         'block_layouts' => [
             'invokables' => [
                 'pageTitle' => BlockLayout\PageTitle::class,
-                /*
                 'asset' => BlockLayout\Asset::class,
+                /*
                 'blockGroup' => Site\BlockLayout\BlockGroup::class,
                 'browsePreview' => Site\BlockLayout\BrowsePreview::class,
                 'html' => BlockLayout\Html::class,
