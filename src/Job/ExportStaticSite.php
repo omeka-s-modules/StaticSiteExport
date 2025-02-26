@@ -451,6 +451,27 @@ class ExportStaticSite extends AbstractJob
     }
 
     /**
+     * Set added IDs to IDs that were set automaticlly.
+     *
+     * Modules can use the "static_site_export.ids.*" event to add resources that
+     * were not automatically added by this module.
+     */
+    public function setAddedIds(string $resourceType, array $ids)
+    {
+            $addIds = new ArrayObject;
+            $this->triggerEvent(
+                sprintf('static_site_export.ids.%s', $resourceType),
+                [
+                    'ids' => $ids,
+                    'addIds' => $addIds,
+                ]
+            );
+            // Include IDs added via the event.
+            $addIds = array_filter(array_values($addIds->getArrayCopy()), 'is_numeric');
+            return array_unique(array_merge($ids, $addIds));
+    }
+
+    /**
      * Get the IDs of items that are assigned to this site.
      */
     public function getItemIds() : array
@@ -463,7 +484,8 @@ class ExportStaticSite extends AbstractJob
                 ORDER BY resource.id';
             $stmt = $this->get('Omeka\Connection')->prepare($sql);
             $stmt->bindValue('site_id', $this->getStaticSite()->site()->id());
-            $this->itemIds = $stmt->executeQuery()->fetchFirstColumn();
+            $itemIds = $stmt->executeQuery()->fetchFirstColumn();
+            $this->itemIds = $this->setAddedIds('items', $itemIds);
         }
         return $this->itemIds;
     }
@@ -482,7 +504,8 @@ class ExportStaticSite extends AbstractJob
                 ORDER BY resource.id';
             $stmt = $this->get('Omeka\Connection')->prepare($sql);
             $stmt->bindValue('site_id', $this->getStaticSite()->site()->id());
-            $this->mediaIds = $stmt->executeQuery()->fetchFirstColumn();
+            $mediaIds = $stmt->executeQuery()->fetchFirstColumn();
+            $this->mediaIds = $this->setAddedIds('media', $mediaIds);
         }
         return $this->mediaIds;
     }
@@ -500,7 +523,8 @@ class ExportStaticSite extends AbstractJob
                 ORDER BY resource.id';
             $stmt = $this->get('Omeka\Connection')->prepare($sql);
             $stmt->bindValue('site_id', $this->getStaticSite()->site()->id());
-            $this->itemSetIds = $stmt->executeQuery()->fetchFirstColumn();
+            $itemSetIds = $stmt->executeQuery()->fetchFirstColumn();
+            $this->itemSetIds = $this->setAddedIds('item_sets', $itemSetIds);
         }
         return $this->itemSetIds;
     }
@@ -515,11 +539,12 @@ class ExportStaticSite extends AbstractJob
                 FROM asset asset
                 INNER JOIN resource resource ON asset.id = resource.thumbnail_id
                 WHERE resource.id IN (?)';
-            $this->assetIds = $this->get('Omeka\Connection')->executeQuery(
+            $assetIds = $this->get('Omeka\Connection')->executeQuery(
                 $sql,
                 [array_merge($this->getItemIds(), $this->getMediaIds(), $this->getItemSetIds())],
                 [Connection::PARAM_INT_ARRAY]
             )->fetchFirstColumn();
+            $this->assetIds = $this->setAddedIds('assets', $assetIds);
         }
         return $this->assetIds;
     }

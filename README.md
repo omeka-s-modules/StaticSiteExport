@@ -124,29 +124,11 @@ These services are parallel to existing Omeka services, and have identical purpo
 but they are for static sites instead of Omeka sites. See the module configuration
 file and the respective interfaces to see how to implement them.
 
-### Using events to add content
 
-Modules can add content to (or otherwise modify) static sites via the provided events:
 
-- Add content to page bundles:
-    - **static_site_export.bundle.item**
-        - `resource`: The item representation
-        - `frontMatter`: An `ArrayObject` containing page front matter
-    - **static_site_export.bundle.media**
-        - `resource`: The media representation
-        - `frontMatter`: An `ArrayObject` containing page front matter
-    - **static_site_export.bundle.item_set**
-        - `resource`: The item set representation
-        - `frontMatter`: An `ArrayObject` containing page front matter
-    - **static_site_export.bundle.asset**
-        - `resource`: The asset representation
-        - `frontMatter`: An `ArrayObject` containing page front matter
-    - **static_site_export.bundle.site_page**
-        - `resource`: The site page representation
-        - `frontMatter`: An `ArrayObject` containing page front matter
+### Events
 
-Attach these events to the shared event manager in `Module::attachListeners()`.
-For example:
+Attach events to the shared event manager in `Module::attachListeners()`. For example:
 
 ```
 $sharedEventManager->attach(
@@ -162,19 +144,60 @@ $sharedEventManager->attach(
 ```
 
 In your handler, use `$event->getTarget()` to get the export job object, which
-has methods that could be useful. Use `$event->getParam('resource')` to get the
-resource representation.
+has methods that could be useful. Note that some parameters are `ArrayObject`s.
+These you can modify and they will take effect without having to set them back on
+the event.
 
-You may modify Hugo page front matter using the `frontMatter` parameter, like
-so:
+#### Using events to add pages
+
+Modules can add items, media, item sets, and assets via the following events:
+
+- **static_site_export.ids.items**
+    - `ids`: An array of item IDs added automatically
+    - `addIDs`: An `ArrayObject` containing IDs of items to add
+- **static_site_export.ids.media**
+    - `ids`: An array of media IDs added automatically
+    - `addIDs`: An `ArrayObject` containing IDs of media to add
+- **static_site_export.ids.item_set**
+    - `ids`: An array of item set IDs added automatically
+    - `addIDs`: An `ArrayObject` containing IDs of item sets to add
+- **static_site_export.ids.assets**
+    - `ids`: An array of asset IDs added automatically
+    - `addIDs`: An `ArrayObject` containing IDs of assets to add
+
+You may add IDs using the `addIDs` parameter, like so:
+
+```
+$addIds = $event->getParam('addIDs');
+$addIds[] = $asset->id();
+```
+
+#### Using events to modify page bundles
+
+Modules can modify page bundles via the following events:
+
+- **static_site_export.bundle.item**
+    - `resource`: The item representation
+    - `frontMatter`: An `ArrayObject` containing page front matter
+- **static_site_export.bundle.media**
+    - `resource`: The media representation
+    - `frontMatter`: An `ArrayObject` containing page front matter
+- **static_site_export.bundle.item_set**
+    - `resource`: The item set representation
+    - `frontMatter`: An `ArrayObject` containing page front matter
+- **static_site_export.bundle.asset**
+    - `resource`: The asset representation
+    - `frontMatter`: An `ArrayObject` containing page front matter
+- **static_site_export.bundle.site_page**
+    - `resource`: The site page representation
+    - `frontMatter`: An `ArrayObject` containing page front matter
+
+You may modify Hugo page front matter using the `frontMatter` parameter, like so:
 
 ```
 $frontMatter = $event->getParam('frontMatter');
 $frontMatter['params']['myParam'] = 'foobar';
 ```
-
-Note that `frontMatter` is an array object, so you can modify it and it will take
-effect without having to set it back on the event.
 
 ### Logging commands
 
