@@ -139,37 +139,19 @@ class ExportStaticSite extends AbstractJob
             ],
         ]);
 
-        // Make the block files.
-        $blockPosition = 0;
-        $blockNames = $this->getResourcePageBlocks()['items'];
-        foreach ($blockNames as $blockName) {
-            $block = $this->get('StaticSiteExport\ResourcePageBlockLayoutManager')->get($blockName);
-            $frontMatterBlock = new ArrayObject([
-                'params' => [
-                    'class' => sprintf('resource-page-block-%s', $blockName),
-                ],
-            ]);
-            $blockMarkdown = $block->getMarkdown($this, $item, $frontMatterPage, $frontMatterBlock);
-            $this->makeFile(
-                sprintf('content/items/%s/blocks/%s-%s.md', $item->id(), $blockPosition++, $blockName),
-                sprintf("%s\n%s", json_encode($frontMatterBlock, JSON_PRETTY_PRINT), $blockMarkdown)
-            );
-        }
+        $blocks = $this->getResourcePageBlocks('items', $item, $frontMatterPage);
 
-        // Trigger the "static_site_export.bundle.item" event.
+        // Trigger the item bundle event.
         $this->triggerEvent(
             'static_site_export.bundle.item',
             [
                 'resource' => $item,
                 'frontMatter' => $frontMatterPage,
+                'blocks' => $blocks,
             ]
         );
 
-        // Make the page file.
-        $this->makeFile(
-            sprintf('content/items/%s/index.md', $item->id()),
-            json_encode($frontMatterPage, JSON_PRETTY_PRINT)
-        );
+        $this->makeBundleFiles('items', $item, $frontMatterPage, $blocks);
     }
 
     /**
@@ -193,38 +175,19 @@ class ExportStaticSite extends AbstractJob
             ],
         ]);
 
-        // Make the block files.
-        $blockPosition = 0;
-        $blockNames = $this->getResourcePageBlocks()['media'];
-        $blockNames[] = 'staticSiteExportItemLink';
-        foreach ($blockNames as $blockName) {
-            $block = $this->get('StaticSiteExport\ResourcePageBlockLayoutManager')->get($blockName);
-            $frontMatterBlock = new ArrayObject([
-                'params' => [
-                    'class' => sprintf('resource-page-block-%s', $blockName),
-                ],
-            ]);
-            $blockMarkdown = $block->getMarkdown($this, $media, $frontMatterPage, $frontMatterBlock);
-            $this->makeFile(
-                sprintf('content/media/%s/blocks/%s-%s.md', $media->id(), $blockPosition++, $blockName),
-                sprintf("%s\n%s", json_encode($frontMatterBlock, JSON_PRETTY_PRINT), $blockMarkdown)
-            );
-        }
+        $blocks = $this->getResourcePageBlocks('media', $media, $frontMatterPage);
 
-        // Trigger the "static_site_export.bundle.media" event.
+        // Trigger the media bundle event.
         $this->triggerEvent(
             'static_site_export.bundle.media',
             [
                 'resource' => $media,
                 'frontMatter' => $frontMatterPage,
+                'blocks' => $blocks,
             ]
         );
 
-        // Make the page file.
-        $this->makeFile(
-            sprintf('content/media/%s/index.md', $media->id()),
-            json_encode($frontMatterPage, JSON_PRETTY_PRINT)
-        );
+        $this->makeBundleFiles('media', $media, $frontMatterPage, $blocks);
 
         // Map the media data file.
         $this->makeFile(
@@ -281,38 +244,19 @@ class ExportStaticSite extends AbstractJob
             ],
         ]);
 
-        // Make the block files.
-        $blockPosition = 0;
-        $blockNames = $this->getResourcePageBlocks()['item_sets'];
-        $blockNames[] = 'staticSiteExportItemList';
-        foreach ($blockNames as $blockName) {
-            $block = $this->get('StaticSiteExport\ResourcePageBlockLayoutManager')->get($blockName);
-            $frontMatterBlock = new ArrayObject([
-                'params' => [
-                    'class' => sprintf('resource-page-block-%s', $blockName),
-                ],
-            ]);
-            $blockMarkdown = $block->getMarkdown($this, $itemSet, $frontMatterPage, $frontMatterBlock);
-            $this->makeFile(
-                sprintf('content/item-sets/%s/blocks/%s-%s.md', $itemSet->id(), $blockPosition++, $blockName),
-                sprintf("%s\n%s", json_encode($frontMatterBlock, JSON_PRETTY_PRINT), $blockMarkdown)
-            );
-        }
+        $blocks = $this->getResourcePageBlocks('item_sets', $itemSet, $frontMatterPage);
 
-        // Trigger the "static_site_export.bundle.item_set" event.
+        // Trigger the item set bundle event.
         $this->triggerEvent(
             'static_site_export.bundle.item_set',
             [
                 'resource' => $itemSet,
                 'frontMatter' => $frontMatterPage,
+                'blocks' => $blocks,
             ]
         );
 
-        // Make the page file.
-        $this->makeFile(
-            sprintf('content/item-sets/%s/index.md', $itemSet->id()),
-            json_encode($frontMatterPage, JSON_PRETTY_PRINT)
-        );
+        $this->makeBundleFiles('item-sets', $itemSet, $frontMatterPage, $blocks);
     }
 
     /**
@@ -770,7 +714,7 @@ class ExportStaticSite extends AbstractJob
     /**
      * Get the resource page blocks configuration from the site's theme.
      */
-    public function getResourcePageBlocks()
+    public function getResourcePageBlockLayouts()
     {
         if (null === $this->resourcePageBlocks) {
             // Must set some things before fetching the resolved resource page
@@ -811,6 +755,45 @@ class ExportStaticSite extends AbstractJob
             $this->resourcePageBlocks = $resourcePageBlocks;
         }
         return $this->resourcePageBlocks;
+    }
+
+    public function getResourcePageBlocks(string $resourceType, AbstractEntityRepresentation $resource, ArrayObject $frontMatterPage) : ArrayObject
+    {
+        // Add configured resource page blocks.
+        $blocks = new ArrayObject;
+        $blockLayoutNames = $this->getResourcePageBlockLayouts()[$resourceType];
+        foreach ($blockLayoutNames as $blockLayoutName) {
+            $blockLayout = $this->get('StaticSiteExport\ResourcePageBlockLayoutManager')->get($blockLayoutName);
+            $frontMatterBlock = new ArrayObject([
+                'params' => [
+                    'class' => sprintf('resource-page-block-%s', $blockLayoutName),
+                ],
+            ]);
+            $blockMarkdown = $blockLayout->getMarkdown($this, $resource, $frontMatterPage, $frontMatterBlock);
+            $blocks[] = [
+                'name' => $blockLayoutName,
+                'frontMatter' => $frontMatterBlock,
+                'markdown' => $blockMarkdown,
+            ];
+        }
+        return $blocks;
+    }
+
+    public function makeBundleFiles(string $resourceContentPath, AbstractEntityRepresentation $resource, ArrayObject $frontMatterPage, ArrayObject $blocks) : void
+    {
+        // Make the block files.
+        $blockPosition = 0;
+        foreach ($blocks as $block) {
+            $this->makeFile(
+                sprintf('content/%s/%s/blocks/%s-%s.md', $resourceContentPath, $resource->id(), $blockPosition++, $block['name']),
+                sprintf("%s\n%s", json_encode($block['frontMatter'], JSON_PRETTY_PRINT), $block['markdown'])
+            );
+        }
+        // Make the page file.
+        $this->makeFile(
+            sprintf('content/%s/%s/index.md', $resourceContentPath, $resource->id()),
+            json_encode($frontMatterPage, JSON_PRETTY_PRINT)
+        );
     }
 
     /**

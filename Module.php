@@ -68,6 +68,7 @@ SQL;
 
     public function attachListeners(SharedEventManagerInterface $sharedEventManager)
     {
+        // Add assets from the "asset" block layout
         $sharedEventManager->attach(
             'StaticSiteExport\Job\ExportStaticSite',
             'static_site_export.ids.assets',
@@ -76,7 +77,6 @@ SQL;
                 $entityManager = $job->get('Omeka\EntityManager');
                 $addIds = $event->getParam('addIds');
 
-                // Add assets from the "asset" block layout
                 $dql = "SELECT b
                     FROM Omeka\Entity\SitePageBlock b
                     JOIN b.page p
@@ -93,6 +93,69 @@ SQL;
                         $addIds[] = $assetData['id'];
                     }
                 }
+            }
+        );
+        // Add the itemLink block to the media page.
+        $sharedEventManager->attach(
+            'StaticSiteExport\Job\ExportStaticSite',
+            'static_site_export.bundle.media',
+            function (Event $event) {
+                $job = $event->getTarget();
+                $media = $event->getParam('resource');
+                $blocks = $event->getParam('blocks');
+
+                $frontMatter = [
+                    'params' => [
+                        'class' => 'resource-page-block-staticSiteExportItemList',
+                    ],
+                ];
+                $markdown = sprintf("## Item\n%s", $job->getLinkMarkdown($media->item(), [
+                    'thumbnailType' => 'square',
+                    'thumbnailHeight' => 40,
+                ]));
+                $blocks[] = [
+                    'name' => 'itemList',
+                    'frontMatter' => $frontMatter,
+                    'markdown' => $markdown,
+                ];
+            }
+        );
+        // Add the itemList block to the item set page.
+        $sharedEventManager->attach(
+            'StaticSiteExport\Job\ExportStaticSite',
+            'static_site_export.bundle.item_set',
+            function (Event $event) {
+                $job = $event->getTarget();
+                $itemSet = $event->getParam('resource');
+                $blocks = $event->getParam('blocks');
+
+                $frontMatter = [
+                    'params' => [
+                        'class' => 'resource-page-block-staticSiteExportItemList',
+                    ],
+                ];
+                $items = $job->get('Omeka\ApiManager')->search('items', [
+                    'item_set_id' => $itemSet->id(),
+                    'site_id' => $job->getStaticSite()->site()->id(),
+                ])->getContent();
+                if (!$items) {
+                    return;
+                }
+                $markdown = "## Items\n";
+                foreach ($items as $item) {
+                    $markdown .= sprintf(
+                        "- %s\n",
+                        $job->getLinkMarkdown($item, [
+                            'thumbnailType' => 'square',
+                            'thumbnailHeight' => 40,
+                        ])
+                    );
+                }
+                $blocks[] = [
+                    'name' => 'staticSiteExportItemList',
+                    'frontMatter' => $frontMatter,
+                    'markdown' => $markdown,
+                ];
             }
         );
     }

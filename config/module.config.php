@@ -87,8 +87,6 @@ return [
                 'mediaEmbeds' => ResourcePageBlockLayout\MediaEmbeds::class,
                 'mediaRender' => ResourcePageBlockLayout\MediaRender::class,
                 'resourceClass' => ResourcePageBlockLayout\ResourceClass::class,
-                'staticSiteExportItemLink' => ResourcePageBlockLayout\StaticSiteExportItemLink::class,
-                'staticSiteExportItemList' => ResourcePageBlockLayout\StaticSiteExportItemList::class,
                 'values' => ResourcePageBlockLayout\Values::class,
             ],
         ],
