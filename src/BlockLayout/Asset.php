@@ -17,18 +17,20 @@ class Asset implements BlockLayoutInterface
         $markdown = [];
         foreach ($block->data() as $attachmentData) {
             $asset = $api->read('assets', $attachmentData['id'])->getContent();
+            $caption = $attachmentData['caption'] ? $job->escape(['"'], $attachmentData['caption']) : '';
             $markdown[] = sprintf(
                 '{{< omeka-figure
                     type="image"
-                    linkPage="/assets/%s"
-                    linkResource="file"
+                    filePage="/assets/%s"
+                    fileResource="file"
                     imgPage="/assets/%s"
                     imgResource="file"
+                    linkPage="/pages/welcome"
                     caption="%s"
                 >}}',
                 $asset->id(),
                 $asset->id(),
-                $attachmentData['caption'] ? $attachmentData['caption'] : ''
+                $caption
             );
         }
         return implode("\n", $markdown);

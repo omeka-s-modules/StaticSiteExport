@@ -340,11 +340,14 @@ class ExportStaticSite extends AbstractJob
         $markdown = sprintf(
             '{{< omeka-figure
                 type="image"
-                linkPage="/assets/%s"
-                linkResource="file"
+                filePage="/assets/%s"
+                fileResource="file"
                 imgPage="/assets/%s"
                 imgResource="file"
+                linkPage="/assets/%s"
+                linkResource="file"
             >}}',
+            $asset->id(),
             $asset->id(),
             $asset->id()
         );

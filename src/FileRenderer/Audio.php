@@ -16,11 +16,14 @@ class Audio implements FileRendererInterface
         return sprintf(
             '{{< omeka-figure
                 type="audio"
+                filePage="/media/%s"
+                fileResource="file"
+                imgResource="/thumbnails/audio.png"
                 linkPage="/media/%s"
                 linkResource="file"
-                imgResource="thumbnails/audio.png"
             >}}',
             $media->id(),
+            $media->id()
         );
     }
 }

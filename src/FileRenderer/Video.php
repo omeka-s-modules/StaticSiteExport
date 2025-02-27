@@ -16,11 +16,14 @@ class Video implements FileRendererInterface
         return sprintf(
             '{{< omeka-figure
                 type="video"
+                filePage="/media/%s"
+                fileResource="file"
+                imgResource="/thumbnails/video.png"
                 linkPage="/media/%s"
                 linkResource="file"
-                imgResource="thumbnails/video.png"
             >}}',
             $media->id(),
+            $media->id()
         );
 
     }
