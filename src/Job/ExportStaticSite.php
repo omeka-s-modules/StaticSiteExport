@@ -140,11 +140,10 @@ class ExportStaticSite extends AbstractJob
         ]);
 
         // Make the block files.
-        $i = 0;
+        $blockPosition = 0;
         $blockNames = $this->getResourcePageBlocks()['items'];
         foreach ($blockNames as $blockName) {
             $block = $this->get('StaticSiteExport\ResourcePageBlockLayoutManager')->get($blockName);
-            $blockPosition = $i++;
             $frontMatterBlock = new ArrayObject([
                 'params' => [
                     'class' => sprintf('resource-page-block-%s', $blockName),
@@ -152,7 +151,7 @@ class ExportStaticSite extends AbstractJob
             ]);
             $blockMarkdown = $block->getMarkdown($this, $item, $frontMatterPage, $frontMatterBlock);
             $this->makeFile(
-                sprintf('content/items/%s/blocks/%s-%s.md', $item->id(), $blockPosition, $blockName),
+                sprintf('content/items/%s/blocks/%s-%s.md', $item->id(), $blockPosition++, $blockName),
                 sprintf("%s\n%s", json_encode($frontMatterBlock, JSON_PRETTY_PRINT), $blockMarkdown)
             );
         }
@@ -195,12 +194,11 @@ class ExportStaticSite extends AbstractJob
         ]);
 
         // Make the block files.
-        $i = 0;
+        $blockPosition = 0;
         $blockNames = $this->getResourcePageBlocks()['media'];
         $blockNames[] = 'staticSiteExportItemLink';
         foreach ($blockNames as $blockName) {
             $block = $this->get('StaticSiteExport\ResourcePageBlockLayoutManager')->get($blockName);
-            $blockPosition = $i++;
             $frontMatterBlock = new ArrayObject([
                 'params' => [
                     'class' => sprintf('resource-page-block-%s', $blockName),
@@ -208,7 +206,7 @@ class ExportStaticSite extends AbstractJob
             ]);
             $blockMarkdown = $block->getMarkdown($this, $media, $frontMatterPage, $frontMatterBlock);
             $this->makeFile(
-                sprintf('content/media/%s/blocks/%s-%s.md', $media->id(), $blockPosition, $blockName),
+                sprintf('content/media/%s/blocks/%s-%s.md', $media->id(), $blockPosition++, $blockName),
                 sprintf("%s\n%s", json_encode($frontMatterBlock, JSON_PRETTY_PRINT), $blockMarkdown)
             );
         }
@@ -284,12 +282,11 @@ class ExportStaticSite extends AbstractJob
         ]);
 
         // Make the block files.
-        $i = 0;
+        $blockPosition = 0;
         $blockNames = $this->getResourcePageBlocks()['item_sets'];
         $blockNames[] = 'staticSiteExportItemList';
         foreach ($blockNames as $blockName) {
             $block = $this->get('StaticSiteExport\ResourcePageBlockLayoutManager')->get($blockName);
-            $blockPosition = $i++;
             $frontMatterBlock = new ArrayObject([
                 'params' => [
                     'class' => sprintf('resource-page-block-%s', $blockName),
@@ -297,7 +294,7 @@ class ExportStaticSite extends AbstractJob
             ]);
             $blockMarkdown = $block->getMarkdown($this, $itemSet, $frontMatterPage, $frontMatterBlock);
             $this->makeFile(
-                sprintf('content/item-sets/%s/blocks/%s-%s.md', $itemSet->id(), $blockPosition, $blockName),
+                sprintf('content/item-sets/%s/blocks/%s-%s.md', $itemSet->id(), $blockPosition++, $blockName),
                 sprintf("%s\n%s", json_encode($frontMatterBlock, JSON_PRETTY_PRINT), $blockMarkdown)
             );
         }
@@ -393,9 +390,8 @@ class ExportStaticSite extends AbstractJob
         ]);
 
         // Make the block files.
-        $i = 0;
+        $blockPosition = 0;
         foreach ($sitePage->blocks() as $block) {
-            $blockPosition = $i++;
             $frontMatterBlock = new ArrayObject([
                 'params' => [
                     'class' => sprintf('block-%s', $block->layout()),
@@ -404,7 +400,7 @@ class ExportStaticSite extends AbstractJob
             $blockLayout = $this->get('StaticSiteExport\BlockLayoutManager')->get($block->layout());
             $blockMarkdown = $blockLayout->getMarkdown($this, $block, $frontMatterPage, $frontMatterBlock);
             $this->makeFile(
-                sprintf('content/pages/%s/blocks/%s-%s.md', $sitePage->slug(), $blockPosition, $block->layout()),
+                sprintf('content/pages/%s/blocks/%s-%s.md', $sitePage->slug(), $blockPosition++, $block->layout()),
                 sprintf("%s\n%s", json_encode($frontMatterBlock, JSON_PRETTY_PRINT), $blockMarkdown)
             );
         }
