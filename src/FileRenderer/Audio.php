@@ -13,17 +13,13 @@ class Audio implements FileRendererInterface
         ArrayObject $frontMatterPage,
         ArrayObject $frontMatterBlock
     ): string {
-        return sprintf(
-            '{{< omeka-figure
-                type="audio"
-                filePage="/media/%s"
-                fileResource="file"
-                imgResource="/thumbnails/audio.png"
-                linkPage="/media/%s"
-                linkResource="file"
-            >}}',
-            $media->id(),
-            $media->id()
-        );
+        return $job->getFigureShortcode([
+            'type' => 'audio',
+            'filePage' => sprintf('/media/%s', $media->id()),
+            'fileResource' => 'file',
+            'imgResource' => '/thumbnails/audio.png',
+            'linkPage' => sprintf('/media/%s', $media->id()),
+            'linkResource' => 'file',
+        ]);
     }
 }

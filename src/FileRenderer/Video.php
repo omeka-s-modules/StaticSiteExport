@@ -13,18 +13,13 @@ class Video implements FileRendererInterface
         ArrayObject $frontMatterPage,
         ArrayObject $frontMatterBlock
     ): string {
-        return sprintf(
-            '{{< omeka-figure
-                type="video"
-                filePage="/media/%s"
-                fileResource="file"
-                imgResource="/thumbnails/video.png"
-                linkPage="/media/%s"
-                linkResource="file"
-            >}}',
-            $media->id(),
-            $media->id()
-        );
-
+        return $job->getFigureShortcode([
+            'type' => "video",
+            'filePage' => sprintf("/media/%s", $media->id()),
+            'fileResource' => "file",
+            'imgResource' => "/thumbnails/video.png",
+            'linkPage' => sprintf("/media/%s", $media->id()),
+            'linkResource' => "file",
+        ]);
     }
 }

@@ -14,36 +14,26 @@ class Thumbnail implements FileRendererInterface
         ArrayObject $frontMatterBlock
     ): string {
         if ($media->thumbnail()) {
-            return sprintf(
-                '{{< omeka-figure
-                    type="image"
-                    filePage="/media/%s"
-                    fileResource="file"
-                    imgPage="/assets/%s"
-                    imgResource="file"
-                    linkPage="/media/%s"
-                    linkResource="file"
-                >}}',
-                $media->id(),
-                $media->thumbnail()->id(),
-                $media->id(),
-            );
+            return $job->getFigureShortcode([
+                'type' => "image",
+                'filePage' => sprintf("/media/%s", $media->id()),
+                'fileResource' => "file",
+                'imgPage' => sprintf("/assets/%s", $media->thumbnail()->id()),
+                'imgResource' => "file",
+                'linkPage' => sprintf("/media/%s", $media->id()),
+                'linkResource' => "file",
+            ]);
         }
         if ($media->hasThumbnails()) {
-            return sprintf(
-                '{{< omeka-figure
-                    type="image"
-                    filePage="/media/%s"
-                    fileResource="file"
-                    imgPage="/media/%s"
-                    imgResource="thumbnail_large"
-                    linkPage="/media/%s"
-                    linkResource="file"
-                >}}',
-                $media->id(),
-                $media->id(),
-                $media->id()
-            );
+            return $job->getFigureShortcode([
+                'type' => "image",
+                'filePage' => sprintf("/media/%s", $media->id()),
+                'fileResource' => "file",
+                'imgPage' => sprintf("/media/%s", $media->id()),
+                'imgResource' => "thumbnail_large",
+                'linkPage' => sprintf("/media/%s", $media->id()),
+                'linkResource' => "file",
+            ]);
         }
         $thumbnailPaths = [
             'audio' => '/thumbnails/audio.png',
@@ -51,19 +41,14 @@ class Thumbnail implements FileRendererInterface
             'video' => '/thumbnails/video.png',
         ];
         $topLevelType = strstr((string) $media->mediaType(), '/', true);
-        $fileThumbnailPath = $thumbnailPaths[$topLevelType] ?? 'thumbnails/default.png';
-        return sprintf(
-            '{{< omeka-figure
-                type="image"
-                filePage="/media/%s"
-                fileResource="file"
-                imgResource="%s"
-                linkPage="/media/%s"
-                linkResource="file"
-            >}}',
-            $media->id(),
-            $fileThumbnailPath,
-            $media->id(),
-        );
+        $fileThumbnailPath = $thumbnailPaths[$topLevelType] ?? '/thumbnails/default.png';
+        return $job->getFigureShortcode([
+            'type' => "image",
+            'filePage' => sprintf("/media/%s", $media->id()),
+            'fileResource' => "file",
+            'imgResource' => $fileThumbnailPath,
+            'linkPage' => sprintf("/media/%s", $media->id()),
+            'linkResource' => "file",
+        ]);
     }
 }

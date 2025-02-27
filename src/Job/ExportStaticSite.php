@@ -337,20 +337,16 @@ class ExportStaticSite extends AbstractJob
             ],
         ]);
 
-        $markdown = sprintf(
-            '{{< omeka-figure
-                type="image"
-                filePage="/assets/%s"
-                fileResource="file"
-                imgPage="/assets/%s"
-                imgResource="file"
-                linkPage="/assets/%s"
-                linkResource="file"
-            >}}',
-            $asset->id(),
-            $asset->id(),
-            $asset->id()
-        );
+        // Add the asset image.
+        $markdown = $this->getFigureShortcode([
+            'type' => 'image',
+            'filePage' => sprintf('/assets/%s', $asset->id()),
+            'fileResource' => 'file',
+            'imgPage' => sprintf('/assets/%s', $asset->id()),
+            'imgResource' => 'file',
+            'linkPage' => sprintf('/assets/%s', $asset->id()),
+            'linkResource' => 'file',
+        ]);
 
         // Trigger the "static_site_export.bundle.asset" event.
         $this->triggerEvent(
@@ -856,6 +852,18 @@ class ExportStaticSite extends AbstractJob
     }
 
     /**
+     * Get the "omeka-figure" shortcode using the passed arguments.
+     */
+    public function getFigureShortcode(array $args) : string
+    {
+        $shortcodeArgs = [];
+        foreach ($args as $key => $value) {
+            $shortcodeArgs[] = sprintf('%s="%s"', $key, $value);
+        }
+        return sprintf('{{< omeka-figure %s >}}', implode(' ', $shortcodeArgs));
+    }
+
+    /**
      * Get the markdown for a link to a resource, including thumbnail.
      *
      * Options are the following:
@@ -888,7 +896,7 @@ class ExportStaticSite extends AbstractJob
     }
 
     /**
-     * Get the thumbnail shortcode for the passed resource.
+     * Get the "omeka-thumbnail" shortcode for the passed resource.
      */
     public function getThumbnailShortcode(AbstractResourceEntityRepresentation $resource, array $options = [])
     {
