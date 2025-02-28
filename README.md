@@ -64,7 +64,7 @@ Note that we're excluding the .git/ directory from the ZIP file.
 Modules can add vendor packages (e.g. scripts, styles, images) by registering them
 in module configuration:
 
-```
+```php
 'static_site_export' => [
     'vendor_packages' => [
         'package-name' => '/path/to/vendor/directory',
@@ -81,13 +81,13 @@ be copied to the newly created static site vendor directory.
 
 To include JS on a page, add the JS path the "js" array on a page's front matter:
 
-```
+```php
 $frontMatter['js'][] = 'vendor/path/to/script.js';
 ```
 
 To include CSS on a page, add the CSS path the "css" array on a page's front matter:
 
-```
+```php
 $frontMatter['css'][] = 'vendor/path/to/style.css';
 ```
 
@@ -97,7 +97,7 @@ These can be set in the bundle events (see below), or in various services (see b
 
 Modules can add Hugo shortcodes by registering them in module configuration:
 
-```
+```php
 'static_site_export' => [
     'shortcodes' => [
         'shortcode-name' => '/path/to/shortcode-name.html',
@@ -130,7 +130,7 @@ file and the respective interfaces to see how to implement them.
 
 Attach events to the shared event manager in `Module::attachListeners()`. For example:
 
-```
+```php
 $sharedEventManager->attach(
     'StaticSiteExport\Job\ExportStaticSite',
     'static_site_export.bundle.item',
@@ -144,30 +144,30 @@ $sharedEventManager->attach(
 ```
 
 In your handler, use `$event->getTarget()` to get the export job object, which
-has methods that could be useful. Note that some parameters are `ArrayObject`s.
-These you can modify and they will take effect without having to set them back on
-the event.
+has methods that could be useful. Note that some parameters are array objects (`ArrayObject`).
+You can append to (and otherwise modify) array objects, and changes will take effect 
+without having to set them back on the event.
 
 #### Using events to add pages
 
 Modules can add items, media, item sets, and assets via the following events:
 
-- **static_site_export.ids.items**
+- `static_site_export.ids.items`
     - `ids`: An array of item IDs added automatically
     - `addIDs`: An `ArrayObject` containing IDs of items to add
-- **static_site_export.ids.media**
+- `static_site_export.ids.media`
     - `ids`: An array of media IDs added automatically
     - `addIDs`: An `ArrayObject` containing IDs of media to add
-- **static_site_export.ids.item_set**
+- `static_site_export.ids.item_set`
     - `ids`: An array of item set IDs added automatically
     - `addIDs`: An `ArrayObject` containing IDs of item sets to add
-- **static_site_export.ids.assets**
+- `static_site_export.ids.assets`
     - `ids`: An array of asset IDs added automatically
     - `addIDs`: An `ArrayObject` containing IDs of assets to add
 
 You may add IDs using the `addIDs` parameter, like so:
 
-```
+```php
 $addIds = $event->getParam('addIDs');
 $addIds[] = $asset->id();
 ```
@@ -176,32 +176,32 @@ $addIds[] = $asset->id();
 
 Modules can modify page bundles via the following events:
 
-- **static_site_export.bundle.item**
+- `static_site_export.bundle.item`
     - `resource`: The item representation
     - `frontMatter`: An `ArrayObject` containing page front matter
-- **static_site_export.bundle.media**
+- `static_site_export.bundle.media`
     - `resource`: The media representation
     - `frontMatter`: An `ArrayObject` containing page front matter
-- **static_site_export.bundle.item_set**
+- `static_site_export.bundle.item_set`
     - `resource`: The item set representation
     - `frontMatter`: An `ArrayObject` containing page front matter
-- **static_site_export.bundle.asset**
+- `static_site_export.bundle.asset`
     - `resource`: The asset representation
     - `frontMatter`: An `ArrayObject` containing page front matter
-- **static_site_export.bundle.site_page**
+- `static_site_export.bundle.site_page`
     - `resource`: The site page representation
     - `frontMatter`: An `ArrayObject` containing page front matter
 
 You may modify Hugo page front matter using the `frontMatter` parameter, like so:
 
-```
+```php
 $frontMatter = $event->getParam('frontMatter');
 $frontMatter['params']['myParam'] = 'foobar';
 ```
 
 You may add content (blocks) to pages using the `blocks` parameter, like so:
 
-```
+```php
 $blocks = $event->getParam('blocks');
 $frontMatter = [];
 $markdown = 'My block';
@@ -218,7 +218,7 @@ The export job executes quite a few shell commands. These are not logged by defa
 because for large sites the log will likely grow to surpass the memory limit. For
 debugging, modules can turn on command logging in module configuration:
 
-```
+```php
 'static_site_export' => [
     'log_commands' => true,
 ]
