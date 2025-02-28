@@ -320,6 +320,8 @@ class ExportStaticSite extends AbstractJob
             'draft' => $sitePage->isPublic() ? false : true,
             'params' => [
                 'pageSlug' => $sitePage->slug(),
+                'layout' => $sitePage->layout(),
+                'layoutData' => $sitePage->layoutData(),
             ],
         ]);
 
@@ -764,6 +766,7 @@ class ExportStaticSite extends AbstractJob
             $frontMatterBlock = new ArrayObject([
                 'params' => [
                     'class' => sprintf('block-%s', $block->layout()),
+                    'layoutData' => $block->layoutData(),
                 ],
             ]);
             $blockLayout = $this->get('StaticSiteExport\BlockLayoutManager')->get($block->layout());
