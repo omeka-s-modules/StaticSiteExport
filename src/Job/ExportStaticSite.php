@@ -139,7 +139,7 @@ class ExportStaticSite extends AbstractJob
             ],
         ]);
 
-        $blocks = $this->getResourcePageBlocks('items', $item, $frontMatterPage);
+        $blocks = $this->getResourcePageBlocks($item, $frontMatterPage);
 
         // Trigger the item bundle event.
         $this->triggerEvent(
@@ -175,7 +175,7 @@ class ExportStaticSite extends AbstractJob
             ],
         ]);
 
-        $blocks = $this->getResourcePageBlocks('media', $media, $frontMatterPage);
+        $blocks = $this->getResourcePageBlocks($media, $frontMatterPage);
 
         // Trigger the media bundle event.
         $this->triggerEvent(
@@ -244,7 +244,7 @@ class ExportStaticSite extends AbstractJob
             ],
         ]);
 
-        $blocks = $this->getResourcePageBlocks('item_sets', $itemSet, $frontMatterPage);
+        $blocks = $this->getResourcePageBlocks($itemSet, $frontMatterPage);
 
         // Trigger the item set bundle event.
         $this->triggerEvent(
@@ -267,9 +267,10 @@ class ExportStaticSite extends AbstractJob
         $asset = $this->get('Omeka\ApiManager')->read('assets', $assetId)->getContent();
 
         $this->makeDirectory(sprintf('content/assets/%s', $asset->id()));
+        $this->makeDirectory(sprintf('content/assets/%s/blocks', $asset->id()));
 
         // Add Hugo front matter.
-        $frontMatter = new ArrayObject([
+        $frontMatterPage = new ArrayObject([
             'date' => date('c'),
             'title' => $asset->name(),
             'draft' => false,
@@ -278,30 +279,19 @@ class ExportStaticSite extends AbstractJob
             ],
         ]);
 
-        // Add the asset image.
-        $markdown = $this->getFigureShortcode([
-            'type' => 'image',
-            'filePage' => sprintf('/assets/%s', $asset->id()),
-            'fileResource' => 'file',
-            'imgPage' => sprintf('/assets/%s', $asset->id()),
-            'imgResource' => 'file',
-            'linkPage' => sprintf('/assets/%s', $asset->id()),
-            'linkResource' => 'file',
-        ]);
+        $blocks = new ArrayObject;
 
-        // Trigger the "static_site_export.bundle.asset" event.
+        // Trigger the asset bundle event.
         $this->triggerEvent(
             'static_site_export.bundle.asset',
             [
                 'resource' => $asset,
-                'frontMatter' => $frontMatter,
+                'frontMatter' => $frontMatterPage,
+                'blocks' => $blocks,
             ]
         );
 
-        $this->makeFile(
-            sprintf('content/assets/%s/index.md', $asset->id()),
-            json_encode($frontMatter, JSON_PRETTY_PRINT) . "\n" . $markdown
-        );
+        $this->makeBundleFiles('assets', $asset, $frontMatterPage, $blocks);
 
         // Note that $asset does not provide direct access to the asset's extension.
         $extension = substr($asset->filename(), strrpos($asset->filename(), '.') + 1);
@@ -757,10 +747,22 @@ class ExportStaticSite extends AbstractJob
         return $this->resourcePageBlocks;
     }
 
-    public function getResourcePageBlocks(string $resourceType, AbstractEntityRepresentation $resource, ArrayObject $frontMatterPage) : ArrayObject
+    /**
+     * Get resource page blocks for the passed resource.
+     */
+    public function getResourcePageBlocks(AbstractEntityRepresentation $resource, ArrayObject $frontMatterPage) : ArrayObject
     {
-        // Add configured resource page blocks.
         $blocks = new ArrayObject;
+        if ($resource instanceof ItemRepresentation) {
+            $resourceType = 'items';
+        } elseif ($resource instanceof MediaRepresentation) {
+            $resourceType = 'media';
+        } elseif ($resource instanceof ItemSetRepresentation) {
+            $resourceType = 'item_sets';
+        } else {
+            // Only items, media, and item sets have resource page blocks.
+            return $blocks;
+        }
         $blockLayoutNames = $this->getResourcePageBlockLayouts()[$resourceType];
         foreach ($blockLayoutNames as $blockLayoutName) {
             $blockLayout = $this->get('StaticSiteExport\ResourcePageBlockLayoutManager')->get($blockLayoutName);

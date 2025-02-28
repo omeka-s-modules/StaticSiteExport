@@ -106,7 +106,7 @@ SQL;
 
                 $frontMatter = [
                     'params' => [
-                        'class' => 'resource-page-block-staticSiteExportItemList',
+                        'class' => 'resource-page-block-sseItemLink',
                     ],
                 ];
                 $markdown = sprintf("## Item\n%s", $job->getLinkMarkdown($media->item(), [
@@ -114,7 +114,7 @@ SQL;
                     'thumbnailHeight' => 40,
                 ]));
                 $blocks[] = [
-                    'name' => 'itemList',
+                    'name' => 'sseItemLink',
                     'frontMatter' => $frontMatter,
                     'markdown' => $markdown,
                 ];
@@ -131,7 +131,7 @@ SQL;
 
                 $frontMatter = [
                     'params' => [
-                        'class' => 'resource-page-block-staticSiteExportItemList',
+                        'class' => 'resource-page-block-sseItemList',
                     ],
                 ];
                 $items = $job->get('Omeka\ApiManager')->search('items', [
@@ -152,12 +152,43 @@ SQL;
                     );
                 }
                 $blocks[] = [
-                    'name' => 'staticSiteExportItemList',
+                    'name' => 'sseItemList',
                     'frontMatter' => $frontMatter,
                     'markdown' => $markdown,
                 ];
             }
         );
+        // Add the figure block to the asset page.
+        $sharedEventManager->attach(
+            'StaticSiteExport\Job\ExportStaticSite',
+            'static_site_export.bundle.asset',
+            function (Event $event) {
+                $job = $event->getTarget();
+                $asset = $event->getParam('resource');
+                $blocks = $event->getParam('blocks');
+
+                $frontMatter = [
+                    'params' => [
+                        'class' => 'resource-page-block-sseAsset',
+                    ],
+                ];
+                $markdown = $job->getFigureShortcode([
+                    'type' => 'image',
+                    'filePage' => sprintf('/assets/%s', $asset->id()),
+                    'fileResource' => 'file',
+                    'imgPage' => sprintf('/assets/%s', $asset->id()),
+                    'imgResource' => 'file',
+                    'linkPage' => sprintf('/assets/%s', $asset->id()),
+                    'linkResource' => 'file',
+                ]);
+                $blocks[] = [
+                    'name' => 'sseAsset',
+                    'frontMatter' => $frontMatter,
+                    'markdown' => $markdown,
+                ];
+            }
+        );
+
     }
 
     public static function sitesDirectoryPathIsValid(string $sitesDirectoryPath)
