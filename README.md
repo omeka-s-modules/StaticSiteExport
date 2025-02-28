@@ -199,6 +199,19 @@ $frontMatter = $event->getParam('frontMatter');
 $frontMatter['params']['myParam'] = 'foobar';
 ```
 
+You may add content (blocks) to pages using the `blocks` parameter, like so:
+
+```
+$blocks = $event->getParam('blocks');
+$frontMatter = [];
+$markdown = 'My block';
+$blocks[] = [
+    'name' => 'my-block',
+    'frontMatter' => $frontMatter,
+    'markdown' => $markdown,
+];
+```
+
 ### Logging commands
 
 The export job executes quite a few shell commands. These are not logged by default
