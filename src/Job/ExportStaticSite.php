@@ -369,19 +369,19 @@ class ExportStaticSite extends AbstractJob
      * Modules can use the "static_site_export.ids.*" event to add resources that
      * were not automatically added by this module.
      */
-    public function setAddedIds(string $resourceType, array $ids)
+    public function setAddedIds(string $resourceType, array $ids) : array
     {
-            $addIds = new ArrayObject;
-            $this->triggerEvent(
-                sprintf('static_site_export.ids.%s', $resourceType),
-                [
-                    'ids' => $ids,
-                    'addIds' => $addIds,
-                ]
-            );
-            // Include IDs added via the event.
-            $addIds = array_filter(array_values($addIds->getArrayCopy()), 'is_numeric');
-            return array_unique(array_merge($ids, $addIds));
+        $addIds = new ArrayObject;
+        $this->triggerEvent(
+            sprintf('static_site_export.ids.%s', $resourceType),
+            [
+                'ids' => $ids,
+                'addIds' => $addIds,
+            ]
+        );
+        // Include IDs added via the event.
+        $addIds = array_filter(array_values($addIds->getArrayCopy()), 'is_numeric');
+        return array_unique(array_merge($ids, $addIds));
     }
 
     /**
@@ -688,7 +688,7 @@ class ExportStaticSite extends AbstractJob
     /**
      * Get the resource page blocks configuration from the site's theme.
      */
-    public function getResourcePageBlockLayouts()
+    public function getResourcePageBlockLayouts() : array
     {
         if (null === $this->resourcePageBlocks) {
             // Must set some things before fetching the resolved resource page
@@ -880,7 +880,7 @@ class ExportStaticSite extends AbstractJob
     /**
      * Get the "omeka-thumbnail" shortcode for the passed resource.
      */
-    public function getThumbnailShortcode(AbstractResourceEntityRepresentation $resource, array $options = [])
+    public function getThumbnailShortcode(AbstractResourceEntityRepresentation $resource, array $options = []) : string
     {
         $defaultOptions = [
             'thumbnailType' => 'large',
