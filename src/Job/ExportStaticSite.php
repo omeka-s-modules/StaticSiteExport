@@ -271,7 +271,6 @@ class ExportStaticSite extends AbstractJob
 
         // Add Hugo front matter.
         $frontMatterPage = new ArrayObject([
-            'date' => date('c'),
             'title' => $asset->name(),
             'draft' => false,
             'params' => [
