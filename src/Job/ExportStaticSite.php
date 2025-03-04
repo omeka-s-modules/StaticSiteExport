@@ -321,6 +321,8 @@ class ExportStaticSite extends AbstractJob
                 'pageSlug' => $sitePage->slug(),
                 'layout' => $sitePage->layout(),
                 'layoutData' => $sitePage->layoutData(),
+                'classes' => [],
+                'inlineStyles' => [],
             ],
         ]);
 
@@ -335,6 +337,24 @@ class ExportStaticSite extends AbstractJob
                 'blocks' => $blocks,
             ]
         );
+
+        // Set the resolved classes and inline styles to front matter.
+        switch ($sitePage->layout()) {
+            case 'grid':
+                $gridColumns = (int) $sitePage->layoutDataValue('grid_columns');
+                $gridColumnGap = (int) $sitePage->layoutDataValue('grid_column_gap', 10);
+                $gridRowGap = (int) $sitePage->layoutDataValue('grid_row_gap', 10);
+
+                $frontMatterPage['params']['classes'][] = 'page-layout-grid';
+                $frontMatterPage['params']['classes'][] = sprintf('grid-template-columns-%s', $gridColumns);
+                $frontMatterPage['params']['inlineStyles'][] = sprintf('column-gap: %spx;', $gridColumnGap);
+                $frontMatterPage['params']['inlineStyles'][] = sprintf('row-gap: %spx;', $gridRowGap);
+                break;
+            case '':
+            default:
+                $frontMatterPage['params']['classes'][] = 'page-layout-normal';
+                break;
+        }
 
         $this->makeBundleFiles(sprintf('pages/%s', $sitePage->slug()), $sitePage, $frontMatterPage, $blocks);
     }
