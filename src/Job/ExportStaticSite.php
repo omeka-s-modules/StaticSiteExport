@@ -741,7 +741,7 @@ class ExportStaticSite extends AbstractJob
         foreach ($blockLayoutNames as $blockLayoutName) {
             $frontMatterBlock = new ArrayObject([
                 'params' => [
-                    'class' => sprintf('resource-page-block-%s', $blockLayoutName),
+                    'layout' => $blockLayoutName,
                 ],
             ]);
             $blockLayout = $this->get('StaticSiteExport\ResourcePageBlockLayoutManager')->get($blockLayoutName);
@@ -764,7 +764,7 @@ class ExportStaticSite extends AbstractJob
         foreach ($sitePage->blocks() as $block) {
             $frontMatterBlock = new ArrayObject([
                 'params' => [
-                    'class' => sprintf('block-%s', $block->layout()),
+                    'layout' => $block->layout(),
                     'layoutData' => $block->layoutData(),
                 ],
             ]);
