@@ -15,7 +15,7 @@ class Unknown implements NavigationLinkInterface
         ?int $weight
     ): void {
         $menu->append([
-            'name' => 'Unknown',
+            'name' => $job->translate('Unknown'),
             'identifier' => $id,
             'parent' => $parentId,
             'pageRef' => '/',

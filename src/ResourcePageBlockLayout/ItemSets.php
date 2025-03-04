@@ -17,7 +17,7 @@ class ItemSets implements ResourcePageBlockLayoutInterface
         if (!$itemSets) {
             return '';
         }
-        $block = [sprintf("## Item sets\n")];
+        $block = [sprintf("## %s\n", $job->translate('Item sets'))];
         foreach ($itemSets as $itemSet) {
             if (!in_array($itemSet->id(), $job->getItemSetIds())) {
                 continue; // Item set not in site.

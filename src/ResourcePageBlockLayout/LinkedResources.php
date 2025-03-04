@@ -33,7 +33,7 @@ class LinkedResources implements ResourcePageBlockLayoutInterface
             $linkedResourcesProperties[$propertyId]['resources'][] = $adapter->getRepresentation($resource);
         }
         // Generate the linked resources markdown.
-        $block = [sprintf("## Linked resources\n")];
+        $block = [sprintf("## %s\n", $job->translate('Linked resources'))];
         foreach ($linkedResourcesProperties as $linkedResourcesProperty) {
             $block[] = sprintf("%s", $linkedResourcesProperty['property_label']);
             foreach ($linkedResourcesProperty['resources'] as $linkedResource) {

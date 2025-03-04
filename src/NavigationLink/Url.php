@@ -15,7 +15,7 @@ class Url implements NavigationLinkInterface
         ?int $weight
     ): void {
         $menu->append([
-            'name' => $navLink['data']['label'] ?: 'URL',
+            'name' => $navLink['data']['label'] ?: $job->translate('URL'),
             'identifier' => $id,
             'parent' => $parentId,
             'url' => $navLink['data']['url'],

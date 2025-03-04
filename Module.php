@@ -109,7 +109,7 @@ SQL;
                         'layout' => 'sseItemLink', // namespace with module name
                     ],
                 ];
-                $markdown = sprintf("## Item\n%s", $job->getLinkMarkdown($media->item(), [
+                $markdown = sprintf("## %s\n%s", $job->translate('Item'), $job->getLinkMarkdown($media->item(), [
                     'thumbnailType' => 'square',
                     'thumbnailHeight' => 40,
                 ]));
@@ -141,7 +141,7 @@ SQL;
                 if (!$items) {
                     return;
                 }
-                $markdown = "## Items\n";
+                $markdown = sprintf("## %s\n", $job->translate('Items'));
                 foreach ($items as $item) {
                     $markdown .= sprintf(
                         "- %s\n",

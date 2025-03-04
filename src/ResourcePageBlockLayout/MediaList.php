@@ -17,7 +17,7 @@ class MediaList implements ResourcePageBlockLayoutInterface
         if (!$media) {
             return '';
         }
-        $block = [sprintf("## Media\n")];
+        $block = [sprintf("## %s\n", $job->translate('Media'))];
         foreach ($media as $media) {
             $block[] = sprintf(
                 '- %s',

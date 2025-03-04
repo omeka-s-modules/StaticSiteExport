@@ -15,7 +15,7 @@ class Browse implements NavigationLinkInterface
         ?int $weight
     ): void {
         $menu->append([
-            'name' => $navLink['data']['label'] ?: 'Browse items',
+            'name' => $navLink['data']['label'] ?: $job->translate('Browse'),
             'identifier' => $id,
             'parent' => $parentId,
             'pageRef' => '/items',

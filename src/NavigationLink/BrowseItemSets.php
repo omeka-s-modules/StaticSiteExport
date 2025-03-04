@@ -15,7 +15,7 @@ class BrowseItemSets implements NavigationLinkInterface
         ?int $weight
     ): void {
         $menu->append([
-            'name' => $navLink['data']['label'] ?: 'Browse item sets',
+            'name' => $navLink['data']['label'] ?: $job->translate('Browse item sets'),
             'identifier' => $id,
             'parent' => $parentId,
             'pageRef' => '/item-sets',

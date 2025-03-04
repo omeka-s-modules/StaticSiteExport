@@ -5,6 +5,7 @@ use ArrayObject;
 use DateTime;
 use Doctrine\DBAL\Connection;
 use Laminas\EventManager\Event;
+use Locale;
 use Omeka\Api\Representation\AbstractEntityRepresentation;
 use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
 use Omeka\Api\Representation\AssetRepresentation;
@@ -70,10 +71,18 @@ class ExportStaticSite extends AbstractJob
     protected $resourcePageBlocks;
 
     /**
+     * The current theme.
+     */
+    protected $currentTheme;
+
+    /**
      * Export the static site.
      */
     public function perform() : void
     {
+        // Must set some things before getting started.
+        $this->prepareSite();
+
         $this->createSiteDirectory();
 
         // Create the items section.
@@ -483,6 +492,26 @@ class ExportStaticSite extends AbstractJob
     }
 
     /**
+     * Prepare the site.
+     */
+    public function prepareSite() : void
+    {
+        $themeManager = $this->get('Omeka\Site\ThemeManager');
+        $siteSettings = $this->get('Omeka\Settings\Site');
+        $site = $this->getStaticSite()->site();
+        $this->currentTheme = $themeManager->getTheme($site->theme());
+        $themeManager->setCurrentTheme($this->currentTheme);
+        $siteSettings->setTargetId($site->id());
+        $locale = $siteSettings->get('locale');
+        if ($locale) {
+            if (extension_loaded('intl') && 'debug' !== $locale) {
+                Locale::setDefault($locale);
+            }
+            $this->get('MvcTranslator')->getDelegatedTranslator()->setLocale($locale);
+        }
+    }
+
+    /**
      * Create the static site directory.
      */
     public function createSiteDirectory() : void
@@ -711,17 +740,9 @@ class ExportStaticSite extends AbstractJob
     public function getResourcePageBlockLayouts() : array
     {
         if (null === $this->resourcePageBlocks) {
-            // Must set some things before fetching the resolved resource page
-            // blocks from the theme configuration.
-            $themeManager = $this->get('Omeka\Site\ThemeManager');
+            // Fetch the resolved resource page blocks from theme configuration.
             $resourcePageBlockLayoutManager = $this->get('Omeka\ResourcePageBlockLayoutManager');
-            $siteSettings = $this->get('Omeka\Settings\Site');
-
-            $site = $this->getStaticSite()->site();
-            $currentTheme = $themeManager->getTheme($site->theme());
-            $themeManager->setCurrentTheme($currentTheme);
-            $siteSettings->setTargetId($site->id());
-            $resourceTypes = $resourcePageBlockLayoutManager->getResourcePageBlocks($currentTheme);
+            $resourceTypes = $resourcePageBlockLayoutManager->getResourcePageBlocks($this->currentTheme);
 
             // Flatten the layouts for each resource type, prioritizing the
             // "main" region. We do this because the static site's resource
@@ -865,6 +886,14 @@ class ExportStaticSite extends AbstractJob
             $string = str_replace($character, sprintf('\%s', $character), $string);
         }
         return $string;
+    }
+
+    /**
+     * Translate a message.
+     */
+    public function translate($message)
+    {
+        return $this->get('MvcTranslator')->translate($message);
     }
 
     /**
