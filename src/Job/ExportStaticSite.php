@@ -786,10 +786,24 @@ class ExportStaticSite extends AbstractJob
                 'params' => [
                     'layout' => $block->layout(),
                     'layoutData' => $block->layoutData(),
+                    'classes' => [],
+                    'inlineStyles' => [],
                 ],
             ]);
             $blockLayout = $this->get('StaticSiteExport\BlockLayoutManager')->get($block->layout());
             $blockMarkdown = $blockLayout->getMarkdown($this, $block, $frontMatterPage, $frontMatterBlock);
+
+            // Set the resolved classes and inline styles to front matter.
+            $blockLayoutHelper = $this->get('ViewHelperManager')->get('blockLayout');
+            $frontMatterBlock['params']['classes'] = array_merge(
+                $frontMatterBlock['params']['classes'],
+                $blockLayoutHelper->getBlockClasses($block)
+            );
+            $frontMatterBlock['params']['inlineStyles'] = array_merge(
+                $frontMatterBlock['params']['inlineStyles'],
+                $blockLayoutHelper->getBlockInlineStyles($block)
+            );
+
             $blocks[] = [
                 'name' => $block->layout(),
                 'frontMatter' => $frontMatterBlock,
