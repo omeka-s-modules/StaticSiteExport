@@ -106,7 +106,7 @@ SQL;
 
                 $frontMatter = [
                     'params' => [
-                        'class' => 'resource-page-block-sseItemLink',
+                        'layout' => 'sseItemLink', // namespace with module name
                     ],
                 ];
                 $markdown = sprintf("## Item\n%s", $job->getLinkMarkdown($media->item(), [
@@ -131,7 +131,7 @@ SQL;
 
                 $frontMatter = [
                     'params' => [
-                        'class' => 'resource-page-block-sseItemList',
+                        'layout' => 'sseItemList', // namespace with module name
                     ],
                 ];
                 $items = $job->get('Omeka\ApiManager')->search('items', [
@@ -169,7 +169,7 @@ SQL;
 
                 $frontMatter = [
                     'params' => [
-                        'class' => 'resource-page-block-sseAsset',
+                        'layout' => 'sseAsset', // namespace with module name
                     ],
                 ];
                 $markdown = $job->getFigureShortcode([
