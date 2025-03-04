@@ -68,7 +68,7 @@ SQL;
 
     public function attachListeners(SharedEventManagerInterface $sharedEventManager)
     {
-        // Add assets from the "asset" block layout
+        // Add asset IDs.
         $sharedEventManager->attach(
             'StaticSiteExport\Job\ExportStaticSite',
             'static_site_export.ids.assets',
@@ -77,6 +77,7 @@ SQL;
                 $entityManager = $job->get('Omeka\EntityManager');
                 $addIds = $event->getParam('addIds');
 
+                // Add assets from the "asset" block layout
                 $dql = "SELECT b
                     FROM Omeka\Entity\SitePageBlock b
                     JOIN b.page p
@@ -91,6 +92,24 @@ SQL;
                 foreach ($blocks as $block) {
                     foreach ($block->getData() as $assetData) {
                         $addIds[] = $assetData['id'];
+                    }
+                }
+
+                // Add assets from the block layout data.
+                $dql = "SELECT b
+                    FROM Omeka\Entity\SitePageBlock b
+                    JOIN b.page p
+                    JOIN p.site s
+                    WHERE s.id = :siteId";
+                $query = $entityManager->createQuery($dql);
+                $query->setParameters([
+                    'siteId' => $job->getStaticSite()->site()->id(),
+                ]);
+                $blocks = $query->getResult();
+                foreach ($blocks as $block) {
+                    $layoutData = $block->getLayoutData();
+                    if (isset($layoutData['background_image_asset']) && is_numeric($layoutData['background_image_asset'])) {
+                        $addIds[] = $layoutData['background_image_asset'];
                     }
                 }
             }
