@@ -86,7 +86,7 @@ class ExportStaticSite extends AbstractJob
         $this->createSiteDirectory();
 
         // Create the items section.
-        $this->makeFile('content/items/_index.md', json_encode(['title' => 'Items']));
+        $this->makeFile('content/items/_index.md', json_encode(['title' => $this->translate('Items')]));
         foreach (array_chunk($this->getItemIds(), 100) as $itemIdsChunk) {
             if ($this->shouldStop()) return;
             foreach ($itemIdsChunk as $itemId) {
@@ -94,7 +94,7 @@ class ExportStaticSite extends AbstractJob
             }
         }
         // Create the media section.
-        $this->makeFile('content/media/_index.md', json_encode(['title' => 'Media']));
+        $this->makeFile('content/media/_index.md', json_encode(['title' => $this->translate('Media')]));
         foreach (array_chunk($this->getMediaIds(), 100) as $mediaIdsChunk) {
             if ($this->shouldStop()) return;
             foreach ($mediaIdsChunk as $mediaId) {
@@ -102,7 +102,7 @@ class ExportStaticSite extends AbstractJob
             }
         }
         // Create the item sets section.
-        $this->makeFile('content/item-sets/_index.md', json_encode(['title' => 'Item sets']));
+        $this->makeFile('content/item-sets/_index.md', json_encode(['title' => $this->translate('Item sets')]));
         foreach (array_chunk($this->getItemSetIds(), 100) as $itemSetIdsChunk) {
             if ($this->shouldStop()) return;
             foreach ($itemSetIdsChunk as $itemSetId) {
@@ -110,7 +110,7 @@ class ExportStaticSite extends AbstractJob
             }
         }
         // Create the assets section.
-        $this->makeFile('content/assets/_index.md', json_encode(['title' => 'Assets']));
+        $this->makeFile('content/assets/_index.md', json_encode(['title' => $this->translate('Assets')]));
         foreach (array_chunk($this->getAssetIds(), 100) as $assetIdsChunk) {
             if ($this->shouldStop()) return;
             foreach ($assetIdsChunk as $assetId) {
@@ -118,7 +118,7 @@ class ExportStaticSite extends AbstractJob
             }
         }
         // Create the pages section.
-        $this->makeFile('content/pages/_index.md', json_encode(['title' => 'Site pages']));
+        $this->makeFile('content/pages/_index.md', json_encode(['title' => $this->translate('Site pages')]));
         $sitePages = $this->getStaticSite()->site()->pages();
         foreach ($sitePages as $sitePage) {
             $this->createSitePageBundle($sitePage);
