@@ -803,10 +803,11 @@ class ExportStaticSite extends AbstractJob
     {
         $blocks = new ArrayObject;
         foreach ($sitePage->blocks() as $block) {
+            $layoutData = $block->layoutData();
             $frontMatterBlock = new ArrayObject([
                 'params' => [
                     'layout' => $block->layout(),
-                    'layoutData' => $block->layoutData(),
+                    'layoutData' => $layoutData,
                     'classes' => [],
                     'inlineStyles' => [],
                 ],
@@ -816,13 +817,20 @@ class ExportStaticSite extends AbstractJob
 
             // Set the resolved classes and inline styles to front matter.
             $blockLayoutHelper = $this->get('ViewHelperManager')->get('blockLayout');
+            $classes = $blockLayoutHelper->getBlockClasses($block);
+            $inlineStyles = $blockLayoutHelper->getBlockInlineStyles($block);
+            // Remove the "background-image" style, if any. This will be handled
+            // in the layout.
+            $inlineStyles = array_filter($inlineStyles, function ($inlineStyle) {
+                return !preg_match('/^background-image:/', $inlineStyle);
+            });
             $frontMatterBlock['params']['classes'] = array_merge(
                 $frontMatterBlock['params']['classes'],
-                $blockLayoutHelper->getBlockClasses($block)
+                $classes
             );
             $frontMatterBlock['params']['inlineStyles'] = array_merge(
                 $frontMatterBlock['params']['inlineStyles'],
-                $blockLayoutHelper->getBlockInlineStyles($block)
+                $inlineStyles
             );
 
             $blocks[] = [
