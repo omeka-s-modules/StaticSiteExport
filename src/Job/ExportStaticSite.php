@@ -803,11 +803,11 @@ class ExportStaticSite extends AbstractJob
     {
         $blocks = new ArrayObject;
         foreach ($sitePage->blocks() as $block) {
-            $layoutData = $block->layoutData();
             $frontMatterBlock = new ArrayObject([
                 'params' => [
                     'layout' => $block->layout(),
-                    'layoutData' => $layoutData,
+                    'layoutData' => $block->layoutData(),
+                    'data' => $block->data(),
                     'classes' => [],
                     'inlineStyles' => [],
                 ],
@@ -824,6 +824,12 @@ class ExportStaticSite extends AbstractJob
             $inlineStyles = array_filter($inlineStyles, function ($inlineStyle) {
                 return !preg_match('/^background-image:/', $inlineStyle);
             });
+            // Set special classes on blockGroups when page layout is a grid.
+            if ('blockGroup' === $block->layout() && 'grid' === $sitePage->layout()) {
+                $classes[] = 'block-group-grid';
+                $classes[] = 'grid-position-1';
+                $classes[] = sprintf('grid-span-%s', $sitePage->layoutDataValue('grid_columns'));
+            }
             $frontMatterBlock['params']['classes'] = array_merge(
                 $frontMatterBlock['params']['classes'],
                 $classes
