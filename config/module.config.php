@@ -13,11 +13,11 @@ return [
                 'pageTitle' => BlockLayout\PageTitle::class,
                 'asset' => BlockLayout\Asset::class,
                 'html' => BlockLayout\Html::class,
+                'lineBreak' => BlockLayout\LineBreak::class,
                 /*
                 // 'blockGroup' => Site\BlockLayout\BlockGroup::class,
                 'browsePreview' => Site\BlockLayout\BrowsePreview::class,
                 'itemWithMetadata' => BlockLayout\ItemWithMetadata::class,
-                'lineBreak' => Site\BlockLayout\LineBreak::class,
                 'listOfPages' => BlockLayout\PageList::class,
                 // 'listOfSites' => Site\BlockLayout\ListOfSites::class,
                 'media' => BlockLayout\Media::class,
