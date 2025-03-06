@@ -17,16 +17,10 @@ class MediaList implements ResourcePageBlockLayoutInterface
         if (!$media) {
             return '';
         }
-        $block = [sprintf("## %s\n", $job->translate('Media'))];
-        foreach ($media as $media) {
-            $block[] = sprintf(
-                '- %s',
-                $job->getLinkMarkdown($media, [
-                    'thumbnailType' => 'square',
-                    'thumbnailHeight' => 40,
-                ])
-            );
-        }
-        return implode("\n", $block);
+        return sprintf(
+            "## %s\n%s",
+            $job->translate('Media'),
+            $job->getMediaListMarkdown($resource, $frontMatterPage, $frontMatterBlock)
+        );
     }
 }

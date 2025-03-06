@@ -911,18 +911,6 @@ class ExportStaticSite extends AbstractJob
     }
 
     /**
-     * Get the "omeka-figure" shortcode using the passed arguments.
-     */
-    public function getFigureShortcode(array $args) : string
-    {
-        $shortcodeArgs = [];
-        foreach ($args as $key => $value) {
-            $shortcodeArgs[] = sprintf('%s="%s"', $key, $value);
-        }
-        return sprintf('{{< omeka-figure %s >}}', implode(' ', $shortcodeArgs));
-    }
-
-    /**
      * Get the markdown for a link to a resource, including thumbnail.
      *
      * Options are the following:
@@ -952,6 +940,86 @@ class ExportStaticSite extends AbstractJob
             $resource->id(),
             $this->escape(['"'], $resource->displayTitle()),
         );
+    }
+
+    /**
+     * Get the markdown for the values of a resource.
+     */
+    public function getValuesMarkdown(
+        AbstractResourceEntityRepresentation $resource,
+        ArrayObject $frontMatterPage,
+        ArrayObject $frontMatterBlock
+    ) : string {
+        $markdown = [];
+        foreach ($resource->values() as $term => $valueData) {
+            $property = $valueData['property'];
+            $altLabel = $valueData['alternate_label'];
+            $altComment = $valueData['alternate_comment'];
+            $markdown[] = sprintf("%s", $altLabel ?? $this->translate($property->label()));
+            foreach ($valueData['values'] as $value) {
+                $dataType = $this->get('StaticSiteExport\DataTypeManager')->get($value->type());
+                $markdown[] = sprintf(': %s', $dataType->getMarkdown($this, $value, $frontMatterPage, $frontMatterBlock));
+            }
+            $markdown[] = '';
+        }
+        return $markdown ? implode("\n", $markdown) : '';
+    }
+
+    /**
+     * Get the markdown for the item sets of an item.
+     */
+    public function getItemSetListMarkdown(
+        AbstractResourceEntityRepresentation $resource,
+        ArrayObject $frontMatterPage,
+        ArrayObject $frontMatterBlock
+    ) : string {
+        $markdown = [];
+        foreach ($resource->itemSets() as $itemSet) {
+            if (!in_array($itemSet->id(), $this->getItemSetIds())) {
+                continue; // Item set not in site.
+            }
+            $markdown[] = sprintf(
+                '- %s',
+                $this->getLinkMarkdown($itemSet, [
+                    'thumbnailType' => 'square',
+                    'thumbnailHeight' => 40,
+                ])
+            );
+        }
+        return implode("\n", $markdown);
+    }
+
+    /**
+     * Get the markdown for the media of an item.
+     */
+    public function getMediaListMarkdown(
+        AbstractResourceEntityRepresentation $resource,
+        ArrayObject $frontMatterPage,
+        ArrayObject $frontMatterBlock
+    ) : string {
+        $markdown = [];
+        foreach ($resource->media() as $media) {
+            $markdown[] = sprintf(
+                '- %s',
+                $this->getLinkMarkdown($media, [
+                    'thumbnailType' => 'square',
+                    'thumbnailHeight' => 40,
+                ])
+            );
+        }
+        return implode("\n", $markdown);
+    }
+
+    /**
+     * Get the "omeka-figure" shortcode using the passed arguments.
+     */
+    public function getFigureShortcode(array $args) : string
+    {
+        $shortcodeArgs = [];
+        foreach ($args as $key => $value) {
+            $shortcodeArgs[] = sprintf('%s="%s"', $key, $value);
+        }
+        return sprintf('{{< omeka-figure %s >}}', implode(' ', $shortcodeArgs));
     }
 
     /**
