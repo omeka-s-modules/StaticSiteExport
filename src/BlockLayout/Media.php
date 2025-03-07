@@ -40,13 +40,23 @@ class Media implements BlockLayoutInterface
             $classes[] = 'attachment-count-' . count($attachments);
         }
 
+        $frontMatterBlock['params']['container'] = [
+            'classes' => $classes,
+        ];
+
         $markdown = [];
         foreach($attachments as $attachment) {
             $item = $attachment->item();
             $media = $attachment->media() ?: $item->primaryMedia();
             // @todo: Finish cribbing off of file.phtml
+            if ('thumbnail' === $mediaDisplay) {
+                $markdown[] = $job->getThumbnailShortcode($media, $thumbnailType);
+            } else {
+                $mediaRenderer = $job->get('StaticSiteExport\MediaRendererManager')->get($media->renderer());
+                $markdown[] = $mediaRenderer->getMarkdown($job, $media, $frontMatterPage, $frontMatterBlock);
+            }
         }
 
-        return implode("\n", $markdown);
+        return implode("\n\n", $markdown);
     }
 }

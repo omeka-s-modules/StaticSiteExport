@@ -331,7 +331,7 @@ class ExportStaticSite extends AbstractJob
                 'layout' => $sitePage->layout(),
                 'layoutData' => $sitePage->layoutData(),
                 'classes' => [],
-                'inlineStyles' => [],
+                'styles' => [],
             ],
         ]);
 
@@ -356,8 +356,8 @@ class ExportStaticSite extends AbstractJob
 
                 $frontMatterPage['params']['classes'][] = 'page-layout-grid';
                 $frontMatterPage['params']['classes'][] = sprintf('grid-template-columns-%s', $gridColumns);
-                $frontMatterPage['params']['inlineStyles'][] = sprintf('column-gap: %spx;', $gridColumnGap);
-                $frontMatterPage['params']['inlineStyles'][] = sprintf('row-gap: %spx;', $gridRowGap);
+                $frontMatterPage['params']['styles'][] = sprintf('column-gap: %spx;', $gridColumnGap);
+                $frontMatterPage['params']['styles'][] = sprintf('row-gap: %spx;', $gridRowGap);
                 break;
             case '':
             default:
@@ -809,7 +809,7 @@ class ExportStaticSite extends AbstractJob
                     'layoutData' => $block->layoutData(),
                     'data' => $block->data(),
                     'classes' => [],
-                    'inlineStyles' => [],
+                    'styles' => [],
                 ],
             ]);
             $blockLayout = $this->get('StaticSiteExport\BlockLayoutManager')->get($block->layout());
@@ -818,11 +818,11 @@ class ExportStaticSite extends AbstractJob
             // Set the resolved classes and inline styles to front matter.
             $blockLayoutHelper = $this->get('ViewHelperManager')->get('blockLayout');
             $classes = $blockLayoutHelper->getBlockClasses($block);
-            $inlineStyles = $blockLayoutHelper->getBlockInlineStyles($block);
+            $styles = $blockLayoutHelper->getBlockInlineStyles($block);
             // Remove the "background-image" style, if any. This will be handled
             // in the layout.
-            $inlineStyles = array_filter($inlineStyles, function ($inlineStyle) {
-                return !preg_match('/^background-image:/', $inlineStyle);
+            $styles = array_filter($styles, function ($style) {
+                return !preg_match('/^background-image:/', $style);
             });
             // Set special classes on blockGroups when page layout is a grid.
             if ('blockGroup' === $block->layout() && 'grid' === $sitePage->layout()) {
@@ -834,9 +834,9 @@ class ExportStaticSite extends AbstractJob
                 $frontMatterBlock['params']['classes'],
                 $classes
             );
-            $frontMatterBlock['params']['inlineStyles'] = array_merge(
-                $frontMatterBlock['params']['inlineStyles'],
-                $inlineStyles
+            $frontMatterBlock['params']['styles'] = array_merge(
+                $frontMatterBlock['params']['styles'],
+                $styles
             );
 
             $blocks[] = [

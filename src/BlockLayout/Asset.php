@@ -28,6 +28,6 @@ class Asset implements BlockLayoutInterface
                 'caption' => $attachmentData['caption'] ? $job->escape(['"'], $attachmentData['caption']) : '',
             ]);
         }
-        return implode("\n", $markdown);
+        return implode("\n\n", $markdown);
     }
 }
