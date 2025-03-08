@@ -16,7 +16,7 @@ class MediaRender implements ResourcePageBlockLayoutInterface
         $media = $resource->primaryMedia();
         if (!$media) {
             // Account for resources with asset thumbnails.
-            return $job->getThumbnailShortcode($resource, 'large');
+            return $job->getThumbnailShortcode($resource, ['thumbnailType' => 'large']);
         }
         $mediaRenderer = $job->get('StaticSiteExport\MediaRendererManager')->get($media->renderer());
         return $mediaRenderer->getMarkdown($job, $media, $frontMatterPage, $frontMatterBlock);

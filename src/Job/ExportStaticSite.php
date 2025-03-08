@@ -1030,6 +1030,8 @@ class ExportStaticSite extends AbstractJob
         $defaultOptions = [
             'thumbnailType' => 'large',
             'thumbnailHeight' => null,
+            'linkPage' => null,
+            'linkResource' => null,
         ];
         $options = array_merge($defaultOptions, $options);
         $thumbnailSpec = $this->getThumbnailSpec($resource, $options['thumbnailType']);
@@ -1037,9 +1039,11 @@ class ExportStaticSite extends AbstractJob
             return '';
         }
         return sprintf(
-            '{{< omeka-thumbnail page="%s" resource="%s" height="%s" >}}',
+            '{{< omeka-thumbnail imgPage="%s" imgResource="%s" linkPage="%s" linkResource="%s" height="%s" >}}',
             $thumbnailSpec['page'],
             $thumbnailSpec['resource'],
+            $options['linkPage'],
+            $options['linkResource'],
             $options['thumbnailHeight']
         );
     }
@@ -1053,6 +1057,7 @@ class ExportStaticSite extends AbstractJob
      *  2. The primary media's asset thumbnail.
      *  3. The primary media's auto-generated thumbnail.
      *  4. The global thumbnail according to the primary media's file media type.
+     *  5. The default thumbnail if there's a primary media
      */
     public function getThumbnailSpec(AbstractEntityRepresentation $resource, string $thumbnailType) : array
     {
@@ -1084,6 +1089,8 @@ class ExportStaticSite extends AbstractJob
                 } else {
                     $thumbnailResource = '/thumbnails/default.png';
                 }
+            } elseif ($primaryMedia) {
+                $thumbnailResource = '/thumbnails/default.png';
             }
         }
         return [

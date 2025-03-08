@@ -23,6 +23,7 @@ class Media implements BlockLayoutInterface
         $thumbnailType = $block->dataValue('thumbnail_type', 'square');
         $showTitleOption = $block->dataValue('show_title_option', 'item_title');
 
+        // Set the classes to the block's container via front matter.
         $classes = ['media-embed'];
         if ('horizontal' === $layout) {
             $classes[] = 'layout-horizontal';
@@ -39,7 +40,6 @@ class Media implements BlockLayoutInterface
         } else {
             $classes[] = 'attachment-count-' . count($attachments);
         }
-
         $frontMatterBlock['params']['container'] = [
             'classes' => $classes,
         ];
@@ -48,12 +48,13 @@ class Media implements BlockLayoutInterface
         foreach($attachments as $attachment) {
             $item = $attachment->item();
             $media = $attachment->media() ?: $item->primaryMedia();
-            // @todo: Finish cribbing off of file.phtml
-            if ('thumbnail' === $mediaDisplay) {
-                $markdown[] = $job->getThumbnailShortcode($media, $thumbnailType);
-            } else {
-                $mediaRenderer = $job->get('StaticSiteExport\MediaRendererManager')->get($media->renderer());
-                $markdown[] = $mediaRenderer->getMarkdown($job, $media, $frontMatterPage, $frontMatterBlock);
+            if ($media) {
+                if ('thumbnail' === $mediaDisplay) {
+                    $markdown[] = $job->getThumbnailShortcode($media, ['thumbnailType' => $thumbnailType]);
+                } else {
+                    $mediaRenderer = $job->get('StaticSiteExport\MediaRendererManager')->get($media->renderer());
+                    $markdown[] = $mediaRenderer->getMarkdown($job, $media, $frontMatterPage, $frontMatterBlock);
+                }
             }
         }
 
