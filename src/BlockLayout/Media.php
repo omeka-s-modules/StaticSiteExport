@@ -23,7 +23,7 @@ class Media implements BlockLayoutInterface
         $thumbnailType = $block->dataValue('thumbnail_type', 'square');
         $showTitleOption = $block->dataValue('show_title_option', 'item_title');
 
-        // Set the classes to the block's container via front matter.
+        // Set the classes to the block's container div.
         $classes = ['media-embed'];
         if ('horizontal' === $layout) {
             $classes[] = 'layout-horizontal';
@@ -40,12 +40,12 @@ class Media implements BlockLayoutInterface
         } else {
             $classes[] = 'attachment-count-' . count($attachments);
         }
-        $frontMatterBlock['params']['container'] = [
-            'classes' => $classes,
-        ];
 
-        $markdown = [];
+        $markdown = [
+            sprintf('{{< omeka-div class="%s" >}}', implode(' ', $classes)),
+        ];
         foreach($attachments as $attachment) {
+            $markdown[] = '{{< omeka-div >}}';
             $item = $attachment->item();
             $media = $attachment->media() ?: $item->primaryMedia();
             if ($media) {
@@ -56,7 +56,9 @@ class Media implements BlockLayoutInterface
                     $markdown[] = $mediaRenderer->getMarkdown($job, $media, $frontMatterPage, $frontMatterBlock);
                 }
             }
+            $markdown[] = '{{< /omeka-div >}}';
         }
+        $markdown[] = '{{< /omeka-div >}}';
 
         return implode("\n\n", $markdown);
     }
