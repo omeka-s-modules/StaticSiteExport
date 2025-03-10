@@ -915,13 +915,13 @@ class ExportStaticSite extends AbstractJob
      *
      * Options are the following:
      *
-     *  - thumbnailType: The type of thumbnail, large, medium, or square (default: large)
+     *  - thumbnailType: The type of thumbnail, large, medium, or square (default: null)
      *  - thumbnailHeight: The height of the thumbnailm preserving aspect ratio (default: null)
      */
     public function getLinkMarkdown(AbstractResourceEntityRepresentation $resource, array $options = []) : string
     {
         $defaultOptions = [
-            'thumbnailType' => 'large',
+            'thumbnailType' => null,
             'thumbnailHeight' => null,
         ];
         $options = array_merge($defaultOptions, $options);
@@ -934,7 +934,7 @@ class ExportStaticSite extends AbstractJob
         }
         return sprintf(
             '%s[%s]({{< ref "/%s/%s" >}} "%s")',
-            $this->getThumbnailShortcode($resource, $options),
+            $options['thumbnailType'] ? $this->getThumbnailShortcode($resource, $options) : '',
             $this->escape(['[', ']'], $resource->displayTitle()),
             $resourceTypePath,
             $resource->id(),
