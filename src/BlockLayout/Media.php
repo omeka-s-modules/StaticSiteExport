@@ -48,6 +48,7 @@ class Media implements BlockLayoutInterface
             $markdown[] = '{{< omeka-div >}}';
             $item = $attachment->item();
             $media = $attachment->media() ?: $item->primaryMedia();
+            $caption = $attachment->caption();
             if ($media) {
                 if ('thumbnail' === $mediaDisplay) {
                     $markdown[] = $job->getThumbnailShortcode($media, ['thumbnailType' => $thumbnailType]);
@@ -55,6 +56,14 @@ class Media implements BlockLayoutInterface
                     $mediaRenderer = $job->get('StaticSiteExport\MediaRendererManager')->get($media->renderer());
                     $markdown[] = $mediaRenderer->getMarkdown($job, $media, $frontMatterPage, $frontMatterBlock);
                 }
+            }
+            if ('item_title' === $showTitleOption) {
+                $markdown[] = '{{% omeka-html %}}' .sprintf('### %s', $job->getLinkMarkdown($item)) . '{{% /omeka-html %}}';
+            } elseif ('file_name' === $showTitleOption) {
+                $markdown[] = '{{% omeka-html %}}' .sprintf('### %s', $media->displayTitle()) . '{{% /omeka-html %}}';
+            }
+            if ($caption) {
+                $markdown[] = $caption;
             }
             $markdown[] = '{{< /omeka-div >}}';
         }
