@@ -616,6 +616,7 @@ class ExportStaticSite extends AbstractJob
                 if (isset($menuEntry['pageRef']) && $query === substr($menuEntry['pageRef'], 0, strlen($query))) {
                     // Must remove the leading slash so Hugo builds the URL correctly.
                     $homepage = ltrim($menuEntry['pageRef'], '/');
+                    break;
                 }
             }
         }
