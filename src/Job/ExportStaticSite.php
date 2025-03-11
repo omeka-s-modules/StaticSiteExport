@@ -775,8 +775,11 @@ class ExportStaticSite extends AbstractJob
     /**
      * Get resource page blocks for the passed resource.
      */
-    public function getResourcePageBlocks(string $resourceType, AbstractEntityRepresentation $resource, ArrayObject $frontMatterPage) : ArrayObject
-    {
+    public function getResourcePageBlocks(
+        string $resourceType,
+        AbstractEntityRepresentation $resource,
+        ArrayObject $frontMatterPage
+    ) : ArrayObject {
         $blocks = new ArrayObject;
         $blockLayoutNames = $this->getResourcePageBlockLayouts()[$resourceType];
         foreach ($blockLayoutNames as $blockLayoutName) {
@@ -851,13 +854,19 @@ class ExportStaticSite extends AbstractJob
     /**
      * Make bundle files, including the index page and its block resources.
      */
-    public function makeBundleFiles(string $resourceContentPath, AbstractEntityRepresentation $resource, ArrayObject $frontMatterPage, ArrayObject $blocks) : void
-    {
+    public function makeBundleFiles(
+        string $resourceContentPath,
+        AbstractEntityRepresentation $resource,
+        ArrayObject $frontMatterPage,
+        ArrayObject $blocks
+    ) : void {
         // Make the block files.
         $blockPosition = 0;
         foreach ($blocks as $block) {
+            // Pad block numbers to get natural sorting for free.
+            $blockNumber = str_pad($blockPosition++, 4, '0', STR_PAD_LEFT);
             $this->makeFile(
-                sprintf('content/%s/blocks/%s-%s.md', $resourceContentPath, $blockPosition++, $block['name']),
+                sprintf('content/%s/blocks/%s-%s.md', $resourceContentPath, $blockNumber, $block['name']),
                 sprintf("%s\n%s", json_encode($block['frontMatter'], JSON_PRETTY_PRINT), $block['markdown'])
             );
         }
@@ -968,11 +977,8 @@ class ExportStaticSite extends AbstractJob
     /**
      * Get the markdown for the item sets of an item.
      */
-    public function getItemSetListMarkdown(
-        AbstractResourceEntityRepresentation $resource,
-        ArrayObject $frontMatterPage,
-        ArrayObject $frontMatterBlock
-    ) : string {
+    public function getItemSetListMarkdown(AbstractResourceEntityRepresentation $resource) : string
+    {
         $markdown = [];
         foreach ($resource->itemSets() as $itemSet) {
             if (!in_array($itemSet->id(), $this->getItemSetIds())) {
@@ -992,11 +998,8 @@ class ExportStaticSite extends AbstractJob
     /**
      * Get the markdown for the media of an item.
      */
-    public function getMediaListMarkdown(
-        AbstractResourceEntityRepresentation $resource,
-        ArrayObject $frontMatterPage,
-        ArrayObject $frontMatterBlock
-    ) : string {
+    public function getMediaListMarkdown(AbstractResourceEntityRepresentation $resource) : string
+    {
         $markdown = [];
         foreach ($resource->media() as $media) {
             $markdown[] = sprintf(
@@ -1008,6 +1011,27 @@ class ExportStaticSite extends AbstractJob
             );
         }
         return implode("\n", $markdown);
+    }
+
+    /**
+     * Get the markdown for an oEmbed.
+     */
+    public function getOembedMarkdown(array $data) : string
+    {
+        if (isset($data['html'])) {
+            return sprintf('{{< omeka-html >}}%s{{< /omeka-html >}}', $data['html']);
+        }
+        $type = $data['type'] ?? null;
+        if ('photo' === $type && isset($data['url'])) {
+            return sprintf(
+                '{{< figure src="%s" width="%s" height="%s" alt="%s" >}}',
+                $data['url'],
+                $data['width'] ?? '',
+                $data['height'] ?? '',
+                $data['title'] ?? ''
+            );
+        }
+        return '';
     }
 
     /**

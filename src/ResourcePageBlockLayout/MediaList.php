@@ -20,7 +20,7 @@ class MediaList implements ResourcePageBlockLayoutInterface
         return sprintf(
             "## %s\n%s",
             $job->translate('Media'),
-            $job->getMediaListMarkdown($resource, $frontMatterPage, $frontMatterBlock)
+            $job->getMediaListMarkdown($resource)
         );
     }
 }

@@ -1,19 +1,19 @@
 <?php
-namespace StaticSiteExport\MediaRenderer;
+namespace StaticSiteExport\BlockLayout;
 
 use ArrayObject;
-use Omeka\Api\Representation\MediaRepresentation;
+use Omeka\Api\Representation\SitePageBlockRepresentation;
 use Omeka\Job\JobInterface;
 
-class Oembed implements MediaRendererInterface
+class Oembed implements BlockLayoutInterface
 {
     public function getMarkdown(
         JobInterface $job,
-        MediaRepresentation $media,
+        SitePageBlockRepresentation $block,
         ArrayObject $frontMatterPage,
         ArrayObject $frontMatterBlock
     ): string {
-        $data = $media->mediaData();
+        $data = $block->data()['oembed'];
         return $job->getOembedMarkdown($data);
     }
 }
