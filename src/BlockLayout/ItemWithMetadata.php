@@ -16,6 +16,9 @@ class ItemWithMetadata implements BlockLayoutInterface
         $markdown = [];
         foreach ($block->attachments() as $attachment) {
             $item = $attachment->item();
+            if (!$item) {
+                continue;
+            }
             $markdown[] = $job->getValuesMarkdown($item, $frontMatterPage, $frontMatterBlock);
             $markdown[] = sprintf("### %s\n", $job->translate('Item sets'));
             $markdown[] = $job->getItemSetListMarkdown($item);
