@@ -46,11 +46,11 @@ class Media implements BlockLayoutInterface
         ];
         foreach($attachments as $attachment) {
             $item = $attachment->item();
-            $media = $attachment->media() ?: $item->primaryMedia();
-            $caption = $attachment->caption();
             if (!$item) {
                 continue;
             }
+            $media = $attachment->media() ?: $item->primaryMedia();
+            $caption = $attachment->caption();
             $markdown[] = '{{< omeka-div >}}';
             if ($media) {
                 if ('thumbnail' === $mediaDisplay) {
