@@ -17,10 +17,10 @@ return [
                 'itemWithMetadata' => BlockLayout\ItemWithMetadata::class,
                 'media' => BlockLayout\Media::class,
                 'oembed' => BlockLayout\Oembed::class,
+                'listOfPages' => BlockLayout\PageList::class,
                 /*
                 // 'blockGroup' => Site\BlockLayout\BlockGroup::class,
                 'browsePreview' => Site\BlockLayout\BrowsePreview::class,
-                'listOfPages' => BlockLayout\PageList::class,
                 // 'listOfSites' => Site\BlockLayout\ListOfSites::class,
                 'pageDateTime' => Site\BlockLayout\PageDateTime::class,
                 'tableOfContents' => Site\BlockLayout\TableOfContents::class,

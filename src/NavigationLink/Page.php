@@ -2,6 +2,7 @@
 namespace StaticSiteExport\NavigationLink;
 
 use ArrayObject;
+use Omeka\Api\Exception\NotFoundException;
 use Omeka\Job\JobInterface;
 
 class Page implements NavigationLinkInterface
@@ -14,15 +15,29 @@ class Page implements NavigationLinkInterface
         ?string $parentId,
         ?int $weight
     ): void {
-        $sitePage = $job->get('Omeka\ApiManager')
-            ->read('site_pages', $navLink['data']['id'])
-            ->getContent();
-        $menu->append([
-            'name' => $sitePage->title(),
-            'identifier' => $id,
-            'parent' => $parentId,
-            'pageRef' => sprintf('/pages/%s', $sitePage->slug()),
-            'weight' => $weight,
-        ]);
+        try {
+            $sitePage = $job->get('Omeka\ApiManager')
+                ->read('site_pages', $navLink['data']['id'])
+                ->getContent();
+        } catch (NotFoundException $e) {
+            $sitePage = null;
+        }
+        if ($sitePage) {
+            $menu->append([
+                'name' => $sitePage->title(),
+                'identifier' => $id,
+                'parent' => $parentId,
+                'pageRef' => sprintf('/pages/%s', $sitePage->slug()),
+                'weight' => $weight,
+            ]);
+        } else {
+            $menu->append([
+                'name' => $job->translate('[Missing Page]'),
+                'identifier' => $id,
+                'parent' => $parentId,
+                'weight' => $weight,
+            ]);
+        }
+
     }
 }
