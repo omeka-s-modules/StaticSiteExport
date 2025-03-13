@@ -18,7 +18,7 @@ class ItemSets implements ResourcePageBlockLayoutInterface
             return '';
         }
         return sprintf(
-            "## %s\n%s",
+            "#### %s\n%s",
             $job->translate('Item sets'),
             $job->getItemSetListMarkdown($resource)
         );

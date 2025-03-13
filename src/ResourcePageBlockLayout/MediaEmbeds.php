@@ -13,11 +13,15 @@ class MediaEmbeds implements ResourcePageBlockLayoutInterface
         ArrayObject $frontMatterPage,
         ArrayObject $frontMatterBlock
     ): string {
-        $mediaRenderBlock = $job->get('StaticSiteExport\ResourcePageBlockLayoutManager')->get('mediaRender');
-        $block = [];
-        foreach ($resource->media() as $media) {
-            $block[] = $mediaRenderBlock->getMarkdown($job, $media, $frontMatterPage, $frontMatterBlock);
+        $medias = $resource->media();
+        if (!$medias) {
+            return '';
         }
-        return implode("\n", $block);
+        $mediaRenderBlock = $job->get('StaticSiteExport\ResourcePageBlockLayoutManager')->get('mediaRender');
+        $markdown = [];
+        foreach ($medias as $media) {
+            $markdown[] = $mediaRenderBlock->getMarkdown($job, $media, $frontMatterPage, $frontMatterBlock);
+        }
+        return implode("\n", $markdown);
     }
 }

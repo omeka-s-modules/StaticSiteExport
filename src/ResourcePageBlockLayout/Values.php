@@ -13,14 +13,9 @@ class Values implements ResourcePageBlockLayoutInterface
         ArrayObject $frontMatterPage,
         ArrayObject $frontMatterBlock
     ): string {
-        $allValues = $resource->values();
-        if (!$allValues) {
+        if (!$resource->values()) {
             return '';
         }
-        return sprintf(
-            "## %s\n%s",
-            $job->translate('Values'),
-            $job->getValuesMarkdown($resource, $frontMatterPage, $frontMatterBlock)
-        );
+        return $job->getValuesMarkdown($resource, $frontMatterPage, $frontMatterBlock);
     }
 }

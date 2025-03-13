@@ -33,9 +33,9 @@ class LinkedResources implements ResourcePageBlockLayoutInterface
             $linkedResourcesProperties[$propertyId]['resources'][] = $adapter->getRepresentation($resource);
         }
         // Generate the linked resources markdown.
-        $block = [sprintf("## %s\n", $job->translate('Linked resources'))];
+        $markdown = [sprintf("#### %s\n", $job->translate('Linked resources'))];
         foreach ($linkedResourcesProperties as $linkedResourcesProperty) {
-            $block[] = sprintf("%s", $linkedResourcesProperty['property_label']);
+            $markdown[] = sprintf("%s", $linkedResourcesProperty['property_label']);
             foreach ($linkedResourcesProperty['resources'] as $linkedResource) {
                 if (in_array($linkedResource->id(), $job->getItemIds())) {
                     $contentDirectory = 'items';
@@ -45,7 +45,7 @@ class LinkedResources implements ResourcePageBlockLayoutInterface
                     continue; // Resource not in site.
                 }
                 // @todo: Add media linked resources.
-                $block[] = sprintf(
+                $markdown[] = sprintf(
                     ': [%s]({{< ref "/%s/%s" >}} "%s")',
                     $job->escape(['[', ']'], $linkedResource->displayTitle()),
                     $contentDirectory,
@@ -53,9 +53,9 @@ class LinkedResources implements ResourcePageBlockLayoutInterface
                     $job->escape(['"'], $linkedResource->displayTitle()),
                 );
             }
-            $block[] = '';
+            $markdown[] = '';
         }
-        return implode("\n", $block);
+        return implode("\n", $markdown);
 
     }
 }

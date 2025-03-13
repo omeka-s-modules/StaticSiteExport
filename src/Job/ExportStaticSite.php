@@ -86,7 +86,13 @@ class ExportStaticSite extends AbstractJob
         $this->createSiteDirectory();
 
         // Create the items section.
-        $this->makeFile('content/items/_index.md', json_encode(['title' => $this->translate('Items')]));
+        $frontMatter = [
+            'title' => $this->translate('Items'),
+            'params' => [
+                'titleSingular' => $this->translate('Item'),
+            ],
+        ];
+        $this->makeFile('content/items/_index.md', json_encode($frontMatter));
         foreach (array_chunk($this->getItemIds(), 100) as $itemIdsChunk) {
             if ($this->shouldStop()) return;
             foreach ($itemIdsChunk as $itemId) {
@@ -94,7 +100,13 @@ class ExportStaticSite extends AbstractJob
             }
         }
         // Create the media section.
-        $this->makeFile('content/media/_index.md', json_encode(['title' => $this->translate('Media')]));
+        $frontMatter = [
+            'title' => $this->translate('Media'),
+            'params' => [
+                'titleSingular' => $this->translate('Media'),
+            ],
+        ];
+        $this->makeFile('content/media/_index.md', json_encode($frontMatter));
         foreach (array_chunk($this->getMediaIds(), 100) as $mediaIdsChunk) {
             if ($this->shouldStop()) return;
             foreach ($mediaIdsChunk as $mediaId) {
@@ -102,7 +114,13 @@ class ExportStaticSite extends AbstractJob
             }
         }
         // Create the item sets section.
-        $this->makeFile('content/item-sets/_index.md', json_encode(['title' => $this->translate('Item sets')]));
+        $frontMatter = [
+            'title' => $this->translate('Item sets'),
+            'params' => [
+                'titleSingular' => $this->translate('Item set'),
+            ],
+        ];
+        $this->makeFile('content/item-sets/_index.md', json_encode($frontMatter));
         foreach (array_chunk($this->getItemSetIds(), 100) as $itemSetIdsChunk) {
             if ($this->shouldStop()) return;
             foreach ($itemSetIdsChunk as $itemSetId) {
@@ -110,7 +128,13 @@ class ExportStaticSite extends AbstractJob
             }
         }
         // Create the assets section.
-        $this->makeFile('content/assets/_index.md', json_encode(['title' => $this->translate('Assets')]));
+        $frontMatter = [
+            'title' => $this->translate('Assets'),
+            'params' => [
+                'titleSingular' => $this->translate('Asset'),
+            ],
+        ];
+        $this->makeFile('content/assets/_index.md', json_encode($frontMatter));
         foreach (array_chunk($this->getAssetIds(), 100) as $assetIdsChunk) {
             if ($this->shouldStop()) return;
             foreach ($assetIdsChunk as $assetId) {
@@ -118,7 +142,10 @@ class ExportStaticSite extends AbstractJob
             }
         }
         // Create the pages section.
-        $this->makeFile('content/pages/_index.md', json_encode(['title' => $this->translate('Site pages')]));
+        $frontMatter = [
+            'title' => $this->translate('Site pages'),
+        ];
+        $this->makeFile('content/pages/_index.md', json_encode($frontMatter));
         $sitePages = $this->getStaticSite()->site()->pages();
         foreach ($sitePages as $sitePage) {
             $this->createSitePageBundle($sitePage);
@@ -794,6 +821,9 @@ class ExportStaticSite extends AbstractJob
             ]);
             $blockLayout = $this->get('StaticSiteExport\ResourcePageBlockLayoutManager')->get($blockLayoutName);
             $blockMarkdown = $blockLayout->getMarkdown($this, $resource, $frontMatterPage, $frontMatterBlock);
+            if ('' === trim($blockMarkdown)) {
+                continue;
+            }
             $blocks[] = [
                 'name' => $blockLayoutName,
                 'frontMatter' => $frontMatterBlock,

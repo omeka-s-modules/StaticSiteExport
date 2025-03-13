@@ -17,6 +17,10 @@ class ResourceClass implements ResourcePageBlockLayoutInterface
         if (!$resourceClass) {
             return '';
         }
-        return sprintf("%s\n: %s", $job->translate('Resource class'), $resourceClass->label());
+        return sprintf(
+            "%s\n: %s",
+            $job->translate('Resource class'),
+            $resourceClass->label()
+        );
     }
 }
