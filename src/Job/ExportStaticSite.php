@@ -80,12 +80,22 @@ class ExportStaticSite extends AbstractJob
      */
     public function perform() : void
     {
-        // Must set some things before getting started.
         $this->prepareSite();
-
         $this->createSiteDirectory();
+        $this->createItemsSection();
+        $this->createMediaSection();
+        $this->createItemSetsSection();
+        $this->createAssetsSection();
+        $this->createPagesSection();
+        $this->createSiteArchive();
+        $this->deleteSiteDirectory();
+    }
 
-        // Create the items section.
+    /**
+     * Create the items section.
+     */
+    public function createItemsSection() : void
+    {
         $frontMatter = [
             'title' => $this->translate('Items'),
             'params' => [
@@ -99,7 +109,13 @@ class ExportStaticSite extends AbstractJob
                 $this->createItemBundle($itemId);
             }
         }
-        // Create the media section.
+    }
+
+    /**
+     * Create the media section.
+     */
+    public function createMediaSection() : void
+    {
         $frontMatter = [
             'title' => $this->translate('Media'),
             'params' => [
@@ -113,6 +129,13 @@ class ExportStaticSite extends AbstractJob
                 $this->createMediaBundle($mediaId);
             }
         }
+    }
+
+    /**
+     * Create the item-sets section.
+     */
+    public function createItemSetsSection() : void
+    {
         // Create the item sets section.
         $frontMatter = [
             'title' => $this->translate('Item sets'),
@@ -127,6 +150,13 @@ class ExportStaticSite extends AbstractJob
                 $this->createItemSetBundle($itemSetId);
             }
         }
+    }
+
+    /**
+     * Create the assets section.
+     */
+    public function createAssetsSection() : void
+    {
         // Create the assets section.
         $frontMatter = [
             'title' => $this->translate('Assets'),
@@ -141,6 +171,13 @@ class ExportStaticSite extends AbstractJob
                 $this->createAssetBundle($assetId);
             }
         }
+    }
+
+    /**
+     * Create the pages section.
+     */
+    public function createPagesSection() : void
+    {
         // Create the pages section.
         $frontMatter = [
             'title' => $this->translate('Site pages'),
@@ -150,9 +187,6 @@ class ExportStaticSite extends AbstractJob
         foreach ($sitePages as $sitePage) {
             $this->createSitePageBundle($sitePage);
         }
-
-        $this->createSiteArchive();
-        $this->deleteSiteDirectory();
     }
 
     /**
@@ -523,6 +557,10 @@ class ExportStaticSite extends AbstractJob
 
     /**
      * Prepare the site.
+     *
+     * - Sets the current theme
+     * - Enables site settings
+     * - Sets the site locale
      */
     public function prepareSite() : void
     {
