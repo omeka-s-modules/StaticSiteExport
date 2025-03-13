@@ -1051,13 +1051,13 @@ class ExportStaticSite extends AbstractJob
      */
     public function getItemSetListMarkdown(AbstractResourceEntityRepresentation $resource) : string
     {
-        $markdown = [];
+        $markdown = [$this->translate('Item sets')];
         foreach ($resource->itemSets() as $itemSet) {
             if (!in_array($itemSet->id(), $this->getItemSetIds())) {
                 continue; // Item set not in site.
             }
             $markdown[] = sprintf(
-                '- %s',
+                ': %s',
                 $this->getLinkMarkdown($itemSet, [
                     'thumbnailType' => 'square',
                     'thumbnailHeight' => 40,
@@ -1072,10 +1072,10 @@ class ExportStaticSite extends AbstractJob
      */
     public function getMediaListMarkdown(AbstractResourceEntityRepresentation $resource) : string
     {
-        $markdown = [];
+        $markdown = [$this->translate('Media')];
         foreach ($resource->media() as $media) {
             $markdown[] = sprintf(
-                '- %s',
+                ': %s',
                 $this->getLinkMarkdown($media, [
                     'thumbnailType' => 'square',
                     'thumbnailHeight' => 40,
