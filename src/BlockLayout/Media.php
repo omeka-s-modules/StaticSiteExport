@@ -44,7 +44,7 @@ class Media implements BlockLayoutInterface
         $markdown = [
             sprintf('{{< omeka-div class="%s" >}}', implode(' ', $classes)),
         ];
-        foreach($attachments as $attachment) {
+        foreach ($attachments as $attachment) {
             $item = $attachment->item();
             if (!$item) {
                 continue;
@@ -61,9 +61,9 @@ class Media implements BlockLayoutInterface
                 }
             }
             if ('item_title' === $showTitleOption) {
-                $markdown[] = '{{% omeka-html %}}' .sprintf('### %s', $job->getLinkMarkdown($item)) . '{{% /omeka-html %}}';
+                $markdown[] = '{{% omeka-html %}}' . sprintf('### %s', $job->getLinkMarkdown($item)) . '{{% /omeka-html %}}';
             } elseif ('file_name' === $showTitleOption) {
-                $markdown[] = '{{% omeka-html %}}' .sprintf('### %s', $media->displayTitle()) . '{{% /omeka-html %}}';
+                $markdown[] = '{{% omeka-html %}}' . sprintf('### %s', $media->displayTitle()) . '{{% /omeka-html %}}';
             }
             if ($caption) {
                 $markdown[] = $caption;

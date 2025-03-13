@@ -62,5 +62,6 @@ class StaticSiteAdapter extends AbstractEntityAdapter
     }
 
     public function validateEntity(EntityInterface $entity, ErrorStore $errorStore)
-    {}
+    {
+    }
 }

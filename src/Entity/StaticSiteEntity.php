@@ -26,7 +26,7 @@ class StaticSite extends AbstractEntity
      */
     protected $id;
 
-    public function getId() : ?int
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -42,12 +42,12 @@ class StaticSite extends AbstractEntity
      */
     protected $owner;
 
-    public function setOwner(?User $owner = null) : void
+    public function setOwner(?User $owner = null): void
     {
         $this->owner = $owner;
     }
 
-    public function getOwner() : ?User
+    public function getOwner(): ?User
     {
         return $this->owner;
     }
@@ -63,12 +63,12 @@ class StaticSite extends AbstractEntity
      */
     protected $site;
 
-    public function setSite(Site $site) : void
+    public function setSite(Site $site): void
     {
         $this->site = $site;
     }
 
-    public function getSite() : Site
+    public function getSite(): Site
     {
         return $this->site;
     }
@@ -84,12 +84,12 @@ class StaticSite extends AbstractEntity
      */
     protected $job;
 
-    public function setJob(?Job $job = null) : void
+    public function setJob(?Job $job = null): void
     {
         $this->job = $job;
     }
 
-    public function getJob() : ?Job
+    public function getJob(): ?Job
     {
         return $this->job;
     }
@@ -102,12 +102,12 @@ class StaticSite extends AbstractEntity
      */
     protected $created;
 
-    public function setCreated(DateTime $created) : void
+    public function setCreated(DateTime $created): void
     {
         $this->created = $created;
     }
 
-    public function getCreated() : DateTime
+    public function getCreated(): DateTime
     {
         return $this->created;
     }
@@ -121,12 +121,12 @@ class StaticSite extends AbstractEntity
      */
     protected $name;
 
-    public function setName(string $name) : void
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
 
-    public function getName() : string
+    public function getName(): string
     {
         return $this->name;
     }
@@ -139,12 +139,12 @@ class StaticSite extends AbstractEntity
      */
     protected $data;
 
-    public function setData(array $data) : void
+    public function setData(array $data): void
     {
         $this->data = $data;
     }
 
-    public function getData() : array
+    public function getData(): array
     {
         return $this->data;
     }
@@ -152,7 +152,7 @@ class StaticSite extends AbstractEntity
     /**
      * @PrePersist
      */
-    public function prePersist(LifecycleEventArgs $eventArgs) : void
+    public function prePersist(LifecycleEventArgs $eventArgs): void
     {
         $this->setCreated(new DateTime('now'));
     }

@@ -2,7 +2,6 @@
 namespace StaticSiteExport\Job;
 
 use ArrayObject;
-use DateTime;
 use Doctrine\DBAL\Connection;
 use Laminas\EventManager\Event;
 use Locale;
@@ -78,7 +77,7 @@ class ExportStaticSite extends AbstractJob
     /**
      * Export the static site.
      */
-    public function perform() : void
+    public function perform(): void
     {
         $this->prepareSite();
         $this->createSiteDirectory();
@@ -94,7 +93,7 @@ class ExportStaticSite extends AbstractJob
     /**
      * Create the items section.
      */
-    public function createItemsSection() : void
+    public function createItemsSection(): void
     {
         $frontMatter = [
             'title' => $this->translate('Items'),
@@ -104,7 +103,9 @@ class ExportStaticSite extends AbstractJob
         ];
         $this->makeFile('content/items/_index.md', json_encode($frontMatter));
         foreach (array_chunk($this->getItemIds(), 100) as $itemIdsChunk) {
-            if ($this->shouldStop()) return;
+            if ($this->shouldStop()) {
+                return;
+            }
             foreach ($itemIdsChunk as $itemId) {
                 $this->createItemBundle($itemId);
             }
@@ -114,7 +115,7 @@ class ExportStaticSite extends AbstractJob
     /**
      * Create the media section.
      */
-    public function createMediaSection() : void
+    public function createMediaSection(): void
     {
         $frontMatter = [
             'title' => $this->translate('Media'),
@@ -124,7 +125,9 @@ class ExportStaticSite extends AbstractJob
         ];
         $this->makeFile('content/media/_index.md', json_encode($frontMatter));
         foreach (array_chunk($this->getMediaIds(), 100) as $mediaIdsChunk) {
-            if ($this->shouldStop()) return;
+            if ($this->shouldStop()) {
+                return;
+            }
             foreach ($mediaIdsChunk as $mediaId) {
                 $this->createMediaBundle($mediaId);
             }
@@ -134,7 +137,7 @@ class ExportStaticSite extends AbstractJob
     /**
      * Create the item-sets section.
      */
-    public function createItemSetsSection() : void
+    public function createItemSetsSection(): void
     {
         // Create the item sets section.
         $frontMatter = [
@@ -145,7 +148,9 @@ class ExportStaticSite extends AbstractJob
         ];
         $this->makeFile('content/item-sets/_index.md', json_encode($frontMatter));
         foreach (array_chunk($this->getItemSetIds(), 100) as $itemSetIdsChunk) {
-            if ($this->shouldStop()) return;
+            if ($this->shouldStop()) {
+                return;
+            }
             foreach ($itemSetIdsChunk as $itemSetId) {
                 $this->createItemSetBundle($itemSetId);
             }
@@ -155,7 +160,7 @@ class ExportStaticSite extends AbstractJob
     /**
      * Create the assets section.
      */
-    public function createAssetsSection() : void
+    public function createAssetsSection(): void
     {
         // Create the assets section.
         $frontMatter = [
@@ -166,7 +171,9 @@ class ExportStaticSite extends AbstractJob
         ];
         $this->makeFile('content/assets/_index.md', json_encode($frontMatter));
         foreach (array_chunk($this->getAssetIds(), 100) as $assetIdsChunk) {
-            if ($this->shouldStop()) return;
+            if ($this->shouldStop()) {
+                return;
+            }
             foreach ($assetIdsChunk as $assetId) {
                 $this->createAssetBundle($assetId);
             }
@@ -176,7 +183,7 @@ class ExportStaticSite extends AbstractJob
     /**
      * Create the pages section.
      */
-    public function createPagesSection() : void
+    public function createPagesSection(): void
     {
         // Create the pages section.
         $frontMatter = [
@@ -192,7 +199,7 @@ class ExportStaticSite extends AbstractJob
     /**
      * Create an item bundle.
      */
-    public function createItemBundle(int $itemId) : void
+    public function createItemBundle(int $itemId): void
     {
         $item = $this->get('Omeka\ApiManager')->read('items', $itemId)->getContent();
 
@@ -228,7 +235,7 @@ class ExportStaticSite extends AbstractJob
     /**
      * Create a media bundle.
      */
-    public function createMediaBundle(int $mediaId) : void
+    public function createMediaBundle(int $mediaId): void
     {
         $media = $this->get('Omeka\ApiManager')->read('media', $mediaId)->getContent();
 
@@ -299,7 +306,7 @@ class ExportStaticSite extends AbstractJob
     /**
      * Create an item set bundle.
      */
-    public function createItemSetBundle(int $itemSetId) : void
+    public function createItemSetBundle(int $itemSetId): void
     {
         $itemSet = $this->get('Omeka\ApiManager')->read('item_sets', $itemSetId)->getContent();
 
@@ -335,7 +342,7 @@ class ExportStaticSite extends AbstractJob
     /**
      * Create an asset bundle.
      */
-    public function createAssetBundle(int $assetId) : void
+    public function createAssetBundle(int $assetId): void
     {
         $asset = $this->get('Omeka\ApiManager')->read('assets', $assetId)->getContent();
 
@@ -381,7 +388,7 @@ class ExportStaticSite extends AbstractJob
     /**
      * Create a site page bundle.
      */
-    public function createSitePageBundle(SitePageRepresentation $sitePage) : void
+    public function createSitePageBundle(SitePageRepresentation $sitePage): void
     {
         $this->makeDirectory(sprintf('content/pages/%s', $sitePage->slug()));
         $this->makeDirectory(sprintf('content/pages/%s/blocks', $sitePage->slug()));
@@ -435,7 +442,7 @@ class ExportStaticSite extends AbstractJob
     /**
      * Make a directory in the static site directory.
      */
-    public function makeDirectory(string $directoryPath) : void
+    public function makeDirectory(string $directoryPath): void
     {
         $command = sprintf(
             '%s -p %s',
@@ -448,7 +455,7 @@ class ExportStaticSite extends AbstractJob
     /**
      * Make a file in the static site directory.
      */
-    public function makeFile(string $filePath, string $content = '') : void
+    public function makeFile(string $filePath, string $content = ''): void
     {
         file_put_contents(
             sprintf('%s/%s', $this->getSiteDirectoryPath(), $filePath),
@@ -462,7 +469,7 @@ class ExportStaticSite extends AbstractJob
      * Modules can use the "static_site_export.ids.*" event to add resources that
      * were not automatically added by this module.
      */
-    public function setAddedIds(string $resourceType, array $ids) : array
+    public function setAddedIds(string $resourceType, array $ids): array
     {
         $addIds = new ArrayObject;
         $this->triggerEvent(
@@ -480,7 +487,7 @@ class ExportStaticSite extends AbstractJob
     /**
      * Get the IDs of items that are assigned to this site.
      */
-    public function getItemIds() : array
+    public function getItemIds(): array
     {
         if (null === $this->itemIds) {
             $sql = 'SELECT item_site.item_id
@@ -499,7 +506,7 @@ class ExportStaticSite extends AbstractJob
     /**
      * Get the IDs of media that are assigned to this site.
      */
-    public function getMediaIds() : array
+    public function getMediaIds(): array
     {
         if (null === $this->mediaIds) {
             $sql = 'SELECT media.id
@@ -519,7 +526,7 @@ class ExportStaticSite extends AbstractJob
     /**
      * Get the IDs of item sets that are assigned to this site.
      */
-    public function getItemSetIds() : array
+    public function getItemSetIds(): array
     {
         if (null === $this->itemSetIds) {
             $sql = 'SELECT site_item_set.item_set_id
@@ -538,7 +545,7 @@ class ExportStaticSite extends AbstractJob
     /**
      * Get the IDs of assets that are assigned to this site.
      */
-    public function getAssetIds() : array
+    public function getAssetIds(): array
     {
         if (null === $this->assetIds) {
             $sql = 'SELECT asset.id
@@ -562,7 +569,7 @@ class ExportStaticSite extends AbstractJob
      * - Enables site settings
      * - Sets the site locale
      */
-    public function prepareSite() : void
+    public function prepareSite(): void
     {
         $themeManager = $this->get('Omeka\Site\ThemeManager');
         $siteSettings = $this->get('Omeka\Settings\Site');
@@ -582,7 +589,7 @@ class ExportStaticSite extends AbstractJob
     /**
      * Create the static site directory.
      */
-    public function createSiteDirectory() : void
+    public function createSiteDirectory(): void
     {
         $modulePath = sprintf('%s/modules/StaticSiteExport', OMEKA_PATH);
 
@@ -710,7 +717,7 @@ class ExportStaticSite extends AbstractJob
     /**
      * Create the static site archive (ZIP).
      */
-    public function createSiteArchive() : void
+    public function createSiteArchive(): void
     {
         $command = sprintf(
             '%s %s && %s --recurse-paths %s %s',
@@ -726,7 +733,7 @@ class ExportStaticSite extends AbstractJob
     /**
      * Delete the static site directory.
      */
-    public function deleteSiteDirectory() : void
+    public function deleteSiteDirectory(): void
     {
         $command = sprintf(
             '%s -r %s',
@@ -739,7 +746,7 @@ class ExportStaticSite extends AbstractJob
     /**
      * Execute a command.
      */
-    public function execute(string $command) : void
+    public function execute(string $command): void
     {
         $output = $this->get('Omeka\Cli')->execute($command);
         if (false === $output) {
@@ -758,7 +765,7 @@ class ExportStaticSite extends AbstractJob
     /**
      * Get the directory path where the static sites are created.
      */
-    public function getSitesDirectoryPath() : string
+    public function getSitesDirectoryPath(): string
     {
         if (null === $this->sitesDirectoryPath) {
             $sitesDirectoryPath = $this->get('Omeka\Settings')->get('static_site_export_sites_directory_path');
@@ -773,7 +780,7 @@ class ExportStaticSite extends AbstractJob
     /**
      * Get the directory path of the static site.
      */
-    public function getSiteDirectoryPath() : string
+    public function getSiteDirectoryPath(): string
     {
         if (null === $this->siteDirectoryPath) {
             $this->siteDirectoryPath = sprintf(
@@ -788,7 +795,7 @@ class ExportStaticSite extends AbstractJob
     /**
      * Get the static site entity.
      */
-    public function getStaticSite() : StaticSiteRepresentation
+    public function getStaticSite(): StaticSiteRepresentation
     {
         if (null === $this->staticSite) {
             // Validate the static site entity.
@@ -806,7 +813,7 @@ class ExportStaticSite extends AbstractJob
     /**
      * Get the resource page blocks configuration from the site's theme.
      */
-    public function getResourcePageBlockLayouts() : array
+    public function getResourcePageBlockLayouts(): array
     {
         if (null === $this->resourcePageBlocks) {
             // Fetch the resolved resource page blocks from theme configuration.
@@ -848,7 +855,7 @@ class ExportStaticSite extends AbstractJob
         string $resourceType,
         AbstractEntityRepresentation $resource,
         ArrayObject $frontMatterPage
-    ) : ArrayObject {
+    ): ArrayObject {
         $blocks = new ArrayObject;
         $blockLayoutNames = $this->getResourcePageBlockLayouts()[$resourceType];
         foreach ($blockLayoutNames as $blockLayoutName) {
@@ -874,7 +881,7 @@ class ExportStaticSite extends AbstractJob
     /**
      * Get blocks for the passed site page.
      */
-    public function getSitePageBlocks(SitePageRepresentation $sitePage, ArrayObject $frontMatterPage) : ArrayObject
+    public function getSitePageBlocks(SitePageRepresentation $sitePage, ArrayObject $frontMatterPage): ArrayObject
     {
         $blocks = new ArrayObject;
         foreach ($sitePage->blocks() as $block) {
@@ -931,7 +938,7 @@ class ExportStaticSite extends AbstractJob
         AbstractEntityRepresentation $resource,
         ArrayObject $frontMatterPage,
         ArrayObject $blocks
-    ) : void {
+    ): void {
         // Make the block files.
         $blockPosition = 0;
         foreach ($blocks as $block) {
@@ -975,7 +982,7 @@ class ExportStaticSite extends AbstractJob
      * escaped in the link text, and double quotes must be escaped in the title
      * text: [link_text](http://example.com "title_text")
      */
-    public function escape(array $characters, string $string) : string
+    public function escape(array $characters, string $string): string
     {
         foreach ($characters as $character) {
             $string = str_replace($character, sprintf('\%s', $character), $string);
@@ -999,7 +1006,7 @@ class ExportStaticSite extends AbstractJob
      *  - thumbnailType: The type of thumbnail, large, medium, or square (default: null)
      *  - thumbnailHeight: The height of the thumbnailm preserving aspect ratio (default: null)
      */
-    public function getLinkMarkdown(AbstractResourceEntityRepresentation $resource, array $options = []) : string
+    public function getLinkMarkdown(AbstractResourceEntityRepresentation $resource, array $options = []): string
     {
         $defaultOptions = [
             'thumbnailType' => null,
@@ -1030,7 +1037,7 @@ class ExportStaticSite extends AbstractJob
         AbstractResourceEntityRepresentation $resource,
         ArrayObject $frontMatterPage,
         ArrayObject $frontMatterBlock
-    ) : string {
+    ): string {
         $markdown = [];
         foreach ($resource->values() as $term => $valueData) {
             $property = $valueData['property'];
@@ -1049,7 +1056,7 @@ class ExportStaticSite extends AbstractJob
     /**
      * Get the markdown for the item sets of an item.
      */
-    public function getItemSetListMarkdown(AbstractResourceEntityRepresentation $resource) : string
+    public function getItemSetListMarkdown(AbstractResourceEntityRepresentation $resource): string
     {
         $markdown = [$this->translate('Item sets')];
         foreach ($resource->itemSets() as $itemSet) {
@@ -1070,7 +1077,7 @@ class ExportStaticSite extends AbstractJob
     /**
      * Get the markdown for the media of an item.
      */
-    public function getMediaListMarkdown(AbstractResourceEntityRepresentation $resource) : string
+    public function getMediaListMarkdown(AbstractResourceEntityRepresentation $resource): string
     {
         $markdown = [$this->translate('Media')];
         foreach ($resource->media() as $media) {
@@ -1088,7 +1095,7 @@ class ExportStaticSite extends AbstractJob
     /**
      * Get the markdown for an oEmbed.
      */
-    public function getOembedMarkdown(array $data) : string
+    public function getOembedMarkdown(array $data): string
     {
         if (isset($data['html'])) {
             return sprintf('{{< omeka-html >}}%s{{< /omeka-html >}}', $data['html']);
@@ -1109,7 +1116,7 @@ class ExportStaticSite extends AbstractJob
     /**
      * Get the "omeka-figure" shortcode using the passed arguments.
      */
-    public function getFigureShortcode(array $args) : string
+    public function getFigureShortcode(array $args): string
     {
         $shortcodeArgs = [];
         foreach ($args as $key => $value) {
@@ -1121,7 +1128,7 @@ class ExportStaticSite extends AbstractJob
     /**
      * Get the "omeka-thumbnail" shortcode for the passed resource.
      */
-    public function getThumbnailShortcode(AbstractResourceEntityRepresentation $resource, array $options = []) : string
+    public function getThumbnailShortcode(AbstractResourceEntityRepresentation $resource, array $options = []): string
     {
         $defaultOptions = [
             'thumbnailType' => 'large',
@@ -1155,7 +1162,7 @@ class ExportStaticSite extends AbstractJob
      *  4. The global thumbnail according to the primary media's file media type.
      *  5. The default thumbnail if there's a primary media
      */
-    public function getThumbnailSpec(AbstractEntityRepresentation $resource, string $thumbnailType) : array
+    public function getThumbnailSpec(AbstractEntityRepresentation $resource, string $thumbnailType): array
     {
         $thumbnailPage = null;
         $thumbnailResource = null;

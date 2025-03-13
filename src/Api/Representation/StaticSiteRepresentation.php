@@ -1,7 +1,6 @@
 <?php
 namespace StaticSiteExport\Api\Representation;
 
-use Laminas\View\Renderer\PhpRenderer;
 use Omeka\Api\Representation\AbstractEntityRepresentation;
 
 class StaticSiteRepresentation extends AbstractEntityRepresentation

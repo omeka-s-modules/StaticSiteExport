@@ -2,7 +2,6 @@
 namespace StaticSiteExport\NavigationLink;
 
 use ArrayObject;
-use Omeka\Api\Representation\MediaRepresentation;
 use Omeka\Job\JobInterface;
 
 interface NavigationLinkInterface
