@@ -857,11 +857,9 @@ class ExportStaticSite extends AbstractJob
         ArrayObject $frontMatterPage
     ): ArrayObject {
         $blocks = new ArrayObject;
-        $blockWeight = 0;
         $blockLayoutNames = $this->getResourcePageBlockLayouts()[$resourceType];
         foreach ($blockLayoutNames as $blockLayoutName) {
             $frontMatterBlock = new ArrayObject([
-                'weight' => $blockWeight++,
                 'params' => [
                     'layout' => $blockLayoutName,
                 ],
@@ -886,10 +884,8 @@ class ExportStaticSite extends AbstractJob
     public function getSitePageBlocks(SitePageRepresentation $sitePage, ArrayObject $frontMatterPage): ArrayObject
     {
         $blocks = new ArrayObject;
-        $blockWeight = 0;
         foreach ($sitePage->blocks() as $block) {
             $frontMatterBlock = new ArrayObject([
-                'weight' => $blockWeight++,
                 'params' => [
                     'blockId' => $block->id(),
                     'layout' => $block->layout(),
@@ -927,7 +923,7 @@ class ExportStaticSite extends AbstractJob
             );
 
             $blocks[] = [
-                'name' => $block->layout(),
+                'name' => sprintf('%s-%s', $block->layout(), $block->id()),
                 'frontMatter' => $frontMatterBlock,
                 'markdown' => $blockMarkdown,
             ];
@@ -937,6 +933,11 @@ class ExportStaticSite extends AbstractJob
 
     /**
      * Make bundle files, including the index page and its block resources.
+     *
+     * Each block in $blocks must be an array containing the following elements:
+     *   - "name" (string): the unique block name
+     *   - "frontMatter" (ArrayObject): the block front matter
+     *   - "markdown" (string): the block markdown
      */
     public function makeBundleFiles(
         string $resourceContentPath,
@@ -945,9 +946,12 @@ class ExportStaticSite extends AbstractJob
         ArrayObject $blocks
     ): void {
         // Make the block files.
+        $blockPosition = 0;
         foreach ($blocks as $block) {
+            // Pad block numbers to get natural sorting for free.
+            $blockNumber = str_pad($blockPosition++, 4, '0', STR_PAD_LEFT);
             $this->makeFile(
-                sprintf('content/%s/blocks/%s.md', $resourceContentPath, $block['name']),
+                sprintf('content/%s/blocks/%s-%s.md', $resourceContentPath, $blockNumber, $block['name']),
                 sprintf("%s\n%s", json_encode($block['frontMatter'], JSON_PRETTY_PRINT), $block['markdown'])
             );
         }
