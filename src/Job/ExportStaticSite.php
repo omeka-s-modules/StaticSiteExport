@@ -956,10 +956,15 @@ class ExportStaticSite extends AbstractJob
                 sprintf("%s\n%s", json_encode($block['frontMatter'], JSON_PRETTY_PRINT), $block['markdown'])
             );
         }
-        // Make the page file.
+        // Make the markdown file.
         $this->makeFile(
             sprintf('content/%s/index.md', $resourceContentPath),
             json_encode($frontMatterPage, JSON_PRETTY_PRINT)
+        );
+        // Make the JSON file.
+        $this->makeFile(
+            sprintf('content/%s/index.json', $resourceContentPath),
+            json_encode($resource, JSON_PRETTY_PRINT)
         );
     }
 
