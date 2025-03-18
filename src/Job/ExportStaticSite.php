@@ -706,6 +706,7 @@ class ExportStaticSite extends AbstractJob
             ],
             'params' => [
                 'homepage' => $homepage,
+                'theme' => $this->getStaticSite()->dataValue('theme'),
             ],
             'pagination' => [
                 'pagerSize' => 25,

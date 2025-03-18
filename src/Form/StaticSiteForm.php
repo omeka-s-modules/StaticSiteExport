@@ -19,5 +19,19 @@ class StaticSiteForm extends Form
                 'value' => 'https://example.org/',
             ],
         ]);
+
+        $this->add([
+            'type' => LaminasElement\Select::class,
+            'name' => 'theme',
+            'options' => [
+                'label' => 'Theme', // @translate
+                'value_options' => [
+                    'default' => 'default',
+                ],
+            ],
+            'attributes' => [
+                'id' => 'theme',
+            ],
+        ]);
     }
 }
