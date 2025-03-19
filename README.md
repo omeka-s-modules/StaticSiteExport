@@ -124,8 +124,6 @@ These services are parallel to existing Omeka services, and have identical purpo
 but they are for static sites instead of Omeka sites. See the module configuration
 file and the respective interfaces to see how to implement them.
 
-
-
 ### Events
 
 Attach events to the shared event manager in `Module::attachListeners()`. For example:
@@ -145,7 +143,7 @@ $sharedEventManager->attach(
 
 In your handler, use `$event->getTarget()` to get the export job object, which
 has methods that could be useful. Note that some parameters are array objects (`ArrayObject`).
-You can append to (and otherwise modify) array objects, and changes will take effect 
+You can append to (and otherwise modify) array objects, and changes will take effect
 without having to set them back on the event.
 
 #### Using events to add pages
@@ -210,6 +208,21 @@ $blocks[] = [
     'frontMatter' => $frontMatter,
     'markdown' => $markdown,
 ];
+```
+
+#### Other events
+
+You may do things immediately after site directory creation using this event:
+
+- `static_site_export.create_site_directory`:
+    - `siteConfig`: An `ArrayObject` of Hugo site configuration
+
+Here you may create directories and files needed by your module. You may modify
+Hugo site configuration using the `siteConfig` parameter, like so:
+
+```php
+$siteConfig = $event->getParam('siteConfig');
+$siteConfig['params']['myParam'] = 'foobar';
 ```
 
 ### Logging commands

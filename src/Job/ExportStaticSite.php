@@ -697,7 +697,7 @@ class ExportStaticSite extends AbstractJob
         }
 
         // Make the hugo.json configuration file.
-        $configContent = [
+        $siteConfig = new ArrayObject([
             'baseURL' => $this->getStaticSite()->dataValue('base_url'),
             'theme' => 'gohugo-theme-omeka-s',
             'title' => $this->getStaticSite()->site()->title(),
@@ -711,8 +711,17 @@ class ExportStaticSite extends AbstractJob
             'pagination' => [
                 'pagerSize' => 25,
             ],
-        ];
-        $this->makeFile('hugo.json', json_encode($configContent, JSON_PRETTY_PRINT));
+        ]);
+
+        // Trigger the create_site_directory event.
+        $this->triggerEvent(
+            'static_site_export.create_site_directory',
+            [
+                'siteConfig' => $siteConfig,
+            ]
+        );
+
+        $this->makeFile('hugo.json', json_encode($siteConfig->getArrayCopy(), JSON_PRETTY_PRINT));
     }
 
     /**
