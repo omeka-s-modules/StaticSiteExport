@@ -401,8 +401,8 @@ class ExportStaticSite extends AbstractJob
                 'pageSlug' => $sitePage->slug(),
                 'layout' => $sitePage->layout(),
                 'layoutData' => $sitePage->layoutData(),
-                'classes' => [],
-                'styles' => [],
+                'layoutClasses' => [],
+                'layoutStyles' => [],
             ],
         ]);
 
@@ -425,14 +425,14 @@ class ExportStaticSite extends AbstractJob
                 $gridColumnGap = (int) $sitePage->layoutDataValue('grid_column_gap', 10);
                 $gridRowGap = (int) $sitePage->layoutDataValue('grid_row_gap', 10);
 
-                $frontMatterPage['params']['classes'][] = 'page-layout-grid';
-                $frontMatterPage['params']['classes'][] = sprintf('grid-template-columns-%s', $gridColumns);
-                $frontMatterPage['params']['styles'][] = sprintf('column-gap: %spx;', $gridColumnGap);
-                $frontMatterPage['params']['styles'][] = sprintf('row-gap: %spx;', $gridRowGap);
+                $frontMatterPage['params']['layoutClasses'][] = 'page-layout-grid';
+                $frontMatterPage['params']['layoutClasses'][] = sprintf('grid-template-columns-%s', $gridColumns);
+                $frontMatterPage['params']['layoutStyles'][] = sprintf('column-gap: %spx;', $gridColumnGap);
+                $frontMatterPage['params']['layoutStyles'][] = sprintf('row-gap: %spx;', $gridRowGap);
                 break;
             case '':
             default:
-                $frontMatterPage['params']['classes'][] = 'page-layout-normal';
+                $frontMatterPage['params']['layoutClasses'][] = 'page-layout-normal';
                 break;
         }
 
@@ -900,9 +900,9 @@ class ExportStaticSite extends AbstractJob
                     'blockId' => $block->id(),
                     'layout' => $block->layout(),
                     'layoutData' => $block->layoutData(),
+                    'layoutClasses' => [],
+                    'layoutStyles' => [],
                     'data' => $block->data(),
-                    'classes' => [],
-                    'styles' => [],
                 ],
             ]);
             $blockLayout = $this->get('StaticSiteExport\BlockLayoutManager')->get($block->layout());
@@ -923,12 +923,12 @@ class ExportStaticSite extends AbstractJob
                 $classes[] = 'grid-position-1';
                 $classes[] = sprintf('grid-span-%s', $sitePage->layoutDataValue('grid_columns'));
             }
-            $frontMatterBlock['params']['classes'] = array_merge(
-                $frontMatterBlock['params']['classes'],
+            $frontMatterBlock['params']['layoutClasses'] = array_merge(
+                $frontMatterBlock['params']['layoutClasses'],
                 $classes
             );
-            $frontMatterBlock['params']['styles'] = array_merge(
-                $frontMatterBlock['params']['styles'],
+            $frontMatterBlock['params']['layoutStyles'] = array_merge(
+                $frontMatterBlock['params']['layoutStyles'],
                 $styles
             );
 
