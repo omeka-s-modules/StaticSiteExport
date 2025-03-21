@@ -131,7 +131,7 @@ Attach events to the shared event manager in `Module::attachListeners()`. For ex
 ```php
 $sharedEventManager->attach(
     'StaticSiteExport\Job\ExportStaticSite',
-    'static_site_export.bundle.item',
+    'static_site_export.page_bundle.item',
     function (Event $event) {
         $job = $event->getTarget();
         $resource = $event->getParam('resource');
@@ -146,49 +146,57 @@ has methods that could be useful. Note that some parameters are array objects (`
 You can append to (and otherwise modify) array objects, and changes will take effect
 without having to set them back on the event.
 
-#### Using events to add pages
+#### Using events to add pages (resources)
 
-Modules can add items, media, item sets, and assets via the following events:
+Modules can add resources (items, media, item sets, and assets) as page bundles
+via the following events:
 
-- `static_site_export.ids.items`
+- `static_site_export.resource_add.items`
     - `ids`: An array of item IDs added automatically
     - `addIDs`: An `ArrayObject` containing IDs of items to add
-- `static_site_export.ids.media`
+- `static_site_export.resource_add.media`
     - `ids`: An array of media IDs added automatically
     - `addIDs`: An `ArrayObject` containing IDs of media to add
-- `static_site_export.ids.item_set`
+- `static_site_export.resource_add.item_set`
     - `ids`: An array of item set IDs added automatically
     - `addIDs`: An `ArrayObject` containing IDs of item sets to add
-- `static_site_export.ids.assets`
+- `static_site_export.resource_add.assets`
     - `ids`: An array of asset IDs added automatically
     - `addIDs`: An `ArrayObject` containing IDs of assets to add
 
-You may add IDs using the `addIDs` parameter, like so:
+These events are needed when you want to add resources that are not added automatically.
+For example, site page blocks may add items and assets that are not explicitly attached
+to the site. You may add the new resource IDs using the `addIDs` parameter, like so:
 
 ```php
 $addIds = $event->getParam('addIDs');
 $addIds[] = $asset->id();
 ```
 
-#### Using events to modify page bundles
+#### Using events to modify page (resource) bundles
 
 Modules can modify page bundles via the following events:
 
-- `static_site_export.bundle.item`
+- `static_site_export.page_bundle.item`
     - `resource`: The item representation
     - `frontMatter`: An `ArrayObject` containing page front matter
-- `static_site_export.bundle.media`
+    - `blocks`: An `ArrayObject` containing resource page blocks, if any
+- `static_site_export.page_bundle.media`
     - `resource`: The media representation
     - `frontMatter`: An `ArrayObject` containing page front matter
-- `static_site_export.bundle.item_set`
+    - `blocks`: An `ArrayObject` containing resource page blocks, if any
+- `static_site_export.page_bundle.item_set`
     - `resource`: The item set representation
     - `frontMatter`: An `ArrayObject` containing page front matter
-- `static_site_export.bundle.asset`
+    - `blocks`: An `ArrayObject` containing resource page blocks, if any
+- `static_site_export.page_bundle.asset`
     - `resource`: The asset representation
     - `frontMatter`: An `ArrayObject` containing page front matter
-- `static_site_export.bundle.site_page`
+    - `blocks`: An `ArrayObject` containing page blocks, if any
+- `static_site_export.page_bundle.site_page`
     - `resource`: The site page representation
     - `frontMatter`: An `ArrayObject` containing page front matter
+    - `blocks`: An `ArrayObject` containing site page blocks, if any
 
 You may modify Hugo page front matter using the `frontMatter` parameter, like so:
 
@@ -212,13 +220,23 @@ $blocks[] = [
 
 #### Other events
 
-You may do things immediately after site directory creation using this event:
+You may do things immediately before and after exporting using these events (in
+this case, "exporting" means to create the site directory):
 
-- `static_site_export.create_site_directory`:
+- `static_site_export.site_export.pre`:
+    - Runs before the site directory is created
+- `static_site_export.site_export.post`
+    - Runs after the site directory is created, but before it is archived
+
+The `export.post` event is particularly useful to create directories and files needed
+by your module.
+
+You may modify the Hugo site configuration using this event:
+
+- `static_site_export.site_config`:
     - `siteConfig`: An `ArrayObject` of Hugo site configuration
 
-Here you may create directories and files needed by your module. You may modify
-Hugo site configuration using the `siteConfig` parameter, like so:
+Use the `siteConfig` parameter, like so:
 
 ```php
 $siteConfig = $event->getParam('siteConfig');

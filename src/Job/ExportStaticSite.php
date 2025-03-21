@@ -80,12 +80,16 @@ class ExportStaticSite extends AbstractJob
     public function perform(): void
     {
         $this->prepareSite();
+
+        $this->triggerEvent('static_site_export.site_export.pre', []);
         $this->createSiteDirectory();
         $this->createItemsSection();
         $this->createMediaSection();
         $this->createItemSetsSection();
         $this->createAssetsSection();
         $this->createPagesSection();
+        $this->triggerEvent('static_site_export.site_export.post', []);
+
         $this->createSiteArchive();
         $this->deleteSiteDirectory();
     }
@@ -221,7 +225,7 @@ class ExportStaticSite extends AbstractJob
 
         // Trigger the item bundle event.
         $this->triggerEvent(
-            'static_site_export.bundle.item',
+            'static_site_export.page_bundle.item',
             [
                 'resource' => $item,
                 'frontMatter' => $frontMatterPage,
@@ -258,7 +262,7 @@ class ExportStaticSite extends AbstractJob
 
         // Trigger the media bundle event.
         $this->triggerEvent(
-            'static_site_export.bundle.media',
+            'static_site_export.page_bundle.media',
             [
                 'resource' => $media,
                 'frontMatter' => $frontMatterPage,
@@ -328,7 +332,7 @@ class ExportStaticSite extends AbstractJob
 
         // Trigger the item set bundle event.
         $this->triggerEvent(
-            'static_site_export.bundle.item_set',
+            'static_site_export.page_bundle.item_set',
             [
                 'resource' => $itemSet,
                 'frontMatter' => $frontMatterPage,
@@ -362,7 +366,7 @@ class ExportStaticSite extends AbstractJob
 
         // Trigger the asset bundle event.
         $this->triggerEvent(
-            'static_site_export.bundle.asset',
+            'static_site_export.page_bundle.asset',
             [
                 'resource' => $asset,
                 'frontMatter' => $frontMatterPage,
@@ -410,7 +414,7 @@ class ExportStaticSite extends AbstractJob
 
         // Trigger the site page bundle event.
         $this->triggerEvent(
-            'static_site_export.bundle.site_page',
+            'static_site_export.page_bundle.site_page',
             [
                 'resource' => $sitePage,
                 'frontMatter' => $frontMatterPage,
@@ -466,14 +470,14 @@ class ExportStaticSite extends AbstractJob
     /**
      * Set added IDs to IDs that were set automaticlly.
      *
-     * Modules can use the "static_site_export.ids.*" event to add resources that
-     * were not automatically added by this module.
+     * Modules can use the "static_site_export.resource_add.*" event to add
+     * resources that were not automatically added by this module.
      */
     public function setAddedIds(string $resourceType, array $ids): array
     {
         $addIds = new ArrayObject;
         $this->triggerEvent(
-            sprintf('static_site_export.ids.%s', $resourceType),
+            sprintf('static_site_export.resource_add.%s', $resourceType),
             [
                 'ids' => $ids,
                 'addIds' => $addIds,
@@ -713,9 +717,9 @@ class ExportStaticSite extends AbstractJob
             ],
         ]);
 
-        // Trigger the create_site_directory event.
+        // Trigger the site_config event.
         $this->triggerEvent(
-            'static_site_export.create_site_directory',
+            'static_site_export.site_config',
             [
                 'siteConfig' => $siteConfig,
             ]

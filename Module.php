@@ -71,7 +71,7 @@ SQL;
         // Add asset IDs.
         $sharedEventManager->attach(
             'StaticSiteExport\Job\ExportStaticSite',
-            'static_site_export.ids.assets',
+            'static_site_export.resource_add.assets',
             function (Event $event) {
                 $job = $event->getTarget();
                 $entityManager = $job->get('Omeka\EntityManager');
@@ -117,7 +117,7 @@ SQL;
         // Add the itemLink block to the media page.
         $sharedEventManager->attach(
             'StaticSiteExport\Job\ExportStaticSite',
-            'static_site_export.bundle.media',
+            'static_site_export.page_bundle.media',
             function (Event $event) {
                 $job = $event->getTarget();
                 $media = $event->getParam('resource');
@@ -142,7 +142,7 @@ SQL;
         // Add the itemList block to the item set page.
         $sharedEventManager->attach(
             'StaticSiteExport\Job\ExportStaticSite',
-            'static_site_export.bundle.item_set',
+            'static_site_export.page_bundle.item_set',
             function (Event $event) {
                 $job = $event->getTarget();
                 $itemSet = $event->getParam('resource');
@@ -180,7 +180,7 @@ SQL;
         // Add the figure block to the asset page.
         $sharedEventManager->attach(
             'StaticSiteExport\Job\ExportStaticSite',
-            'static_site_export.bundle.asset',
+            'static_site_export.page_bundle.asset',
             function (Event $event) {
                 $job = $event->getTarget();
                 $asset = $event->getParam('resource');
