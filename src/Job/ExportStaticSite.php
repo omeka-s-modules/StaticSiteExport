@@ -103,6 +103,9 @@ class ExportStaticSite extends AbstractJob
             'title' => $this->translate('Items'),
             'params' => [
                 'titleSingular' => $this->translate('Item'),
+                'bodyClasses' => [
+                    'item resource browse',
+                ],
             ],
         ];
         $this->makeFile('content/items/_index.md', json_encode($frontMatter));
@@ -125,6 +128,9 @@ class ExportStaticSite extends AbstractJob
             'title' => $this->translate('Media'),
             'params' => [
                 'titleSingular' => $this->translate('Media'),
+                'bodyClasses' => [
+                    'media resource browse',
+                ],
             ],
         ];
         $this->makeFile('content/media/_index.md', json_encode($frontMatter));
@@ -148,6 +154,9 @@ class ExportStaticSite extends AbstractJob
             'title' => $this->translate('Item sets'),
             'params' => [
                 'titleSingular' => $this->translate('Item set'),
+                'bodyClasses' => [
+                    'item-set resource browse',
+                ],
             ],
         ];
         $this->makeFile('content/item-sets/_index.md', json_encode($frontMatter));
@@ -171,6 +180,9 @@ class ExportStaticSite extends AbstractJob
             'title' => $this->translate('Assets'),
             'params' => [
                 'titleSingular' => $this->translate('Asset'),
+                'bodyClasses' => [
+                    'asset resource browse',
+                ],
             ],
         ];
         $this->makeFile('content/assets/_index.md', json_encode($frontMatter));
@@ -192,6 +204,11 @@ class ExportStaticSite extends AbstractJob
         // Create the pages section.
         $frontMatter = [
             'title' => $this->translate('Site pages'),
+            'params' => [
+                'bodyClasses' => [
+                    'page resource browse',
+                ],
+            ],
         ];
         $this->makeFile('content/pages/_index.md', json_encode($frontMatter));
         $sitePages = $this->getStaticSite()->site()->pages();
@@ -218,6 +235,9 @@ class ExportStaticSite extends AbstractJob
                 'itemID' => $item->id(),
                 'description' => $item->displayDescription(),
                 'thumbnailSpec' => $this->getThumbnailSpec($item, 'square'),
+                'bodyClasses' => [
+                    'item resource show',
+                ],
             ],
         ]);
 
@@ -255,6 +275,9 @@ class ExportStaticSite extends AbstractJob
                 'itemID' => $media->item()->id(),
                 'description' => $media->displayDescription(),
                 'thumbnailSpec' => $this->getThumbnailSpec($media, 'square'),
+                'bodyClasses' => [
+                    'media resource show',
+                ],
             ],
         ]);
 
@@ -325,6 +348,9 @@ class ExportStaticSite extends AbstractJob
                 'itemSetID' => $itemSet->id(),
                 'description' => $itemSet->displayDescription(),
                 'thumbnailSpec' => $this->getThumbnailSpec($itemSet, 'square'),
+                'bodyClasses' => [
+                    'item-set resource show',
+                ],
             ],
         ]);
 
@@ -359,6 +385,9 @@ class ExportStaticSite extends AbstractJob
             'draft' => false,
             'params' => [
                 'thumbnailSpec' => $this->getThumbnailSpec($asset, 'square'),
+                'bodyClasses' => [
+                    'asset resource show',
+                ],
             ],
         ]);
 
@@ -407,6 +436,9 @@ class ExportStaticSite extends AbstractJob
                 'layoutData' => $sitePage->layoutData(),
                 'layoutClasses' => [],
                 'layoutStyles' => [],
+                'bodyClasses' => [
+                    sprintf('page site-page-%s', $sitePage->slug()),
+                ],
             ],
         ]);
 
