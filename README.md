@@ -19,17 +19,25 @@ Note that an export may take a long time, depending on the size of the site.
 ### Building a static site
 
 After exporting a static site, you can unzip the resulting ZIP file and immediately
-use [Hugo](https://gohugo.io/) to build and view the static site:
+use [Hugo](https://gohugo.io/) to build the site, run a local testing server, and
+view the site:
 
 ```
-$ cd /path/to/static-sites/
-$ unzip <export-name>.zip
-$ cd <export-name>/
-$ hugo server
+cd /path/to/static-sites/
+unzip <export-name>.zip
+cd <export-name>/
+hugo server
 ```
 
-After the build is complete, follow the instructions and go to the specified web
-server in your browser.
+After the build is complete, follow the instructions in your terminal and go to
+the specified web server in your browser. If your site is very large, you may need
+to disable the default "watch for changes and recreate" behavior by running
+`hugo server --watch=false`.
+
+When you are ready to deploy your site, just run `hugo` in your project directory.
+See Hugo's documentation to learn more about how to use the [command line interface (CLI)](https://gohugo.io/commands/)
+to manage your site, and how to [host and deploy](https://gohugo.io/host-and-deploy/)
+your site.
 
 ## Developer notes
 
