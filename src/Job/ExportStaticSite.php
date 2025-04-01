@@ -12,6 +12,7 @@ use Omeka\Api\Representation\ItemRepresentation;
 use Omeka\Api\Representation\ItemSetRepresentation;
 use Omeka\Api\Representation\MediaRepresentation;
 use Omeka\Api\Representation\SitePageRepresentation;
+use Omeka\File\Store\Local;
 use Omeka\Job\AbstractJob;
 use Omeka\Job\Exception;
 use StaticSiteExport\Api\Representation\StaticSiteRepresentation;
@@ -295,26 +296,31 @@ class ExportStaticSite extends AbstractJob
 
         $this->makeBundleFiles(sprintf('media/%s', $media->id()), $media, $frontMatterPage, $blocks);
 
-        // Map the media data file.
+        // Make the media data file.
         $this->makeFile(
             sprintf('content/media/%s/data.json', $media->id()),
             json_encode($media->mediaData(), JSON_PRETTY_PRINT)
         );
 
-        // Copy the original file.
+        // Copy original and thumbnail files, if any. Use copy() if the installation
+        // uses the Local file store, otherwise use HTTP client data streaming.
+        $fileStore = $this->get('Omeka\File\Store');
         if ($media->hasOriginal()) {
             $filePath = sprintf(
                 'content/media/%s/%s',
                 $media->id(),
                 sprintf('file%s', $media->extension() ? sprintf('.%s', $media->extension()) : '')
             );
-            $this->makeFile($filePath);
-            $client = $this->get('Omeka\HttpClient')
-                ->setUri($media->originalUrl())
-                ->setStream(sprintf('%s/%s', $this->getSiteDirectoryPath(), $filePath))->send();
+            $toPath = sprintf('%s/%s', $this->getSiteDirectoryPath(), $filePath);
+            if ($fileStore instanceof Local) {
+                $fromPath = $fileStore->getLocalPath(sprintf('original/%s', $media->filename()));
+                copy($fromPath, $toPath);
+            } else {
+                $fromPath = $media->originalUrl();
+                $this->makeFile($filePath);
+                $this->get('Omeka\HttpClient')->setUri($fromPath)->setStream($toPath)->send();
+            }
         }
-
-        // Copy the thumbnail files.
         if ($media->hasThumbnails()) {
             foreach (['large', 'medium', 'square'] as $type) {
                 $filePath = sprintf(
@@ -322,10 +328,15 @@ class ExportStaticSite extends AbstractJob
                     $media->id(),
                     sprintf('thumbnail_%s.jpg', $type)
                 );
-                $this->makeFile($filePath);
-                $client = $this->get('Omeka\HttpClient')
-                    ->setUri($media->thumbnailUrl($type))
-                    ->setStream(sprintf('%s/%s', $this->getSiteDirectoryPath(), $filePath))->send();
+                $toPath = sprintf('%s/%s', $this->getSiteDirectoryPath(), $filePath);
+                if ($fileStore instanceof Local) {
+                    $fromPath = $fileStore->getLocalPath(sprintf('%s/%s', $type, $media->filename()));
+                    copy($fromPath, $toPath);
+                } else {
+                    $fromPath = $media->thumbnailUrl($type);
+                    $this->makeFile($filePath);
+                    $this->get('Omeka\HttpClient')->setUri($fromPath)->setStream($toPath)->send();
+                }
             }
         }
     }
