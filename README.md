@@ -16,6 +16,10 @@ for information about the export, including progress of the export job.
 
 Note that an export may take a long time, depending on the size of the site.
 
+Note that the export runs several widely used commands on your server: `cd`, `cp`,
+`rm`, `unzip`, and `zip`. While these commands are required during export, they
+are likely already installed on your server, so there's nothing you need to do.
+
 ### Building a static site
 
 After exporting a static site, you can unzip the resulting ZIP file and immediately

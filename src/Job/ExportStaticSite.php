@@ -491,12 +491,7 @@ class ExportStaticSite extends AbstractJob
      */
     public function makeDirectory(string $directoryPath): void
     {
-        $command = sprintf(
-            '%s -p %s',
-            $this->get('Omeka\Cli')->getCommandPath('mkdir'),
-            escapeshellarg(sprintf('%s/%s', $this->getSiteDirectoryPath(), $directoryPath))
-        );
-        $this->execute($command);
+        mkdir(sprintf('%s/%s', $this->getSiteDirectoryPath(), $directoryPath), 0755, true);
     }
 
     /**
