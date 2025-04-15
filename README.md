@@ -4,15 +4,30 @@ An [Omeka S](https://omeka.org/s/) module for exporting static sites.
 
 ## End user notes
 
-This section is meant for end users.
+This section is meant for end users. If you are using this module only to export
+and build a static site, the following applies to you.
+
+### Configuring the module
+
+After installing this module, you will need to add a "Sites directory path" in the
+module configuration page. This is the path to the directory where your static sites
+will be saved on your server. The path must exist and be writable by the web server.
 
 ### Exporting a static site
 
 After installing and configuring this module, go to an Omeka site in the administrative
 interface, click on "Static Site Export" in the navigation, and click the "Export
-new static site" button. After configuring the export, click the "Begin export"
-button. The new export will be the first in the list. Click on the "Details" icon
-for information about the export, including progress of the export job.
+new static site" button.
+
+On this page you will configure the export by entering a "Base URL" and selecting
+a "Theme". The "Base URL" is the absolute URL of your published site including the
+protocol, host, path, and a trailing slash (e.g. `https://example.org/`). The "Theme"
+is one of the available themes that will be appplied to your static site.
+
+After configuring the export, click the "Begin export" button. The new export will
+be the first in the list. Click on the "Details" icon for information about the
+export, including status of the export job. The export is finished once the status
+is marked as "Completed".
 
 Note that an export may take a long time, depending on the size of the site.
 
