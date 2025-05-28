@@ -19,10 +19,16 @@ After installing and configuring this module, go to an Omeka site in the adminis
 interface, click on "Static Site Export" in the navigation, and click the "Export
 new static site" button.
 
-On this page you will configure the export by entering a "Base URL" and selecting
-a "Theme". The "Base URL" is the absolute URL of your published site including the
-protocol, host, path, and a trailing slash (e.g. `https://example.org/`). The "Theme"
-is one of the available themes that will be appplied to your static site.
+On this page you will configure the export by entering a "Base URL", selecting a
+"Theme", and declaring whether to "Include private resources".
+
+- "Base URL": enter the absolute URL of your published site including the protocol,
+host, path, and a trailing slash (e.g. `https://example.org/`).
+- "Theme": select one of the available themes that will be appplied to your static
+site.
+- "Include private resources": check if you want to include private resources (items,
+media, item sets, and site pages) in your static site. Note that, if checked, private
+resources will be published by Hugo.
 
 After configuring the export, click the "Begin export" button. The new export will
 be the first in the list. Click on the "Details" icon for information about the

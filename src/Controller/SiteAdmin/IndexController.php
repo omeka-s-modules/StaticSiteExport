@@ -53,6 +53,7 @@ class IndexController extends AbstractActionController
                 $formData['o:data'] = [
                     'base_url' => $formData['base_url'],
                     'theme' => $formData['theme'],
+                    'include_private' => $formData['include_private'],
                 ];
                 $site = $this->currentSite();
                 $formData['o:site'] = ['o:id' => $site->id()];

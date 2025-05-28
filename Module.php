@@ -123,6 +123,11 @@ SQL;
                 $media = $event->getParam('resource');
                 $blocks = $event->getParam('blocks');
 
+                $item = $media->item();
+                if (!in_array($item->id(), $job->getItemIds())) {
+                    return; // Item not in site.
+                }
+
                 $frontMatter = [
                     'params' => [
                         'layout' => 'sseItemLink', // namespace with module name

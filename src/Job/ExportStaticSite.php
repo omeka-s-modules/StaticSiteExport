@@ -236,7 +236,7 @@ class ExportStaticSite extends AbstractJob
         $frontMatterPage = new ArrayObject([
             'date' => $item->created()->format('c'),
             'title' => $item->displayTitle(),
-            'draft' => $item->isPublic() ? false : true,
+            'draft' => false,
             'params' => [
                 'itemID' => $item->id(),
                 'description' => $item->displayDescription(),
@@ -279,7 +279,7 @@ class ExportStaticSite extends AbstractJob
         $frontMatterPage = new ArrayObject([
             'date' => $media->created()->format('c'),
             'title' => $media->displayTitle(),
-            'draft' => $media->isPublic() ? false : true,
+            'draft' => false,
             'params' => [
                 'mediaID' => $media->id(),
                 'itemID' => $media->item()->id(),
@@ -367,7 +367,7 @@ class ExportStaticSite extends AbstractJob
         $frontMatterPage = new ArrayObject([
             'date' => $itemSet->created()->format('c'),
             'title' => $itemSet->displayTitle(),
-            'draft' => $itemSet->isPublic() ? false : true,
+            'draft' => false,
             'params' => [
                 'itemSetID' => $itemSet->id(),
                 'description' => $itemSet->displayDescription(),
@@ -457,7 +457,7 @@ class ExportStaticSite extends AbstractJob
         $frontMatterPage = new ArrayObject([
             'date' => $sitePage->created()->format('c'),
             'title' => $sitePage->title(),
-            'draft' => $sitePage->isPublic() ? false : true,
+            'draft' => false,
             'params' => [
                 'pageSlug' => $sitePage->slug(),
                 'layout' => $sitePage->layout(),
@@ -549,11 +549,15 @@ class ExportStaticSite extends AbstractJob
     public function getItemIds(): array
     {
         if (null === $this->itemIds) {
-            $sql = 'SELECT item_site.item_id
+            $includePrivate = $this->getStaticSite()->dataValue('include_private');
+            $sql = sprintf('SELECT item_site.item_id
                 FROM item_site item_site
                 INNER JOIN resource resource ON item_site.item_id = resource.id
                 WHERE item_site.site_id = :site_id
-                ORDER BY resource.id';
+                %s
+                ORDER BY resource.id',
+                $includePrivate ? '' : 'AND resource.is_public = 1'
+            );
             $stmt = $this->get('Omeka\Connection')->prepare($sql);
             $stmt->bindValue('site_id', $this->getStaticSite()->site()->id());
             $itemIds = $stmt->executeQuery()->fetchFirstColumn();
@@ -568,12 +572,16 @@ class ExportStaticSite extends AbstractJob
     public function getMediaIds(): array
     {
         if (null === $this->mediaIds) {
-            $sql = 'SELECT media.id
+            $includePrivate = $this->getStaticSite()->dataValue('include_private');
+            $sql = sprintf('SELECT media.id
                 FROM media media
                 INNER JOIN item_site item_site ON media.item_id = item_site.item_id
-                INNER JOIN resource resource ON item_site.item_id = resource.id
+                INNER JOIN resource resource ON media.id = resource.id
                 WHERE item_site.site_id = :site_id
-                ORDER BY resource.id';
+                %s
+                ORDER BY resource.id',
+                $includePrivate ? '' : 'AND resource.is_public = 1'
+            );
             $stmt = $this->get('Omeka\Connection')->prepare($sql);
             $stmt->bindValue('site_id', $this->getStaticSite()->site()->id());
             $mediaIds = $stmt->executeQuery()->fetchFirstColumn();
@@ -588,11 +596,15 @@ class ExportStaticSite extends AbstractJob
     public function getItemSetIds(): array
     {
         if (null === $this->itemSetIds) {
-            $sql = 'SELECT site_item_set.item_set_id
+            $includePrivate = $this->getStaticSite()->dataValue('include_private');
+            $sql = sprintf('SELECT site_item_set.item_set_id
                 FROM site_item_set site_item_set
                 INNER JOIN resource resource ON site_item_set.item_set_id = resource.id
                 WHERE site_item_set.site_id = :site_id
-                ORDER BY resource.id';
+                %s
+                ORDER BY resource.id',
+                $includePrivate ? '' : 'AND resource.is_public = 1'
+            );
             $stmt = $this->get('Omeka\Connection')->prepare($sql);
             $stmt->bindValue('site_id', $this->getStaticSite()->site()->id());
             $itemSetIds = $stmt->executeQuery()->fetchFirstColumn();
@@ -1161,6 +1173,9 @@ class ExportStaticSite extends AbstractJob
     {
         $markdown = [$this->translate('Media')];
         foreach ($resource->media() as $media) {
+            if (!in_array($media->id(), $this->getMediaIds())) {
+                continue; // Media not in site.
+            }
             $markdown[] = sprintf(
                 ': %s',
                 $this->getLinkMarkdown($media, [

@@ -33,5 +33,16 @@ class StaticSiteForm extends Form
                 'id' => 'theme',
             ],
         ]);
+
+        $this->add([
+            'type' => LaminasElement\Checkbox::class,
+            'name' => 'include_private',
+            'options' => [
+                'label' => 'Include private resources', // @translate
+            ],
+            'attributes' => [
+                'id' => 'include_private',
+            ],
+        ]);
     }
 }
