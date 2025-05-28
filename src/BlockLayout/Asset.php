@@ -2,6 +2,7 @@
 namespace StaticSiteExport\BlockLayout;
 
 use ArrayObject;
+use Omeka\Api\Exception\NotFoundException;
 use Omeka\Api\Representation\SitePageBlockRepresentation;
 use Omeka\Job\JobInterface;
 
@@ -16,7 +17,11 @@ class Asset implements BlockLayoutInterface
         $api = $job->get('Omeka\ApiManager');
         $markdown = [];
         foreach ($block->data() as $attachmentData) {
-            $asset = $api->read('assets', $attachmentData['id'])->getContent();
+            try {
+                $asset = $api->read('assets', $attachmentData['id'])->getContent();
+            } catch (NotFoundException $e) {
+                continue;
+            }
             $page = $attachmentData['page'] ? $api->read('site_pages', $attachmentData['page'])->getContent() : null;
             $markdown[] = $job->getFigureShortcode([
                 'type' => 'image',

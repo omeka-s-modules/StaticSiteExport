@@ -5,6 +5,7 @@ use ArrayObject;
 use Doctrine\DBAL\Connection;
 use Laminas\EventManager\Event;
 use Locale;
+use Omeka\Api\Exception\NotFoundException;
 use Omeka\Api\Representation\AbstractEntityRepresentation;
 use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
 use Omeka\Api\Representation\AssetRepresentation;
@@ -223,7 +224,11 @@ class ExportStaticSite extends AbstractJob
      */
     public function createItemBundle(int $itemId): void
     {
-        $item = $this->get('Omeka\ApiManager')->read('items', $itemId)->getContent();
+        try {
+            $item = $this->get('Omeka\ApiManager')->read('items', $itemId)->getContent();
+        } catch (NotFoundException $e) {
+            return;
+        }
 
         $this->makeDirectory(sprintf('content/items/%s', $item->id()));
         $this->makeDirectory(sprintf('content/items/%s/blocks', $item->id()));
@@ -262,7 +267,11 @@ class ExportStaticSite extends AbstractJob
      */
     public function createMediaBundle(int $mediaId): void
     {
-        $media = $this->get('Omeka\ApiManager')->read('media', $mediaId)->getContent();
+        try {
+            $media = $this->get('Omeka\ApiManager')->read('media', $mediaId)->getContent();
+        } catch (NotFoundException $e) {
+            return;
+        }
 
         $this->makeDirectory(sprintf('content/media/%s', $media->id()));
         $this->makeDirectory(sprintf('content/media/%s/blocks', $media->id()));
@@ -346,7 +355,11 @@ class ExportStaticSite extends AbstractJob
      */
     public function createItemSetBundle(int $itemSetId): void
     {
-        $itemSet = $this->get('Omeka\ApiManager')->read('item_sets', $itemSetId)->getContent();
+        try {
+            $itemSet = $this->get('Omeka\ApiManager')->read('item_sets', $itemSetId)->getContent();
+        } catch (NotFoundException $e) {
+            return;
+        }
 
         $this->makeDirectory(sprintf('content/item-sets/%s', $itemSet->id()));
         $this->makeDirectory(sprintf('content/item-sets/%s/blocks', $itemSet->id()));
@@ -385,7 +398,11 @@ class ExportStaticSite extends AbstractJob
      */
     public function createAssetBundle(int $assetId): void
     {
-        $asset = $this->get('Omeka\ApiManager')->read('assets', $assetId)->getContent();
+        try {
+            $asset = $this->get('Omeka\ApiManager')->read('assets', $assetId)->getContent();
+        } catch (NotFoundException $e) {
+            return;
+        }
 
         $this->makeDirectory(sprintf('content/assets/%s', $asset->id()));
         $this->makeDirectory(sprintf('content/assets/%s/blocks', $asset->id()));
