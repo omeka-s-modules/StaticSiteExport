@@ -339,7 +339,7 @@ class ExportStaticSite extends AbstractJob
                 );
                 $toPath = sprintf('%s/%s', $this->getSiteDirectoryPath(), $filePath);
                 if ($fileStore instanceof Local) {
-                    $fromPath = $fileStore->getLocalPath(sprintf('%s/%s', $type, $media->filename()));
+                    $fromPath = $fileStore->getLocalPath(sprintf('%s/%s.jpg', $type, $media->storageId()));
                     copy($fromPath, $toPath);
                 } else {
                     $fromPath = $media->thumbnailUrl($type);
