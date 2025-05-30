@@ -93,36 +93,6 @@ class IndexController extends AbstractActionController
         return $view;
     }
 
-    public function deleteConfirmAction()
-    {
-        $staticSite = $this->api()->read('static_site_export_static_sites', $this->params('id'))->getContent();
-
-        $view = new ViewModel;
-        $view->setTerminal(true);
-        $view->setTemplate('common/delete-confirm-details');
-        $view->setVariable('resource', $staticSite);
-        $view->setVariable('resourceLabel', 'static site'); // @translate
-        return $view;
-    }
-
-    public function deleteAction()
-    {
-        if ($this->getRequest()->isPost()) {
-            $staticSite = $this->api()->read('static_site_export_static_sites', $this->params('id'))->getContent();
-            $form = $this->getForm(ConfirmForm::class);
-            $form->setData($this->getRequest()->getPost());
-            if ($form->isValid()) {
-                $response = $this->api($form)->delete('static_site_export_static_sites', $staticSite->id());
-                if ($response) {
-                    $this->messenger()->addSuccess('Successfully deleted your static site.'); // @translate
-                }
-            } else {
-                $this->messenger()->addFormErrors($form);
-            }
-        }
-        return $this->redirect()->toRoute(null, ['action' => 'browse'], true);
-    }
-
     public function showDetailsAction()
     {
         $staticSite = $this->api()->read('static_site_export_static_sites', $this->params('id'))->getContent();
