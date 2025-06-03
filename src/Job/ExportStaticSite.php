@@ -14,28 +14,10 @@ use Omeka\Api\Representation\ItemSetRepresentation;
 use Omeka\Api\Representation\MediaRepresentation;
 use Omeka\Api\Representation\SitePageRepresentation;
 use Omeka\File\Store\Local;
-use Omeka\Job\AbstractJob;
-use Omeka\Job\Exception;
-use StaticSiteExport\Api\Representation\StaticSiteRepresentation;
 use StaticSiteExport\Module;
 
-class ExportStaticSite extends AbstractJob
+class ExportStaticSite extends AbstractStaticSiteJob
 {
-    /**
-     * @var StaticSiteRepresentation
-     */
-    protected $staticSite;
-
-    /**
-     * @var string
-     */
-    protected $sitesDirectoryPath;
-
-    /**
-     * @var string
-     */
-    protected $siteDirectoryPath;
-
     /**
      * An array of all item IDs assigned to this site.
      *
@@ -805,90 +787,10 @@ class ExportStaticSite extends AbstractJob
             $this->get('Omeka\Cli')->getCommandPath('cd'),
             $this->getSitesDirectoryPath(),
             $this->get('Omeka\Cli')->getCommandPath('zip'),
-            sprintf('%s.zip', $this->getStaticSite()->name()),
-            $this->getStaticSite()->name()
+            sprintf('%s.zip', $this->getStaticSiteName()),
+            $this->getStaticSiteName()
         );
         $this->execute($command);
-    }
-
-    /**
-     * Delete the static site directory.
-     */
-    public function deleteSiteDirectory(): void
-    {
-        $command = sprintf(
-            '%s -r %s',
-            $this->get('Omeka\Cli')->getCommandPath('rm'),
-            escapeshellarg($this->getSiteDirectoryPath())
-        );
-        $this->execute($command);
-    }
-
-    /**
-     * Execute a command.
-     */
-    public function execute(string $command): void
-    {
-        $output = $this->get('Omeka\Cli')->execute($command);
-        if (false === $output) {
-            // Stop the job. Note that the Cli service already logged an error.
-            throw new Exception\RuntimeException;
-        }
-        // Log every command output if configured to do so. Note that this is
-        // off by default because for large sites the log will likely grow to
-        // surpass the memory limit.
-        $logCommands = $this->get('Config')['static_site_export']['log_commands'];
-        if ($logCommands) {
-            $this->get('Omeka\Logger')->notice(sprintf("Output for command: %s\n%s", $command, $output));
-        }
-    }
-
-    /**
-     * Get the directory path where the static sites are created.
-     */
-    public function getSitesDirectoryPath(): string
-    {
-        if (null === $this->sitesDirectoryPath) {
-            $sitesDirectoryPath = $this->get('Omeka\Settings')->get('static_site_export_sites_directory_path');
-            if (!Module::sitesDirectoryPathIsValid($sitesDirectoryPath)) {
-                throw new Exception\RuntimeException('Invalid directory path');
-            }
-            $this->sitesDirectoryPath = $sitesDirectoryPath;
-        }
-        return $this->sitesDirectoryPath;
-    }
-
-    /**
-     * Get the directory path of the static site.
-     */
-    public function getSiteDirectoryPath(): string
-    {
-        if (null === $this->siteDirectoryPath) {
-            $this->siteDirectoryPath = sprintf(
-                '%s/%s',
-                $this->getSitesDirectoryPath(),
-                $this->getStaticSite()->name()
-            );
-        }
-        return $this->siteDirectoryPath;
-    }
-
-    /**
-     * Get the static site entity.
-     */
-    public function getStaticSite(): StaticSiteRepresentation
-    {
-        if (null === $this->staticSite) {
-            // Validate the static site entity.
-            $staticSiteId = $this->getArg('static_site_id');
-            if (!is_numeric($staticSiteId)) {
-                throw new Exception\RuntimeException('Missing static_site_id');
-            }
-            $this->staticSite = $this->get('Omeka\ApiManager')
-                ->read('static_site_export_static_sites', $staticSiteId)
-                ->getContent();
-        }
-        return $this->staticSite;
     }
 
     /**
@@ -1046,14 +948,6 @@ class ExportStaticSite extends AbstractJob
             sprintf('content/%s/index.json', $resourceContentPath),
             json_encode($resource, JSON_PRETTY_PRINT)
         );
-    }
-
-    /**
-     * Get a named service. Proxy to $this->getServiceLocator().
-     */
-    public function get(string $serviceName)
-    {
-        return $this->getServiceLocator()->get($serviceName);
     }
 
     /**
