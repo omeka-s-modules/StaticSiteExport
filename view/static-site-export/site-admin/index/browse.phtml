@@ -55,14 +55,12 @@ $this->htmlElement('body')->appendAttribute('class', 'static-site-export browse'
                         'class' => 'o-icon-more sidebar-content',
                         'title' => $this->translate('Details'),
                     ]); ?></li>
-                    <?php if (in_array($job->status(), ['completed', 'stopped', 'error'])): ?>
                     <li><?php echo $this->hyperlink('', '#', [
                         'data-sidebar-selector' => '#sidebar',
                         'data-sidebar-content-url' => $staticSite->url('delete-confirm'),
                         'class' => 'o-icon-delete sidebar-content',
                         'title' => $this->translate('Delete'),
                     ]); ?></li>
-                    <?php endif; ?>
                 </ul>
             </td>
             <td><?php echo $job->link($job->statusLabel()); ?></td>

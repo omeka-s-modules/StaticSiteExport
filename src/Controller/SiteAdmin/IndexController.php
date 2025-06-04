@@ -115,19 +115,23 @@ class IndexController extends AbstractActionController
             if ($form->isValid()) {
                 $response = $this->api($form)->delete('static_site_export_static_sites', $staticSite->id());
                 if ($response) {
-                    // Dispatch the static site delete job.
-                    $job = $this->jobDispatcher()->dispatch(
-                        DeleteStaticSite::class,
-                        ['static_site_name' => $staticSite->name()]
-                    );
-                    // Set the message and redirect to browse.
-                    $message = new Message(
-                        '%s <a href="%s">%s</a>',
-                        $this->translate('Deleting static site server artifacts.'),
-                        htmlspecialchars($this->url()->fromRoute('admin/id', ['controller' => 'job', 'id' => $job->getId()])),
-                        $this->translate('See this job for progress.')
-                    );
-                    $message->setEscapeHtml(false);
+                    // Dispatch the static site delete job only if the export job
+                    // is at a state where it can be done safely.
+                    if (in_array($staticSite->job()->status(), ['completed', 'stopped', 'error'])) {
+                        $job = $this->jobDispatcher()->dispatch(
+                            DeleteStaticSite::class,
+                            ['static_site_name' => $staticSite->name()]
+                        );
+                        $message = new Message(
+                            '%s <a href="%s">%s</a>',
+                            $this->translate('Successfully deleted the static site resource. Deleting static site artifacts from the server.'),
+                            htmlspecialchars($this->url()->fromRoute('admin/id', ['controller' => 'job', 'id' => $job->getId()])),
+                            $this->translate('See this job for progress.')
+                        );
+                        $message->setEscapeHtml(false);
+                    } else {
+                        $message = $this->translate('Successfully deleted the static site resource. Could not delete static site artifacts from the server.');
+                    }
                     $this->messenger()->addSuccess($message);
                 }
             } else {
