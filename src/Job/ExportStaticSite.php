@@ -63,6 +63,8 @@ class ExportStaticSite extends AbstractStaticSiteJob
      */
     public function perform(): void
     {
+        // Must build a new entity manager here to avoid errors in dispatcher.
+        $this->buildEntityManager();
         $this->prepareSite();
 
         $this->triggerEvent('static_site_export.site_export.pre', []);
@@ -76,6 +78,35 @@ class ExportStaticSite extends AbstractStaticSiteJob
 
         $this->createSiteArchive();
         $this->deleteSiteDirectory();
+    }
+
+    /**
+     * Build a new entity manager instance and set it to the service manager.
+     */
+    public function buildEntityManager()
+    {
+        $services = $this->getServiceLocator();
+        $entityManager = $this->getServiceLocator()->build('Omeka\EntityManager');
+        $services->setAllowOverride(true);
+        $services->setService('Omeka\EntityManager', $entityManager);
+        $services->setAllowOverride(false);
+    }
+
+    /**
+     * Reset the entity manager.
+     *
+     * This is an attempt to resolve memory leaks related to the entity manager.
+     * Normally, calling clear() on the entity manager is sufficient, but, while
+     * some entities were being detached with clear(), many were not, so memory
+     * usage was increasing on every chunk. We still don't know why.
+     *
+     * Here we call close() on the entity manager, which is a heavy-handed way
+     * to to clear all entities, and then build a new entity manager.
+     */
+    public function resetEntityManager()
+    {
+        $this->getServiceLocator()->get('Omeka\EntityManager')->close();
+        $this->buildEntityManager();
     }
 
     /**
@@ -100,6 +131,7 @@ class ExportStaticSite extends AbstractStaticSiteJob
             foreach ($itemIdsChunk as $itemId) {
                 $this->createItemBundle($itemId);
             }
+            $this->resetEntityManager();
         }
     }
 
@@ -125,6 +157,7 @@ class ExportStaticSite extends AbstractStaticSiteJob
             foreach ($mediaIdsChunk as $mediaId) {
                 $this->createMediaBundle($mediaId);
             }
+            $this->resetEntityManager();
         }
     }
 
@@ -151,6 +184,7 @@ class ExportStaticSite extends AbstractStaticSiteJob
             foreach ($itemSetIdsChunk as $itemSetId) {
                 $this->createItemSetBundle($itemSetId);
             }
+            $this->resetEntityManager();
         }
     }
 
@@ -177,6 +211,7 @@ class ExportStaticSite extends AbstractStaticSiteJob
             foreach ($assetIdsChunk as $assetId) {
                 $this->createAssetBundle($assetId);
             }
+            $this->resetEntityManager();
         }
     }
 

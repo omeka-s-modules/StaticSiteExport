@@ -166,13 +166,18 @@ SQL;
                     return;
                 }
                 $markdown = sprintf("## %s\n", $job->translate('Items'));
+                // Note that we're not setting a thumbnail type when getting link
+                // markdown. As a consequence, the item list will not include thumbnail
+                // images. This is neecessary to avoid the risk of reaching the
+                // memory limit when loading the items into memory. This is preferable
+                // to chunking this iteration and resetting the entity manager because
+                // subsequent logic may need to fully hydrate the item set (e.g.
+                // when using json_encode), which would be impossible with a reset
+                // entity manager.
                 foreach ($items as $item) {
                     $markdown .= sprintf(
                         "- %s\n",
-                        $job->getLinkMarkdown($item, [
-                            'thumbnailType' => 'square',
-                            'thumbnailHeight' => 40,
-                        ])
+                        $job->getLinkMarkdown($item)
                     );
                 }
                 $blocks[] = [
