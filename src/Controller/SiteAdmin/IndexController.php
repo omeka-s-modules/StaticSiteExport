@@ -117,7 +117,7 @@ class IndexController extends AbstractActionController
                 if ($response) {
                     // Dispatch the static site delete job only if the export job
                     // is at a state where it can be done safely.
-                    if (in_array($staticSite->job()->status(), ['completed', 'error'])) {
+                    if (in_array($staticSite->job()->status(), ['completed', 'stopped', 'error'])) {
                         $job = $this->jobDispatcher()->dispatch(
                             DeleteStaticSite::class,
                             ['static_site_name' => $staticSite->name()]
