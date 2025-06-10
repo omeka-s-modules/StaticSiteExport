@@ -52,7 +52,6 @@ class IndexController extends AbstractActionController
                 // Set the static site data.
                 $formData = $form->getData();
                 $formData['o:data'] = [
-                    'base_url' => $formData['base_url'],
                     'theme' => $formData['theme'],
                     'include_private' => $formData['include_private'],
                 ];

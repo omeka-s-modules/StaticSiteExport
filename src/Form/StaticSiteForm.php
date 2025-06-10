@@ -9,18 +9,6 @@ class StaticSiteForm extends Form
     public function init()
     {
         $this->add([
-            'type' => LaminasElement\Text::class,
-            'name' => 'base_url',
-            'options' => [
-                'label' => 'Base URL', // @translate
-            ],
-            'attributes' => [
-                'id' => 'base_url',
-                'value' => 'https://example.org/',
-            ],
-        ]);
-
-        $this->add([
             'type' => LaminasElement\Select::class,
             'name' => 'theme',
             'options' => [
@@ -33,7 +21,6 @@ class StaticSiteForm extends Form
                 'id' => 'theme',
             ],
         ]);
-
         $this->add([
             'type' => LaminasElement\Checkbox::class,
             'name' => 'include_private',

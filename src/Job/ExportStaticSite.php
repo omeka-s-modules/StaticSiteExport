@@ -786,7 +786,6 @@ class ExportStaticSite extends AbstractStaticSiteJob
 
         // Make the hugo.json configuration file.
         $siteConfig = new ArrayObject([
-            'baseURL' => $this->getStaticSite()->dataValue('base_url'),
             'theme' => 'gohugo-theme-omeka-s',
             'title' => $this->getStaticSite()->site()->title(),
             'menus' => [
