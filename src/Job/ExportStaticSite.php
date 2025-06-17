@@ -784,6 +784,11 @@ class ExportStaticSite extends AbstractStaticSiteJob
             }
         }
 
+        // Get pager size (pagination per page).
+        $settings = $this->get('Omeka\Settings');
+        $siteSettings = $this->get('Omeka\Settings\Site');
+        $pagerSize = $siteSettings->get('pagination_per_page') ?? $settings->get('pagination_per_page', 25);
+
         // Make the hugo.json configuration file.
         $siteConfig = new ArrayObject([
             'theme' => 'gohugo-theme-omeka-s',
@@ -796,7 +801,7 @@ class ExportStaticSite extends AbstractStaticSiteJob
                 'theme' => $this->getStaticSite()->dataValue('theme'),
             ],
             'pagination' => [
-                'pagerSize' => 25,
+                'pagerSize' => $pagerSize,
             ],
         ]);
 
