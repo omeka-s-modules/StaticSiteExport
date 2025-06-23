@@ -68,6 +68,66 @@ SQL;
 
     public function attachListeners(SharedEventManagerInterface $sharedEventManager)
     {
+        // Add item IDs.
+        $sharedEventManager->attach(
+            'StaticSiteExport\Job\ExportStaticSite',
+            'static_site_export.resource_add.items',
+            function (Event $event) {
+                $job = $event->getTarget();
+                $entityManager = $job->get('Omeka\EntityManager');
+                $addIds = $event->getParam('addIds');
+
+                // Add items assigned to site page block attachments.
+                $dql = "SELECT a
+                    FROM Omeka\Entity\SiteBlockAttachment a
+                    JOIN a.block b
+                    JOIN b.page p
+                    JOIN p.site s
+                    WHERE s.id = :siteId";
+                $query = $entityManager->createQuery($dql);
+                $query->setParameters([
+                    'siteId' => $job->getStaticSite()->site()->id(),
+                ]);
+                $attachments = $query->getResult();
+                foreach ($attachments as $attachment) {
+                    $item = $attachment->getItem();
+                    if (!$item) {
+                        continue;
+                    }
+                    $addIds[] = $item->getId();
+                }
+            }
+        );
+        // Add media IDs.
+        $sharedEventManager->attach(
+            'StaticSiteExport\Job\ExportStaticSite',
+            'static_site_export.resource_add.media',
+            function (Event $event) {
+                $job = $event->getTarget();
+                $entityManager = $job->get('Omeka\EntityManager');
+                $addIds = $event->getParam('addIds');
+
+                // Add media assigned to site page block attachments.
+                $dql = "SELECT a
+                    FROM Omeka\Entity\SiteBlockAttachment a
+                    JOIN a.block b
+                    JOIN b.page p
+                    JOIN p.site s
+                    WHERE s.id = :siteId";
+                $query = $entityManager->createQuery($dql);
+                $query->setParameters([
+                    'siteId' => $job->getStaticSite()->site()->id(),
+                ]);
+                $attachments = $query->getResult();
+                foreach ($attachments as $attachment) {
+                    $media = $attachment->getMedia();
+                    if (!$media) {
+                        continue;
+                    }
+                    $addIds[] = $media->getId();
+                }
+            }
+        );
         // Add asset IDs.
         $sharedEventManager->attach(
             'StaticSiteExport\Job\ExportStaticSite',
