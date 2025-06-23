@@ -17,21 +17,25 @@ class Asset implements BlockLayoutInterface
         $api = $job->get('Omeka\ApiManager');
         $markdown = [];
         foreach ($block->data() as $attachmentData) {
+            $figureSpec = [
+                'caption' => $attachmentData['caption'] ? $job->escape(['"'], $attachmentData['caption']) : '',
+            ];
             try {
                 $asset = $api->read('assets', $attachmentData['id'])->getContent();
+                $page = $attachmentData['page'] ? $api->read('site_pages', $attachmentData['page'])->getContent() : null;
+                $figureSpec['image'] = 'image';
+                $figureSpec['fileResource'] = 'file';
+                $figureSpec['filePage'] = sprintf('/assets/%s', $asset->id());
+                $figureSpec['imgResource'] = 'file';
+                $figureSpec['imgPage'] = sprintf('/assets/%s', $asset->id());
+                $figureSpec['linkPage'] = $page ? sprintf('/pages/%s', $page->slug()) : '';
             } catch (NotFoundException $e) {
-                continue;
+                // The attachment may not have an asset. This can happen if one
+                // was assigned to the attachment and subsequently deleted. Even
+                // so, the attachment may still have a caption, so export the
+                // figure shortcode anyway.
             }
-            $page = $attachmentData['page'] ? $api->read('site_pages', $attachmentData['page'])->getContent() : null;
-            $markdown[] = $job->getFigureShortcode([
-                'type' => 'image',
-                'filePage' => sprintf('/assets/%s', $asset->id()),
-                'fileResource' => 'file',
-                'imgPage' => sprintf('/assets/%s', $asset->id()),
-                'imgResource' => 'file',
-                'linkPage' => $page ? sprintf('/pages/%s', $page->slug()) : '',
-                'caption' => $attachmentData['caption'] ? $job->escape(['"'], $attachmentData['caption']) : '',
-            ]);
+            $markdown[] = $job->getFigureShortcode($figureSpec);
         }
         return implode("\n\n", $markdown);
     }
