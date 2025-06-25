@@ -13,6 +13,6 @@ class PageTitle implements BlockLayoutInterface
         ArrayObject $frontMatterPage,
         ArrayObject $frontMatterBlock
     ): string {
-        return sprintf('# %s', $block->page()->title());
+        return sprintf('## %s', $block->page()->title());
     }
 }
