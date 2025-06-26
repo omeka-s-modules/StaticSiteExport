@@ -738,7 +738,7 @@ class ExportStaticSite extends AbstractStaticSiteJob
             $this->makeDirectory($toDirectoryPath);
             // Copy packages into the vendor directory.
             $command = sprintf(
-                '%s --recursive %s %s',
+                '%s -R %s %s',
                 $this->get('Omeka\Cli')->getCommandPath('cp'),
                 sprintf('%s/*', escapeshellarg($fromDirectoryPath)),
                 escapeshellarg(sprintf('%s/%s', $this->getSiteDirectoryPath(), $toDirectoryPath))
