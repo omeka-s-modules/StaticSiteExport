@@ -20,15 +20,33 @@ class BrowsePreview implements BlockLayoutInterface
             'media' => 'media',
             'item_sets' => 'item-sets',
         ];
-        $markdown = [];
+
         $blockHeading = $block->dataValue('heading');
+        $resourceType = $block->dataValue('resource_type', 'items');
+
+        // Build the query and get the resource IDs.
+        parse_str($block->dataValue('query'), $query);
+        $query['limit'] = $block->dataValue('limit', 12);
+        $query['site_id'] = $job->getStaticSite()->site()->id();
+        if (!isset($query['sort_by'])) {
+            $query['sort_by_default'] = '';
+            $query['sort_by'] = 'created';
+        }
+        if (!isset($query['sort_order'])) {
+            $query['sort_order_default'] = '';
+            $query['sort_order'] = 'desc';
+        }
+        $resourceIds = $job->get('Omeka\ApiManager')->search($resourceType, $query, ['returnScalar' => 'id'])->getContent();
+
+        // Build the markdown.
+        $markdown = [];
         if ($blockHeading) {
             $markdown[] = sprintf('### %s', $blockHeading);
         }
         $markdown[] = sprintf(
-            '{{< omeka-resource-list section="%s" limit="%s" >}}',
+            '{{< omeka-resource-list section="%s" resource-ids="%s" >}}',
             $sections[$block->dataValue('resource_type', 'items')],
-            $block->dataValue('limit', 12)
+            implode(',', $resourceIds)
         );
         $blockLinkText = $block->dataValue('link-text') ?? $job->translate('Browse all');
         $markdown[] = sprintf(
@@ -36,6 +54,7 @@ class BrowsePreview implements BlockLayoutInterface
             $job->escape(['[', ']'], $blockLinkText),
             $sections[$block->dataValue('resource_type', 'items')]
         );
+
         return implode("\n\n", $markdown);
     }
 }
