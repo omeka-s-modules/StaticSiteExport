@@ -59,12 +59,16 @@ class ExportStaticSite extends AbstractStaticSiteJob
     protected $currentTheme;
 
     /**
+     * The original entity manager identity map.
+     */
+    protected $originalIdentityMap;
+
+    /**
      * Export the static site.
      */
     public function perform(): void
     {
-        // Must build a new entity manager here to avoid errors in dispatcher.
-        $this->buildEntityManager();
+        $this->originalIdentityMap = $this->get('Omeka\EntityManager')->getUnitOfWork()->getIdentityMap();
         $this->prepareSite();
 
         $this->triggerEvent('static_site_export.site_export.pre', []);
@@ -81,32 +85,28 @@ class ExportStaticSite extends AbstractStaticSiteJob
     }
 
     /**
-     * Build a new entity manager instance and set it to the service manager.
+     * Flush entity manager and detach entites to clear memory.
      */
-    public function buildEntityManager()
+    public function flushDetach()
     {
-        $services = $this->getServiceLocator();
-        $entityManager = $this->getServiceLocator()->build('Omeka\EntityManager');
-        $services->setAllowOverride(true);
-        $services->setService('Omeka\EntityManager', $entityManager);
-        $services->setAllowOverride(false);
-    }
+        $entityManager = $this->get('Omeka\EntityManager');
 
-    /**
-     * Reset the entity manager.
-     *
-     * This is an attempt to resolve memory leaks related to the entity manager.
-     * Normally, calling clear() on the entity manager is sufficient, but, while
-     * some entities were being detached with clear(), many were not, so memory
-     * usage was increasing on every chunk. We still don't know why.
-     *
-     * Here we call close() on the entity manager, which is a heavy-handed way
-     * to to clear all entities, and then build a new entity manager.
-     */
-    public function resetEntityManager()
-    {
-        $this->getServiceLocator()->get('Omeka\EntityManager')->close();
-        $this->buildEntityManager();
+        // Flush the entity manager to persist changes.
+        $entityManager->flush();
+
+        // Detach entities that were *not* part of the original state of the
+        // entity manager to avoid reaching the memory limit. Do this instead of
+        // explicitly clearing the entity manager to avoid the uncommon but
+        // irksome "A new entity was found" Doctrine errors.
+        $unitOfWork = $entityManager->getUnitOfWork();
+        $identityMap = $unitOfWork->getIdentityMap();
+        foreach ($identityMap as $entityClass => $entities) {
+            foreach ($entities as $idHash => $entity) {
+                if (!isset($this->originalIdentityMap[$entityClass][$idHash])) {
+                    $entityManager->detach($entity);
+                }
+            }
+        }
     }
 
     /**
@@ -131,7 +131,7 @@ class ExportStaticSite extends AbstractStaticSiteJob
             foreach ($itemIdsChunk as $itemId) {
                 $this->createItemBundle($itemId);
             }
-            $this->resetEntityManager();
+            $this->flushDetach();
         }
     }
 
@@ -157,7 +157,7 @@ class ExportStaticSite extends AbstractStaticSiteJob
             foreach ($mediaIdsChunk as $mediaId) {
                 $this->createMediaBundle($mediaId);
             }
-            $this->resetEntityManager();
+            $this->flushDetach();
         }
     }
 
@@ -184,7 +184,7 @@ class ExportStaticSite extends AbstractStaticSiteJob
             foreach ($itemSetIdsChunk as $itemSetId) {
                 $this->createItemSetBundle($itemSetId);
             }
-            $this->resetEntityManager();
+            $this->flushDetach();
         }
     }
 
@@ -211,7 +211,7 @@ class ExportStaticSite extends AbstractStaticSiteJob
             foreach ($assetIdsChunk as $assetId) {
                 $this->createAssetBundle($assetId);
             }
-            $this->resetEntityManager();
+            $this->flushDetach();
         }
     }
 
