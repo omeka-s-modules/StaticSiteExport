@@ -1148,6 +1148,11 @@ class ExportStaticSite extends AbstractStaticSiteJob
     {
         $shortcodeArgs = [];
         foreach ($args as $key => $value) {
+            if ('caption' === $key) {
+                // For captions, convert applicable characters to HTML entities
+                // and remove new lines.
+                $value = str_replace(["\r\n", "\r", "\n"], '', htmlentities($value));
+            }
             $shortcodeArgs[] = sprintf('%s="%s"', $key, $value);
         }
         return sprintf('{{< omeka-figure %s >}}', implode(' ', $shortcodeArgs));
