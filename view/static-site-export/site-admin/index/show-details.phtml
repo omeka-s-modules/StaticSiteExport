@@ -35,6 +35,11 @@ $owner = $staticSite->owner();
 </div>
 
 <div class="meta-group">
+    <h4><?php echo $this->translate('Base URL'); ?></h4>
+    <div class="value"><?php echo $staticSite->dataValue('base_url'); ?></div>
+</div>
+
+<div class="meta-group">
     <h4><?php echo $this->translate('Theme'); ?></h4>
     <div class="value"><?php echo $staticSite->dataValue('theme'); ?></div>
 </div>

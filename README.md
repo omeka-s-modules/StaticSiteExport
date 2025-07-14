@@ -19,8 +19,8 @@ After installing and configuring this module, go to an Omeka site in the adminis
 interface, click on "Static Site Export" in the navigation, and click the "Export
 new static site" button.
 
-On this page you will configure the export by selecting a "Theme" and declaring
-whether to "Include private resources".
+On this page you will configure the export by entering a "Base URL", selecting a
+"Theme", and declaring whether to "Include private resources".
 
 - "Theme": select one of the available themes that will be appplied to your static
 site.
