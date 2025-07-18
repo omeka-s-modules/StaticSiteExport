@@ -22,12 +22,6 @@ new static site" button.
 On this page you will configure the export by entering a "Base URL", selecting a
 "Theme", and declaring whether to "Include private resources".
 
-- "Theme": select one of the available themes that will be appplied to your static
-site.
-- "Include private resources": check if you want to include private resources (items,
-media, item sets, and site pages) in your static site. Note that, if checked, private
-resources will be published by Hugo.
-
 After configuring the export, click the "Begin export" button. The new export will
 be the first in the list. Click on the "Details" icon for information about the
 export, including status of the export job. The export is finished once the status
