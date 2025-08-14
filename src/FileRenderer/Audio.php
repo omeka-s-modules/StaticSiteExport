@@ -14,6 +14,7 @@ class Audio implements FileRendererInterface
         ArrayObject $frontMatterBlock
     ): string {
         return $job->getFigureShortcode([
+            'class' => 'media-render file',
             'type' => 'audio',
             'filePage' => sprintf('/media/%s', $media->id()),
             'fileResource' => 'file',

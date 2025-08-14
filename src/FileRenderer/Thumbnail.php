@@ -15,6 +15,7 @@ class Thumbnail implements FileRendererInterface
     ): string {
         if ($media->thumbnail()) {
             return $job->getFigureShortcode([
+                'class' => 'media-render file',
                 'type' => "image",
                 'filePage' => sprintf("/media/%s", $media->id()),
                 'fileResource' => "file",
@@ -26,6 +27,7 @@ class Thumbnail implements FileRendererInterface
         }
         if ($media->hasThumbnails()) {
             return $job->getFigureShortcode([
+                'class' => 'media-render file',
                 'type' => "image",
                 'filePage' => sprintf("/media/%s", $media->id()),
                 'fileResource' => "file",
@@ -43,6 +45,7 @@ class Thumbnail implements FileRendererInterface
         $topLevelType = strstr((string) $media->mediaType(), '/', true);
         $fileThumbnailPath = $thumbnailPaths[$topLevelType] ?? '/thumbnails/default.png';
         return $job->getFigureShortcode([
+            'class' => 'media-render file',
             'type' => "image",
             'filePage' => sprintf("/media/%s", $media->id()),
             'fileResource' => "file",

@@ -51,7 +51,7 @@ class Media implements BlockLayoutInterface
             }
             $media = $attachment->media() ?: $item->primaryMedia();
             $caption = $attachment->caption();
-            $markdown[] = '{{< omeka-div >}}';
+            $markdown[] = '{{< omeka-div class="item resource" >}}';
             if ($media) {
                 if ('thumbnail' === $mediaDisplay) {
                     $markdown[] = $job->getThumbnailShortcode($media, ['thumbnailType' => $thumbnailType]);
