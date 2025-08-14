@@ -38,7 +38,7 @@ class StaticSiteForm extends Form
             'name' => 'include_private',
             'options' => [
                 'label' => 'Include private resources', // @translate
-                'info' => 'Check to include private resources in the export. The default behavior is to exclude private resources. This must be set prior to export.'
+                'info' => 'Check to include private resources in the export. The default behavior is to exclude private resources. This must be set prior to export.',
             ],
             'attributes' => [
                 'id' => 'include_private',

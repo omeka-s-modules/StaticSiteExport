@@ -1,0 +1,143 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-08-14 11:08-0400\n"
+"PO-Revision-Date: 2025-08-14 15:08+0000\n"
+"Language-Team: Welsh (United Kingdom) (https://app.transifex.com/omeka/teams/14184/cy_GB/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: cy_GB\n"
+"Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n==2) ? 1 : (n != 8 && n != 11) ? 2 : 3;\n"
+
+#: src/Controller/SiteAdmin/IndexController.php:79
+msgid "Exporting static site. This may take a while."
+msgstr ""
+
+#: src/Controller/SiteAdmin/IndexController.php:81
+#: src/Controller/SiteAdmin/IndexController.php:129
+msgid "See this job for progress."
+msgstr ""
+
+#: src/Controller/SiteAdmin/IndexController.php:127
+msgid ""
+"Successfully deleted the static site resource. Deleting static site "
+"artifacts from the server."
+msgstr ""
+
+#: src/Controller/SiteAdmin/IndexController.php:133
+msgid ""
+"Successfully deleted the static site resource. Could not delete static site "
+"artifacts from the server."
+msgstr ""
+
+#: view/static-site-export/site-admin/index/browse.phtml:9
+msgid "Static sites"
+msgstr ""
+
+#: view/static-site-export/site-admin/index/browse.phtml:9
+#: view/static-site-export/site-admin/index/export.phtml:3
+msgid "Static Site Export"
+msgstr ""
+
+#: view/static-site-export/site-admin/index/browse.phtml:13
+msgid "Export new static site"
+msgstr ""
+
+#: view/static-site-export/site-admin/index/browse.phtml:21
+msgid "Date created"
+msgstr ""
+
+#: view/static-site-export/site-admin/index/browse.phtml:37
+msgid "Export status"
+msgstr ""
+
+#: view/static-site-export/site-admin/index/browse.phtml:81
+#, php-format
+msgid "No static sites found. %s"
+msgstr ""
+
+#: view/static-site-export/site-admin/index/browse.phtml:82
+msgid "Export new static site."
+msgstr ""
+
+#: view/static-site-export/site-admin/index/export.phtml:3
+msgid "Export static site"
+msgstr ""
+
+#: view/static-site-export/site-admin/index/export.phtml:9
+msgid "Begin export"
+msgstr ""
+
+#: view/static-site-export/site-admin/index/show-details.phtml:14
+msgid "Export job"
+msgstr ""
+
+#: view/static-site-export/site-admin/index/show-details.phtml:17
+#, php-format
+msgid "Status: %s [%s]"
+msgstr ""
+
+#: view/static-site-export/site-admin/index/show-details.phtml:21
+msgid "no log"
+msgstr ""
+
+#: view/static-site-export/site-admin/index/show-details.phtml:23
+#, php-format
+msgid "Started: %s"
+msgstr ""
+
+#: view/static-site-export/site-admin/index/show-details.phtml:24
+#, php-format
+msgid "Ended: %s"
+msgstr ""
+
+#: view/static-site-export/site-admin/index/show-details.phtml:38
+msgid "Base URL"
+msgstr ""
+
+#: view/static-site-export/site-admin/index/show-details.phtml:48
+msgid "Include private resources"
+msgstr ""
+
+#: src/Api/Adapter/StaticSiteAdapter.php:42
+msgid "Cannot update a static site"
+msgstr ""
+
+#: src/Api/Adapter/StaticSiteAdapter.php:47
+msgid "A site must have an ID"
+msgstr ""
+
+#: src/Controller/SiteAdmin/IndexController.php:105
+msgid "static site"
+msgstr ""
+
+#: src/Form/StaticSiteForm.php:16
+msgid ""
+"Enter the absolute URL of your published site including the protocol, host, "
+"path, and a trailing slash. This is optional and can be set after export, "
+"prior to build, in hugo.json under baseURL."
+msgstr ""
+
+#: src/Form/ModuleConfigForm.php:17
+msgid "Sites directory path"
+msgstr ""
+
+#: src/Form/ModuleConfigForm.php:18
+msgid ""
+"Enter the path to the directory where your static sites will be saved. The "
+"path must exist and be writable by the web server."
+msgstr ""
+
+#: src/Form/ModuleConfigForm.php:37
+msgid ""
+"Invalid sites directory path. The path must exist and be writable by the web"
+" server."
+msgstr ""
