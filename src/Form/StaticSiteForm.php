@@ -24,7 +24,7 @@ class StaticSiteForm extends Form
             'name' => 'theme',
             'options' => [
                 'label' => 'Theme', // @translate
-                'info' => 'Select an Omeka theme to use to style your site. This is optional and can be set after export, prior to build, in hugo.json under params.theme.',
+                'info' => 'Select an Omeka theme to use to style your site. This is optional and can be set after export, prior to build, in hugo.json under params.theme.', // @translate
                 'value_options' => [
                     'default' => 'default',
                 ],
@@ -38,7 +38,7 @@ class StaticSiteForm extends Form
             'name' => 'include_private',
             'options' => [
                 'label' => 'Include private resources', // @translate
-                'info' => 'Check to include private resources in the export. The default behavior is to exclude private resources. This must be set prior to export.',
+                'info' => 'Check to include private resources in the export. The default behavior is to exclude private resources. This must be set prior to export.', // @translate
             ],
             'attributes' => [
                 'id' => 'include_private',
