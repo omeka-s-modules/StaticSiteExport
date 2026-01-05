@@ -13,6 +13,6 @@ class Literal implements DataTypeInterface
         ArrayObject $frontMatterPage,
         ArrayObject $frontMatterBlock
     ): string {
-        return sprintf('{{< omeka-literal >}}%s{{< /omeka-literal >}}', $value->value());
+        return sprintf('{{< omeka-literal lang="%s" >}}%s{{< /omeka-literal >}}', $value->lang(), $value->value());
     }
 }
