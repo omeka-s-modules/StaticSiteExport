@@ -789,11 +789,10 @@ class ExportStaticSite extends AbstractStaticSiteJob
             }
         }
 
-        // Get pager size (pagination per page).
-        $settings = $this->get('Omeka\Settings');
-        $siteSettings = $this->get('Omeka\Settings\Site');
-        $pagerSize = $siteSettings->get('pagination_per_page') ?? $settings->get('pagination_per_page', 25);
-        $fallbackSetting = $this->get('ViewHelperManager')->get('fallbackSetting');
+        // Get Omeka settings.
+        $fallbackSettings = $this->get('Omeka\Settings\Fallback');
+        $pagerSize = $fallbackSettings->get('pagination_per_page', ['site', 'global'], 25);
+        $showLocaleLabel = (bool) $fallbackSettings->get('show_locale_label', ['site'], true);
 
         // Make the hugo.json configuration file.
         $siteConfig = new ArrayObject([
@@ -806,7 +805,7 @@ class ExportStaticSite extends AbstractStaticSiteJob
             'params' => [
                 'homepage' => $homepage,
                 'theme' => $this->getStaticSite()->dataValue('theme'),
-                'showLocaleLabel' => (bool) $fallbackSetting('show_locale_label', ['site'], true)
+                'showLocaleLabel' => $showLocaleLabel,
             ],
             'pagination' => [
                 'pagerSize' => $pagerSize,
