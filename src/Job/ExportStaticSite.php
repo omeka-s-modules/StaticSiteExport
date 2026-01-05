@@ -231,7 +231,12 @@ class ExportStaticSite extends AbstractStaticSiteJob
         ];
         $this->makeFile('content/pages/_index.md', json_encode($frontMatter));
         $sitePages = $this->getStaticSite()->site()->pages();
+        $includePrivate = $this->getStaticSite()->dataValue('include_private');
         foreach ($sitePages as $sitePage) {
+            if (!$sitePage->isPublic() && !$includePrivate) {
+                // Do not publish private pages when private resources not included.
+                continue;
+            }
             $this->createSitePageBundle($sitePage);
         }
     }

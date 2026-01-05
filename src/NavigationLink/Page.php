@@ -22,6 +22,11 @@ class Page implements NavigationLinkInterface
         } catch (NotFoundException $e) {
             $sitePage = null;
         }
+        $includePrivate = $job->getStaticSite()->dataValue('include_private');
+        if ($sitePage && !$sitePage->isPublic() && !$includePrivate) {
+            // Do not link to private pages when private resources not included.
+            $sitePage = null;
+        }
         if ($sitePage) {
             $menu->append([
                 'name' => $sitePage->title(),
