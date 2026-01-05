@@ -221,6 +221,7 @@ SQL;
                 $items = $job->get('Omeka\ApiManager')->search('items', [
                     'item_set_id' => $itemSet->id(),
                     'site_id' => $job->getStaticSite()->site()->id(),
+                    'is_public' => !$job->getStaticSite()->dataValue('include_private'),
                 ])->getContent();
                 if (!$items) {
                     return;
