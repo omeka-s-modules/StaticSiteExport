@@ -67,16 +67,10 @@ class IndexController extends AbstractActionController
                         ExportStaticSite::class,
                         ['static_site_id' => $staticSite->id()]
                     );
-                    // Set the job and directory name to the static site entity.
-                    $staticSiteEntity = $this->entityManager->find('StaticSiteExport\Entity\StaticSite', $staticSite->id());
-                    $staticSiteEntity->setJob($job);
-                    $name = sprintf('%s-%s', $site->slug(), $job->getId());
-                    $staticSiteEntity->setName($name);
-                    $this->entityManager->flush();
                     // Set the message and redirect to browse.
                     $message = new Message(
                         '%s <a href="%s">%s</a>',
-                        $this->translate('Exporting static site. This may take a while.'),
+                        sprintf($this->translate('Exporting static site "%s".'), $staticSite->name()),
                         htmlspecialchars($this->url()->fromRoute('admin/id', ['controller' => 'job', 'id' => $job->getId()])),
                         $this->translate('See this job for progress.')
                     );

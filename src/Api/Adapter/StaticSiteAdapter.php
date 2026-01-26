@@ -56,9 +56,10 @@ class StaticSiteAdapter extends AbstractEntityAdapter
         $site = $this->getAdapter('sites')->findEntity($siteData['o:id']);
         $entity->setSite($site);
 
-        if ($this->shouldHydrate($request, 'o:data')) {
-            $entity->setData($request->getValue('o:data'));
-        }
+        $name = sprintf('%s-%s', $site->getSlug(), time());
+        $entity->setName($name);
+
+        $entity->setData($request->getValue('o:data'));
     }
 
     public function validateEntity(EntityInterface $entity, ErrorStore $errorStore)

@@ -68,7 +68,16 @@ class ExportStaticSite extends AbstractStaticSiteJob
      */
     public function perform(): void
     {
-        $this->originalIdentityMap = $this->get('Omeka\EntityManager')->getUnitOfWork()->getIdentityMap();
+        $entityManager = $this->get('Omeka\EntityManager');
+
+        $this->originalIdentityMap = $entityManager->getUnitOfWork()->getIdentityMap();
+
+        // Set the job to the static site entity.
+        $staticSite = $this->getStaticSite();
+        $staticSiteEntity = $entityManager->find('StaticSiteExport\Entity\StaticSite', $staticSite->id());
+        $staticSiteEntity->setJob($this->job);
+        $entityManager->flush();
+
         $this->prepareSite();
 
         $this->triggerEvent('static_site_export.site_export.pre', []);

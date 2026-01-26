@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-05 16:03-0500\n"
+"POT-Creation-Date: 2026-01-26 16:27-0500\n"
 "PO-Revision-Date: 2025-08-14 15:08+0000\n"
 "Last-Translator: Giorgio Comai <g@giorgiocomai.eu>, 2025\n"
 "Language-Team: Italian (https://app.transifex.com/omeka/teams/14184/it/)\n"
@@ -21,16 +21,17 @@ msgstr ""
 "Language: it\n"
 "Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
 
-#: src/Controller/SiteAdmin/IndexController.php:79
-msgid "Exporting static site. This may take a while."
-msgstr "Esportazione del sito statico in corso. Ci vorrà un po' di tempo."
+#: src/Controller/SiteAdmin/IndexController.php:73
+#, php-format
+msgid "Exporting static site \"%s\"."
+msgstr ""
 
-#: src/Controller/SiteAdmin/IndexController.php:81
-#: src/Controller/SiteAdmin/IndexController.php:129
+#: src/Controller/SiteAdmin/IndexController.php:75
+#: src/Controller/SiteAdmin/IndexController.php:123
 msgid "See this job for progress."
 msgstr "Vedi questo lavoro per l'avanzamento."
 
-#: src/Controller/SiteAdmin/IndexController.php:127
+#: src/Controller/SiteAdmin/IndexController.php:121
 msgid ""
 "Successfully deleted the static site resource. Deleting static site "
 "artifacts from the server."
@@ -38,7 +39,7 @@ msgstr ""
 "Risorsa del sito statico eliminata con successo. Eliminazione degli "
 "artefatti dal server in corso."
 
-#: src/Controller/SiteAdmin/IndexController.php:133
+#: src/Controller/SiteAdmin/IndexController.php:127
 msgid ""
 "Successfully deleted the static site resource. Could not delete static site "
 "artifacts from the server."
@@ -67,6 +68,11 @@ msgstr "Data di creazione"
 msgid "Export status"
 msgstr "Stato dell'esportazione"
 
+#: view/static-site-export/site-admin/index/browse.phtml:66
+#: view/static-site-export/site-admin/index/show-details.phtml:28
+msgid "[unknown]"
+msgstr ""
+
 #: view/static-site-export/site-admin/index/browse.phtml:81
 #, php-format
 msgid "No static sites found. %s"
@@ -88,30 +94,30 @@ msgstr "Inizia esportazione"
 msgid "Export job"
 msgstr "Esporta lavoro"
 
-#: view/static-site-export/site-admin/index/show-details.phtml:17
+#: view/static-site-export/site-admin/index/show-details.phtml:18
 #, php-format
 msgid "Status: %s [%s]"
 msgstr "Stato: %s [%s]"
 
-#: view/static-site-export/site-admin/index/show-details.phtml:21
+#: view/static-site-export/site-admin/index/show-details.phtml:22
 msgid "no log"
 msgstr "nessun log"
 
-#: view/static-site-export/site-admin/index/show-details.phtml:23
+#: view/static-site-export/site-admin/index/show-details.phtml:25
 #, php-format
 msgid "Started: %s"
 msgstr "Iniziato: %s"
 
-#: view/static-site-export/site-admin/index/show-details.phtml:24
+#: view/static-site-export/site-admin/index/show-details.phtml:26
 #, php-format
 msgid "Ended: %s"
 msgstr "Completato: %s"
 
-#: view/static-site-export/site-admin/index/show-details.phtml:38
+#: view/static-site-export/site-admin/index/show-details.phtml:43
 msgid "Base URL"
 msgstr "URL di base"
 
-#: view/static-site-export/site-admin/index/show-details.phtml:48
+#: view/static-site-export/site-admin/index/show-details.phtml:53
 msgid "Include private resources"
 msgstr "Includi risorse private"
 
@@ -123,7 +129,7 @@ msgstr "Non è possibile aggiornare un sito statico"
 msgid "A site must have an ID"
 msgstr "Un sito deve avere un ID"
 
-#: src/Controller/SiteAdmin/IndexController.php:105
+#: src/Controller/SiteAdmin/IndexController.php:99
 msgid "static site"
 msgstr "sito statico"
 

@@ -1,12 +1,13 @@
 <?php
 namespace StaticSiteExport;
 
-use Omeka\Module\AbstractModule;
+use Composer\Semver\Comparator;
 use Laminas\EventManager\Event;
 use Laminas\EventManager\SharedEventManagerInterface;
 use Laminas\Mvc\Controller\AbstractController;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\View\Renderer\PhpRenderer;
+use Omeka\Module\AbstractModule;
 use StaticSiteExport\Form\ModuleConfigForm;
 
 class Module extends AbstractModule
@@ -19,7 +20,7 @@ class Module extends AbstractModule
     public function install(ServiceLocatorInterface $services)
     {
         $sql = <<<'SQL'
-CREATE TABLE static_site (id INT UNSIGNED AUTO_INCREMENT NOT NULL, owner_id INT DEFAULT NULL, site_id INT NOT NULL, job_id INT DEFAULT NULL, created DATETIME NOT NULL, name VARCHAR(255) DEFAULT NULL, data LONGTEXT NOT NULL COMMENT '(DC2Type:json)', INDEX IDX_F2ED50517E3C61F9 (owner_id), INDEX IDX_F2ED5051F6BD1646 (site_id), INDEX IDX_F2ED5051BE04EA9 (job_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB;
+CREATE TABLE static_site (id INT UNSIGNED AUTO_INCREMENT NOT NULL, owner_id INT DEFAULT NULL, site_id INT NOT NULL, job_id INT DEFAULT NULL, created DATETIME NOT NULL, name VARCHAR(255) NOT NULL, data LONGTEXT NOT NULL COMMENT '(DC2Type:json)', INDEX IDX_F2ED50517E3C61F9 (owner_id), INDEX IDX_F2ED5051F6BD1646 (site_id), INDEX IDX_F2ED5051BE04EA9 (job_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB;
 ALTER TABLE static_site ADD CONSTRAINT FK_F2ED50517E3C61F9 FOREIGN KEY (owner_id) REFERENCES user (id) ON DELETE SET NULL;
 ALTER TABLE static_site ADD CONSTRAINT FK_F2ED5051F6BD1646 FOREIGN KEY (site_id) REFERENCES site (id) ON DELETE CASCADE;
 ALTER TABLE static_site ADD CONSTRAINT FK_F2ED5051BE04EA9 FOREIGN KEY (job_id) REFERENCES job (id) ON DELETE SET NULL;
@@ -33,11 +34,21 @@ SQL;
     public function uninstall(ServiceLocatorInterface $services)
     {
         $conn = $services->get('Omeka\Connection');
-        $settings = $services->get('Omeka\Settings');
 
         $conn->exec('SET FOREIGN_KEY_CHECKS=0;');
         $conn->exec('DROP TABLE IF EXISTS static_site;');
         $conn->exec('SET FOREIGN_KEY_CHECKS=1;');
+    }
+
+    public function upgrade($oldVersion, $newVersion, ServiceLocatorInterface $services)
+    {
+        $conn = $services->get('Omeka\Connection');
+
+        if (Comparator::lessThan($oldVersion, '1.2.0')) {
+            // Change name column from DEFAULT NULL to NOT NULL.
+            $conn->exec("UPDATE static_site SET name = '' WHERE name IS NULL");
+            $conn->exec("ALTER TABLE static_site MODIFY COLUMN name VARCHAR(255) NOT NULL");
+        }
     }
 
     public function getConfigForm(PhpRenderer $view)

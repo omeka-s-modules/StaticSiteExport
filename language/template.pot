@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-05 16:03-0500\n"
+"POT-Creation-Date: 2026-01-26 16:27-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,22 +17,23 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/Controller/SiteAdmin/IndexController.php:79
-msgid "Exporting static site. This may take a while."
+#: src/Controller/SiteAdmin/IndexController.php:73
+#, php-format
+msgid "Exporting static site \"%s\"."
 msgstr ""
 
-#: src/Controller/SiteAdmin/IndexController.php:81
-#: src/Controller/SiteAdmin/IndexController.php:129
+#: src/Controller/SiteAdmin/IndexController.php:75
+#: src/Controller/SiteAdmin/IndexController.php:123
 msgid "See this job for progress."
 msgstr ""
 
-#: src/Controller/SiteAdmin/IndexController.php:127
+#: src/Controller/SiteAdmin/IndexController.php:121
 msgid ""
 "Successfully deleted the static site resource. Deleting static site "
 "artifacts from the server."
 msgstr ""
 
-#: src/Controller/SiteAdmin/IndexController.php:133
+#: src/Controller/SiteAdmin/IndexController.php:127
 msgid ""
 "Successfully deleted the static site resource. Could not delete static site "
 "artifacts from the server."
@@ -59,6 +60,11 @@ msgstr ""
 msgid "Export status"
 msgstr ""
 
+#: view/static-site-export/site-admin/index/browse.phtml:66
+#: view/static-site-export/site-admin/index/show-details.phtml:28
+msgid "[unknown]"
+msgstr ""
+
 #: view/static-site-export/site-admin/index/browse.phtml:81
 #, php-format
 msgid "No static sites found. %s"
@@ -80,30 +86,30 @@ msgstr ""
 msgid "Export job"
 msgstr ""
 
-#: view/static-site-export/site-admin/index/show-details.phtml:17
+#: view/static-site-export/site-admin/index/show-details.phtml:18
 #, php-format
 msgid "Status: %s [%s]"
 msgstr ""
 
-#: view/static-site-export/site-admin/index/show-details.phtml:21
+#: view/static-site-export/site-admin/index/show-details.phtml:22
 msgid "no log"
 msgstr ""
 
-#: view/static-site-export/site-admin/index/show-details.phtml:23
+#: view/static-site-export/site-admin/index/show-details.phtml:25
 #, php-format
 msgid "Started: %s"
 msgstr ""
 
-#: view/static-site-export/site-admin/index/show-details.phtml:24
+#: view/static-site-export/site-admin/index/show-details.phtml:26
 #, php-format
 msgid "Ended: %s"
 msgstr ""
 
-#: view/static-site-export/site-admin/index/show-details.phtml:38
+#: view/static-site-export/site-admin/index/show-details.phtml:43
 msgid "Base URL"
 msgstr ""
 
-#: view/static-site-export/site-admin/index/show-details.phtml:48
+#: view/static-site-export/site-admin/index/show-details.phtml:53
 msgid "Include private resources"
 msgstr ""
 
@@ -115,7 +121,7 @@ msgstr ""
 msgid "A site must have an ID"
 msgstr ""
 
-#: src/Controller/SiteAdmin/IndexController.php:105
+#: src/Controller/SiteAdmin/IndexController.php:99
 msgid "static site"
 msgstr ""
 

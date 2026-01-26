@@ -12,6 +12,7 @@ $owner = $staticSite->owner();
 
 <div class="meta-group">
     <h4><?php echo $this->translate('Export job'); ?></h4>
+    <?php if ($job): ?>
     <div class="value"><?php
         echo sprintf(
             $this->translate('Status: %s [%s]'),
@@ -19,9 +20,13 @@ $owner = $staticSite->owner();
             $job->log()
                 ? $this->hyperlink($this->translate('view log'), $this->url('admin/id', ['controller' => 'job', 'action' => 'log', 'id' => $job->id()]), ['target' => '_blank'])
                 : $this->translate('no log')
-        ); ?></div>
+        ); ?>
+    </div>
     <div class="value"><?php echo sprintf($this->translate('Started: %s'), $this->i18n()->dateFormat($job->started(), 'medium', 'medium')); ?></div>
     <div class="value"><?php echo sprintf($this->translate('Ended: %s'), $this->i18n()->dateFormat($job->ended(), 'medium', 'medium')); ?></div>
+    <?php else: ?>
+    <div class="value"><?php echo $this->translate('[unknown]'); ?></div>
+    <?php endif; ?>
 </div>
 
 <div class="meta-group">

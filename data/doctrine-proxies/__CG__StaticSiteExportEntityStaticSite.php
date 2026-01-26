@@ -133,7 +133,7 @@ class StaticSite extends \StaticSiteExport\Entity\StaticSite implements \Doctrin
      * {@inheritDoc}
      * @internal generated method: use only when explicitly handling proxy specific loading logic
      */
-    public function __setInitializer(\Closure $initializer = null): void
+    public function __setInitializer(?\Closure $initializer = null): void
     {
         $this->__initializer__ = $initializer;
     }
@@ -151,7 +151,7 @@ class StaticSite extends \StaticSiteExport\Entity\StaticSite implements \Doctrin
      * {@inheritDoc}
      * @internal generated method: use only when explicitly handling proxy specific loading logic
      */
-    public function __setCloner(\Closure $cloner = null): void
+    public function __setCloner(?\Closure $cloner = null): void
     {
         $this->__cloner__ = $cloner;
     }
@@ -195,7 +195,7 @@ class StaticSite extends \StaticSiteExport\Entity\StaticSite implements \Doctrin
     /**
      * {@inheritDoc}
      */
-    public function setOwner(\Omeka\Entity\User $owner = NULL): void
+    public function setOwner(?\Omeka\Entity\User $owner = NULL): void
     {
 
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'setOwner', [$owner]);
@@ -239,7 +239,7 @@ class StaticSite extends \StaticSiteExport\Entity\StaticSite implements \Doctrin
     /**
      * {@inheritDoc}
      */
-    public function setJob(\Omeka\Entity\Job $job = NULL): void
+    public function setJob(?\Omeka\Entity\Job $job = NULL): void
     {
 
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'setJob', [$job]);
@@ -283,7 +283,7 @@ class StaticSite extends \StaticSiteExport\Entity\StaticSite implements \Doctrin
     /**
      * {@inheritDoc}
      */
-    public function setName(string $name): void
+    public function setName(?string $name): void
     {
 
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'setName', [$name]);
@@ -294,7 +294,7 @@ class StaticSite extends \StaticSiteExport\Entity\StaticSite implements \Doctrin
     /**
      * {@inheritDoc}
      */
-    public function getName(): string
+    public function getName(): ?string
     {
 
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'getName', []);

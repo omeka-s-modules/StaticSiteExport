@@ -116,17 +116,17 @@ class StaticSite extends AbstractEntity
      * @Column(
      *     type="string",
      *     length=255,
-     *     nullable=true
+     *     nullable=false
      * )
      */
     protected $name;
 
-    public function setName(string $name): void
+    public function setName(?string $name): void
     {
         $this->name = $name;
     }
 
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
